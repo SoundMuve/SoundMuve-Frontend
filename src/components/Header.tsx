@@ -19,6 +19,8 @@ import LanguageIcon from '@mui/icons-material/Language';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import CloseIcon from '@mui/icons-material/Close';
 
+import SoundMuve from "./../assets/images/SoundMuve.png";
+
 const drawerWidth = 240;
 
 export default function HeaderComponent() {
@@ -66,7 +68,7 @@ export default function HeaderComponent() {
                 </Box>
 
                 <Typography variant="h6" sx={{ my: 2 }}>
-                    <img src="/src/assets/images/SoundMuve.png" alt="Logo" style={{width: 130}} />
+                    <img src={SoundMuve} alt="Logo" style={{width: 130}} />
                 </Typography>
 
                 <Divider color='#c1c1c1' />
@@ -106,7 +108,7 @@ export default function HeaderComponent() {
             <AppBar component="nav" color='transparent' position="static">
                 <Toolbar>
                     <Box sx={{flexGrow: 1}}>
-                        <img src="/src/assets/images/SoundMuve.png" alt="Logo" style={{width: 130}} />
+                        <img src={SoundMuve} alt="Logo" style={{width: 130}} />
                     </Box>
 
                     <Box sx={{ display: { xs: 'none', sm: 'block' } }}>

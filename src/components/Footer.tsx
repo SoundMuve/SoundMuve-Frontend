@@ -12,6 +12,9 @@ import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import style from "./footer.module.css";
 import { Link } from 'react-router-dom';
 
+import SoundMuve from "./../assets/images/SoundMuve.png";
+
+
 export default function FooterComponent() {
     // const navigate = useNavigate();
     // const location = useLocation();
@@ -25,7 +28,7 @@ export default function FooterComponent() {
                     sx={{ display: "flex", justifyContent: "center" }}
                 >
                     <div>
-                        <img src="/src/assets/images/SoundMuve.png" alt="Logo" style={{width: 130}} />
+                        <img src={SoundMuve} alt="Logo" style={{width: 130}} />
 
                         <Box my={2}>
                             <Typography className={style.text}>

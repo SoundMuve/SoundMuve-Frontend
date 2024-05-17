@@ -12,31 +12,37 @@ import style from './pricingStyles.module.css';
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { Button } from "@mui/material";
 
+import spotify from "./../assets/images/spotify.png";
+import apple from "./../assets/images/apple.png";
+import amazon from "./../assets/images/amazon.png";
+import tiktok from "./../assets/images/tiktok.png";
+import youtube from "./../assets/images/youtube.png";
+import beatport from "./../assets/images/beatport.png";
 
 
 const musicDSPlogos = [
     {
-        src: "/src/assets/images/spotify.png",
+        src: spotify,
         alt: "spotify logo" 
     },
     {
-        src: "/src/assets/images/apple.png",
+        src: apple,
         alt: "apple music logo" 
     },
     {
-        src: "/src/assets/images/amazon.png",
+        src: amazon,
         alt: "amazon music logo" 
     },
     {
-        src: "/src/assets/images/tiktok.png",
+        src: tiktok,
         alt: "tiktok logo" 
     },
     {
-        src: "/src/assets/images/youtube.png",
+        src: youtube,
         alt: "youtube muisc logo" 
     },
     {
-        src: "/src/assets/images/beatport.png",
+        src: beatport,
         alt: "beatport logo" 
     },
 ];

@@ -1,11 +1,12 @@
 import axios from "axios";
 
-import { countryInterface, IpApiResponse } from "../constants/modelTypes";
+// import { countryInterface, IpApiResponse } from "../constants/modelTypes";
 
 
 export async function getUserLocation() {
     try {
-        const response: IpApiResponse = (await axios.get("http://ip-api.com/json")).data;
+        const response = (await axios.get("http://ip-api.com/json")).data;
+        // const response: IpApiResponse = (await axios.get("http://ip-api.com/json")).data;
     
         return response;
     } catch (error) {
@@ -16,7 +17,8 @@ export async function getUserLocation() {
 export async function getCountries() {
     try {
         const url = "https://restcountries.com/v3.1/all?fields=name,flags,idd";
-        const response: countryInterface[] = (await axios.get(`${url}`)).data;
+        // const response: countryInterface[] = (await axios.get(`${url}`)).data;
+        const response = (await axios.get(`${url}`)).data;
         
         return response;
     } catch (error: any) {

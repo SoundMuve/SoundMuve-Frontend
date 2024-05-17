@@ -267,7 +267,7 @@ function Contact() {
                                                 my: 2
                                             }}
 
-                                            onClick={(e) => {
+                                            onClick={(_e) => {
                                                 window.location.href = `mailto:admin@gsssecurity.ng?subject=Contact form!&body=Hi SoundMuve,\n`;
                                             }}
                                         >

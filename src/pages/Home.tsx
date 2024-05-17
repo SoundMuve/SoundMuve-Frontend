@@ -16,35 +16,54 @@ import FooterComponent from '../components/Footer';
 import style from './homeStyles.module.css';
 import ArtistTestimony from '../components/ArtistTestimony';
  
+import rema from "./../assets/images/rema.jpg";
+import limoblaze from "./../assets/images/limoblaze.jpg";
+import burnaBoy from "./../assets/images/burnaBoy.jpg";
+import AEO from "./../assets/images/AEO.jpg";
+import ayraStar from "./../assets/images/ayraStar.jpg";
+import davido from "./../assets/images/davido.jpg";
+
+import spotify from "./../assets/images/spotify.png";
+import apple from "./../assets/images/apple.png";
+import amazon from "./../assets/images/amazon.png";
+import tiktok from "./../assets/images/tiktok.png";
+import youtube from "./../assets/images/youtube.png";
+import beatport from "./../assets/images/beatport.png";
+
+import section1home from "./../assets/images/section1home.png";
+import section4home from "./../assets/images/section4home.png";
+import section5home from "./../assets/images/section5home.png";
+import section6home from "./../assets/images/section6home.png";
+
 
 const ArtistTestimonies = [
     {
-        img: '/src/assets/images/rema.jpg',
+        img: rema,
         title: 'Rema',
         author: '@rema',
     },
     {
-        img: '/src/assets/images/limoblaze.jpg',
+        img: limoblaze,
         title: 'Limoblaze',
         author: '@limoblaze',
     },
     {
-        img: '/src/assets/images/burnaBoy.jpg',
+        img: burnaBoy,
         title: 'Burnaboy',
         author: '@burnaBoy',
     },
     {
-        img: '/src/assets/images/AEO.jpg',
+        img: AEO,
         title: 'AEO',
         author: '@AEO',
     },
     {
-        img: '/src/assets/images/ayraStar.jpg',
+        img: ayraStar,
         title: 'Ayra star',
         author: '@ayraStar',
     },
     {
-        img: '/src/assets/images/davido.jpg',
+        img: davido,
         title: 'Davido',
         author: '@davido',
     },
@@ -52,27 +71,27 @@ const ArtistTestimonies = [
 
 const musicDSPlogos = [
     {
-        src: "/src/assets/images/spotify.png",
+        src: spotify,
         alt: "spotify logo" 
     },
     {
-        src: "/src/assets/images/apple.png",
+        src: apple,
         alt: "apple music logo" 
     },
     {
-        src: "/src/assets/images/amazon.png",
+        src: amazon,
         alt: "amazon music logo" 
     },
     {
-        src: "/src/assets/images/tiktok.png",
+        src: tiktok,
         alt: "tiktok logo" 
     },
     {
-        src: "/src/assets/images/youtube.png",
+        src: youtube,
         alt: "youtube muisc logo" 
     },
     {
-        src: "/src/assets/images/beatport.png",
+        src: beatport,
         alt: "beatport logo" 
     },
 ]
@@ -80,10 +99,6 @@ const musicDSPlogos = [
 export default function Home() {
     const navigate = useNavigate();
     const isMediumScreen = useMediaQuery('(min-width: 960px)');
-
-
-
-
 
     return (
         <>
@@ -197,7 +212,7 @@ export default function Home() {
                             <Box sx={{
                                 mt: {xs: 5, md: 1}
                             }}>
-                                <img src="/src/assets/images/section1home.png" alt="section6home"  style={{width: "100%"}} />
+                                <img src={section1home} alt="section6home"  style={{width: "100%"}} />
                             </Box>
                         </Grid>
                     </Grid>
@@ -427,7 +442,7 @@ export default function Home() {
                                     sx={{ alignSelf: "center" }}
                                 >
                                     <Box sx={{py: "15px"}}>
-                                        <img src="/src/assets/images/section4home.png" alt="section4home"  style={{width: "100%"}} />
+                                        <img src={section4home} alt="section4home"  style={{width: "100%"}} />
                                     </Box>
                                 </Grid>
 
@@ -530,7 +545,7 @@ export default function Home() {
                                     sx={{ alignSelf: "center", order: {xs: 1, md: "unset"} }}
                                 >
                                     <Box sx={{py: "15px"}}>
-                                        <img src="/src/assets/images/section5home.png" alt="section6home"  style={{width: "100%"}} />
+                                        <img src={section5home} alt="section6home"  style={{width: "100%"}} />
                                     </Box>
                                 </Grid>
                             </Grid>
@@ -559,7 +574,7 @@ export default function Home() {
                                     sx={{ alignSelf: "center" }}
                                 >
                                     <div>
-                                        <img src="/src/assets/images/section6home.png" alt="section6home"  style={{width: "100%"}} />
+                                        <img src={section6home} alt="section6home"  style={{width: "100%"}} />
                                     </div>
                                 </Grid>
 

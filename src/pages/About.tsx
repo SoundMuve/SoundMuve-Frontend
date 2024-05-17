@@ -8,148 +8,185 @@ import FooterComponent from '../components/Footer';
 import style from './aboutStyles.module.css';
 
 
+import amazin from "./../assets/images/partners/amazin_.png";
+import amuze from "./../assets/images/partners/amuze_.png";
+import appleMusic from "./../assets/images/partners/appleMusic_.png";
+import ayoba from "./../assets/images/partners/ayoba_.png";
+import bMusic from "./../assets/images/partners/bMusic_.png";
+import boomplay from "./../assets/images/partners/boomplay_.png";
+import deezer from "./../assets/images/partners/deezer_.png";
+import digital from "./../assets/images/partners/digital_.png";
+import gaana from "./../assets/images/partners/gaana_.png";
+import gobuz from "./../assets/images/partners/gobuz_.png";
+import gracenote from "./../assets/images/partners/gracenote_.png";
+import jio from "./../assets/images/partners/jio_.png";
+import joox from "./../assets/images/partners/joox_.png";
+import kkbox from "./../assets/images/partners/kkbox_.png";
+import localMusic from "./../assets/images/partners/localMusic_.png";
+import masd from "./../assets/images/partners/masd_.png";
+import medianet from "./../assets/images/partners/medianet_.png";
+import mm from "./../assets/images/partners/mm_.png";
+import musicIsland from "./../assets/images/partners/musicIsland_.png";
+import musicTime from "./../assets/images/partners/musicTime_.png";
+import napster from "./../assets/images/partners/napster_.png";
+import pandora from "./../assets/images/partners/pandora_.png";
+import shazam from "./../assets/images/partners/shazam_.png";
+import snap from "./../assets/images/partners/snap_.png";
+import soundTrack from "./../assets/images/partners/soundTrack_.png";
+import spinlet from "./../assets/images/partners/spinlet_.png";
+import spotify from "./../assets/images/partners/spotify_.png";
+import tidal from "./../assets/images/partners/tidal_.png";
+import tiktok from "./../assets/images/partners/tiktok_.png";
+import tiktoxChina from "./../assets/images/partners/tiktoxChina_.png";
+import timMusic from "./../assets/images/partners/timMusic_.png";
+import tMusic from "./../assets/images/partners/tMusic_.png";
+import vervelife from "./../assets/images/partners/vervelife_.png";
+import yandexMusic from "./../assets/images/partners/yandexMusic_.png";
+import youtube from "./../assets/images/partners/youtube_.png";
+
+
 
 function About() {
     const patners = [
         {
             name: "amazin",
-            logo: "/src/assets/images/partners/amazin_.png"
+            logo: amazin,
         },
         {
             name: "amuze",
-            logo: "/src/assets/images/partners/amuze_.png"
+            logo: amuze,
         },
         {
             name: "Apple Music",
-            logo: "/src/assets/images/partners/appleMusic_.png"
+            logo: appleMusic,
         },
         {
             name: "ayoba",
-            logo: "/src/assets/images/partners/ayoba_.png"
+            logo: ayoba,
         },
         {
             name: "bMusic",
-            logo: "/src/assets/images/partners/bMusic_.png"
+            logo: bMusic,
         },
         {
             name: "boomplay",
-            logo: "/src/assets/images/partners/boomplay_.png"
+            logo: boomplay,
         },
         {
             name: "deezer",
-            logo: "/src/assets/images/partners/deezer_.png"
+            logo: deezer,
         },
         {
             name: "digital",
-            logo: "/src/assets/images/partners/digital_.png"
+            logo: digital,
         },
         {
             name: "gaana",
-            logo: "/src/assets/images/partners/gaana_.png"
+            logo: gaana,
         },
         {
             name: "gobuz",
-            logo: "/src/assets/images/partners/gobuz_.png"
+            logo: gobuz
         },
         {
             name: "gracenote",
-            logo: "/src/assets/images/partners/gracenote_.png"
+            logo: gracenote,
         },
         {
             name: "jio",
-            logo: "/src/assets/images/partners/jio_.png"
+            logo: jio
         },
         {
             name: "joox",
-            logo: "/src/assets/images/partners/joox_.png"
+            logo: joox
         },
         {
             name: "kkbox",
-            logo: "/src/assets/images/partners/kkbox_.png"
+            logo: kkbox
         },
         {
             name: "localMusic",
-            logo: "/src/assets/images/partners/localMusic_.png"
+            logo: localMusic
         },
         {
             name: "masd",
-            logo: "/src/assets/images/partners/masd_.png"
+            logo: masd
         },
         {
             name: "medianet",
-            logo: "/src/assets/images/partners/medianet_.png"
+            logo: medianet
         },
         {
             name: "mm",
-            logo: "/src/assets/images/partners/mm_.png"
+            logo: mm
         },
         {
             name: "musicIsland",
-            logo: "/src/assets/images/partners/musicIsland_.png"
+            logo: musicIsland
         },
         {
             name: "musicTime",
-            logo: "/src/assets/images/partners/musicTime_.png"
+            logo: musicTime
         },
         {
             name: "napster",
-            logo: "/src/assets/images/partners/napster_.png"
+            logo: napster
         },
         {
             name: "pandora",
-            logo: "/src/assets/images/partners/pandora_.png"
+            logo: pandora
         },
         {
             name: "shazam",
-            logo: "/src/assets/images/partners/shazam_.png"
+            logo: shazam
         },
         {
             name: "snap",
-            logo: "/src/assets/images/partners/snap_.png"
+            logo: snap
         },
         {
             name: "soundTrack",
-            logo: "/src/assets/images/partners/soundTrack_.png"
+            logo: soundTrack
         },
         {
             name: "spinlet",
-            logo: "/src/assets/images/partners/spinlet_.png"
+            logo: spinlet
         },
         {
             name: "spotify",
-            logo: "/src/assets/images/partners/spotify_.png"
+            logo: spotify
         },
         {
             name: "tidal",
-            logo: "/src/assets/images/partners/tidal_.png"
+            logo: tidal
         },
         {
             name: "tiktok",
-            logo: "/src/assets/images/partners/tiktok_.png"
+            logo: tiktok
         },
         {
             name: "tiktox China",
-            logo: "/src/assets/images/partners/tiktoxChina_.png"
+            logo: tiktoxChina
         },
         {
             name: "timMusic",
-            logo: "/src/assets/images/partners/timMusic_.png"
+            logo: timMusic
         },
         {
             name: "tMusic",
-            logo: "/src/assets/images/partners/tMusic_.png"
+            logo: tMusic
         },
         {
             name: "vervelife",
-            logo: "/src/assets/images/partners/vervelife_.png"
+            logo: vervelife
         },
         {
             name: "yandexMusic",
-            logo: "/src/assets/images/partners/yandexMusic_.png"
+            logo: yandexMusic
         },
         {
             name: "youtube",
-            logo: "/src/assets/images/partners/youtube_.png"
+            logo: youtube
         },
     ]
  

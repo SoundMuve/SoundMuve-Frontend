@@ -1,10 +1,3 @@
-import axios from "axios";
-import { Share } from "react-native";
-import * as Clipboard from "expo-clipboard";
-import Toast from "react-native-root-toast";
-
-import { getLocalStorage } from "./storage";
-
 
 export const backendUrl = "http://localhost:5000";
 export const apiEndpoint = `${backendUrl}/api/v1`;
@@ -33,56 +26,8 @@ export function getPinDisplayButtons() {
 
   return filteredArr;
 }
-         
-export const reValidateUserAuth = async () => {
-  const accessToken = getLocalStorage("access_token");
-  if (!accessToken) return false;
-  
-  try {
-    const response = (await axios.get(`${apiEndpoint}/auth/reValidateUserAuth`, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`
-      }
-    })).data;
-    // console.log(response);
 
-    if (response.status) return true;
-    return false;
-  } catch (error: any) {
-    const err = error.response.data;
-    // console.log(err);
-    return false;
-  }
-}
 
-    
-export const sendEmailVerificationToken = async (
-  email: string, firstName: string, middleName: string, lastName: string
-) => {
-  try {
-    const response = (await axios.post(`${apiEndpoint}/auth/resendEmailVerificationToken`, 
-    { email, firstName, middleName, lastName })).data;
-    // console.log(response);
-      
-    return response;
-  } catch (error: any) {
-    const err = error.response.data;
-    return err;
-  }
-}
-    
-export const sendPhoneVerificationToken = async (phoneNumber: string) => {
-  try {
-    const response = (await axios.post(`${apiEndpoint}/auth/sendPhoneVerificationToken`, 
-    { phoneNumber })).data;
-    // console.log(response);
-      
-    return response;
-  } catch (error: any) {
-    const err = error.response.data;
-    return err;
-  }
-}
 
 export function maskPhoneNumber(phoneNumber: string) {
   // Remove any non-digit characters from the input
@@ -122,68 +67,6 @@ export function maskEmailAddress(email: string) {
   const maskedEmail = `${maskedUsername}@${domain}`;
 
   return maskedEmail;
-}
-
-export async function shareText(
-  sharedText: string,
-  sharedTitle: string,
-  feedbackMsg = `shared!`,
-  errorMsg = "Request failed to share.!"
-) {
-  try {
-    const shareResult = await Share.share({
-      title: sharedTitle,
-      message: sharedText,
-    });
-
-    if (shareResult.action === Share.sharedAction) {
-      let toast = Toast.show(feedbackMsg, {
-        duration: Toast.durations.LONG,
-        position: Toast.positions.BOTTOM,
-        shadow: true,
-        animation: true,
-        hideOnPress: true,
-        delay: 0,
-      });
-
-      return true;
-    }
-    return false;
-  } catch (error) {
-    console.log(error);
-
-    let toast = Toast.show(errorMsg, {
-      duration: Toast.durations.LONG,
-      position: Toast.positions.BOTTOM,
-      shadow: true,
-      animation: true,
-      hideOnPress: true,
-      delay: 0,
-    });
-    return false;
-  }
-}
-
-export async function copyToClipboard(
-  copiedText: string,
-  feedbackMsg = "copied to clipboard!"
-) {
-  try {
-    await Clipboard.setStringAsync(copiedText);
-  
-    let toast = Toast.show(feedbackMsg, {
-      duration: Toast.durations.LONG,
-      position: Toast.positions.BOTTOM,
-      shadow: true,
-      animation: true,
-      hideOnPress: true,
-      delay: 0,
-    });
-  
-    return true;
-  } catch (error) {
-    throw error;
-  }
 }
 
 
