@@ -181,7 +181,7 @@ export default function Home() {
                                     <Button variant="contained" 
                                         sx={{
                                             background: "#797979",
-                                            color: "#fff",
+                                            color: "#5F5D5D",
                                             outline: "none",
                                             boxShadow: "none",
                                             padding: {xs: "10px", md: "15px"},
@@ -317,6 +317,7 @@ export default function Home() {
                                 }}>
                                     See how it works
                                 </Typography>
+                                
                                 <Box sx={{p: "15px"}}>
 
                                     <Box sx={{

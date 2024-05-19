@@ -1,21 +1,154 @@
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import * as yup from "yup";
+import { yupResolver } from '@hookform/resolvers/yup';
+
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+import CircularProgress from '@mui/material/CircularProgress';
+import Grid from '@mui/material/Grid';
+import FormGroup from '@mui/material/FormGroup';
+import Checkbox from '@mui/material/Checkbox';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import TextField from '@mui/material/TextField';
+
+import { createTheme, ThemeProvider, Theme, useTheme } from '@mui/material/styles';
+import { outlinedInputClasses } from '@mui/material/OutlinedInput';
 
 import HeaderComponent from '../../components/Header';
 import FooterComponent from '../../components/Footer';
 import style from '../pricingStyles.module.css';
 
+import signupImg from "./../../assets/images/signup.jpg";
+
+
+const formSchema = yup.object({
+    firstName: yup.string().required().min(2).trim().label("First Name"),
+    lastName: yup.string().required().min(2).trim().label("Last Name"),
+
+    email: yup.string().required()
+    .email("Please enter a valid email address.")
+    .matches(/^([a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+(?:\.[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+)*|\"([^\\]\\\"]|\\.)*\")@(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}$/
+    , "Please enter a valid email address.")
+    .trim().label("Email Address"),
+
+    password: yup.string().required()
+    .min(6, 'Password must be at least 6 characters')
+    .matches(
+      /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]+$/,
+      'Password must include uppercase, lowercase, digit, and special character'
+    ).trim().label("Password"),
+
+    confirmPassword: yup.string().required()
+    .min(6, 'Password must be at least 6 characters')
+    .matches(
+      /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]+$/,
+      'Password must include uppercase, lowercase, digit, and special character'
+    ).trim().label("Confirm Password"),
+
+    // tnc: yup.boolean().required().label("Terms and conditions")
+});
+
+const customTheme = (outerTheme: Theme) =>
+    createTheme({
+        palette: {
+            mode: outerTheme.palette.mode,
+        },
+        components: {
+            MuiTextField: {
+                styleOverrides: {
+                    root: {
+                        '--TextField-brandBorderColor': '#FFFFFF',
+                        '--TextField-brandBorderHoverColor': '#B2BAC2',
+                        '--TextField-brandBorderFocusedColor': '#6F7E8C',
+                        '& label.Mui-focused': {
+                            color: 'var(--TextField-brandBorderFocusedColor)',
+                        },
+                        '& .MuiInputBase-input': { // Target input text
+                            color: '#fff', // Change to your desired text color
+                        },
+                        '& .MuiInputBase-placeholder': { // Target placeholder text
+                            color: 'gray', // Change to your desired placeholder color
+                        },
+                    },
+                },
+            },
+            MuiOutlinedInput: {
+                styleOverrides: {
+                    notchedOutline: {
+                        borderColor: 'var(--TextField-brandBorderColor)',
+                    },
+                    root: {
+                        [`&:hover .${outlinedInputClasses.notchedOutline}`]: {
+                            borderColor: 'var(--TextField-brandBorderHoverColor)',
+                        },
+                        [`&.Mui-focused .${outlinedInputClasses.notchedOutline}`]: {
+                            borderColor: 'var(--TextField-brandBorderFocusedColor)',
+                        },
+                    },
+                },
+            },
+            MuiFilledInput: {
+                styleOverrides: {
+                    root: {
+                        '&::before, &::after': {
+                            borderBottom: '2px solid var(--TextField-brandBorderColor)',
+                        },
+                        '&:hover:not(.Mui-disabled, .Mui-error):before': {
+                            borderBottom: '2px solid var(--TextField-brandBorderHoverColor)',
+                        },
+                        '&.Mui-focused:after': {
+                            borderBottom: '2px solid var(--TextField-brandBorderFocusedColor)',
+                        },
+                    },
+                },
+            },
+            MuiInput: {
+                styleOverrides: {
+                    root: {
+                        '&::before': {
+                            borderBottom: '2px solid var(--TextField-brandBorderColor)',
+                        },
+                        '&:hover:not(.Mui-disabled, .Mui-error):before': {
+                            borderBottom: '2px solid var(--TextField-brandBorderHoverColor)',
+                        },
+                        '&.Mui-focused:after': {
+                            borderBottom: '2px solid var(--TextField-brandBorderFocusedColor)',
+                        },
+                    },
+                },
+            },
+        },
+    });
+  
 
 
 function Signup() {
+    const [tnc, setTnc] = useState(true);
+    const outerTheme = useTheme();
+
+    const { 
+        handleSubmit, register, formState: { errors, isValid, isSubmitting } 
+    } = useForm({ resolver: yupResolver(formSchema), mode: 'onBlur', reValidateMode: 'onChange' });
+
+
+        
+    const onSubmit = (formData: typeof formSchema.__outputType) => {
+        console.log(formData);
+        
+    }
+
+    
 
 
     return (
         <>
             <HeaderComponent />
 
-            <Box sx={{bgcolor: "#000", color: "#fff", pt: 5, position: "relative", overflow: "hidden"}}>
+            <Box sx={{bgcolor: "#000", color: "#fff", position: "relative", overflow: "hidden"}}>
                 <Box sx={{display: { xs: 'none', md: 'block' }}}>
                     <div className={style.topGradient}></div>
                     <div className={style.leftGradient}></div>
@@ -32,15 +165,258 @@ function Signup() {
                     <div className={style.mobileCenteredGradient}></div>
                 </Box>
 
+                
+                <Grid container >
+                    <Grid item
+                        xs={12} md={6}
+                        sx={{ 
+                            alignSelf: "center",
+                            textAlign: {xs: "center", md: "left"},
+                            display: {xs: "none", md: "block"}
+                        }}
+                    >
+                        <img 
+                            src={signupImg}
+                            style={{
+                                width: "100%",
+                                height: "100%"
+                            }}
+                        />
 
-                <Container>
-                    <Box sx={{py: 30}}>
-                        <Typography>
-                            hello
-                        </Typography>
+                    </Grid>
 
-                    </Box>
-                </Container>
+                    <Grid item
+                        xs={12} md={6}
+                        sx={{ 
+                            alignSelf: "center",
+                            textAlign: {xs: "center", md: "left"},
+                            py: {xs: 7, md: 2}
+                        }}
+                    >
+                        <Container>
+                            <ThemeProvider theme={customTheme(outerTheme)}>
+                                <Box sx={{ display: "flex", justifyContent: "center" }}>
+                                    <form noValidate onSubmit={ handleSubmit(onSubmit) } 
+                                        style={{
+                                            maxWidth: 643,
+                                            width: "100%",
+                                            textAlign: "center"
+                                        }}
+                                    >
+
+                                        <Typography sx={{
+                                            fontWeight: "bolder",
+                                            fontSize: {xs: 25, md: 45},
+                                        }}>
+                                            Start your music journey
+                                        </Typography>
+
+                                        <Box sx={{
+                                            display: "flex",
+                                            flexDirection: "row",
+                                            gap: 3,
+                                            flexWrap: "nowrap"
+                                        }}>
+
+                                            <Box sx={{ py: 3, flexGrow: 1 }}>
+                                                <TextField 
+                                                    variant="outlined" 
+                                                    fullWidth 
+                                                    id='firstName'
+                                                    type='text'
+                                                    label='First Name'
+                                                    inputMode='text'
+                                                    defaultValue=""
+                                                    InputLabelProps={{
+                                                        style: { color: '#c1c1c1', fontWeight: "400" },
+                                                    }}
+                                                    InputProps={{
+                                                        sx: {
+                                                            borderRadius: "16px",
+                                                        },
+                                                    }}
+                                                    
+                                                    error={ errors.firstName ? true : false }
+                                                    { ...register('firstName') }
+                                                />
+                                                { errors.firstName && <Box sx={{fontSize: 13, color: "red", textAlign: "left"}}>{ errors.firstName?.message }</Box> }
+
+                                            </Box>
+
+                                            <Box sx={{ py: 3, flexGrow: 1 }}>
+                                                <TextField 
+                                                    variant="outlined" 
+                                                    fullWidth 
+                                                    id='lastName'
+                                                    type='text'
+                                                    label='Last Name'
+                                                    inputMode='text'
+                                                    defaultValue=""
+                                                    InputLabelProps={{
+                                                        style: { color: '#c1c1c1', fontWeight: "400" },
+                                                    }}
+                                                    InputProps={{
+                                                        sx: {
+                                                            borderRadius: "16px",
+                                                        },
+                                                    }}
+                                                    
+                                                    error={ errors.lastName ? true : false }
+                                                    { ...register('lastName') }
+                                                />
+                                                { errors.lastName && <Box sx={{fontSize: 13, color: "red", textAlign: "left"}}>{ errors.lastName?.message }</Box> }
+
+                                            </Box>
+                                        </Box>
+
+
+                                        <Box sx={{ py: 3 }}>
+                                            <TextField 
+                                                variant="outlined" 
+                                                fullWidth 
+                                                id='email'
+                                                type='email'
+                                                label='Email Address'
+                                                inputMode='email'
+                                                defaultValue=""
+                                                InputLabelProps={{
+                                                    style: { color: '#c1c1c1', fontWeight: "400" },
+                                                }}
+                                                InputProps={{
+                                                    sx: {
+                                                        borderRadius: "16px",
+                                                    },
+                                                }}
+                                                
+                                                error={ errors.email ? true : false }
+                                                { ...register('email') }
+                                            />
+                                            { errors.email && <Box sx={{fontSize: 13, color: "red", textAlign: "left"}}>{ errors.email?.message }</Box> }
+
+                                        </Box>
+
+                                        <Box sx={{ py: 3 }}>
+                                            <TextField 
+                                                id='password'
+                                                type='password'
+                                                label='Password'
+                                                inputMode='text'
+                                                variant="outlined" 
+                                                fullWidth 
+                                                defaultValue=""
+                                                InputLabelProps={{
+                                                    style: { color: '#c1c1c1', fontWeight: "400" },
+                                                }}
+                                                InputProps={{
+                                                    sx: {
+                                                        borderRadius: "16px",
+                                                    },
+                                                }}
+                                                
+                                                error={ errors.password ? true : false }
+                                                { ...register('password') }
+                                            />
+                                            { errors.password && <Box sx={{fontSize: 13, color: "red", textAlign: "left"}}>{ errors.password?.message }</Box> }
+
+                                        </Box>
+
+                                        <Box sx={{ py: 3 }}>
+                                            <TextField 
+                                                id='confirmPassword'
+                                                type='password'
+                                                label='Confirm Password'
+                                                inputMode='text'
+                                                variant="outlined" 
+                                                fullWidth 
+                                                defaultValue=""
+                                                InputLabelProps={{
+                                                    style: { color: '#c1c1c1', fontWeight: "400" },
+                                                }}
+                                                InputProps={{
+                                                    sx: {
+                                                        borderRadius: "16px",
+                                                    },
+                                                }}
+                                                
+                                                error={ errors.confirmPassword ? true : false }
+                                                { ...register('confirmPassword') }
+                                            />
+                                            { errors.confirmPassword && <Box sx={{fontSize: 13, color: "red", textAlign: "left"}}>{ errors.confirmPassword?.message }</Box> }
+
+                                        </Box>
+
+                                        <FormGroup>
+                                            <FormControlLabel 
+                                                control={
+                                                    <Checkbox 
+                                                        checked={tnc}
+                                                        sx={{
+                                                            color: tnc ? "#fff" : "red",
+                                                            '&.Mui-checked': {
+                                                                color: "#8638E5",
+                                                            },
+                                                        }}
+                                                        onChange={(_e) => {
+                                                            // console.log(_e.target.checked);
+                                                            setTnc(_e.target.checked)
+                                                        }}
+                                                    />
+                                                } 
+                                                label={<Typography sx={{
+                                                    fontSize: {xs: 14, md: 16}
+                                                }}>I agree with SoundMuv terms and conditions</Typography>}
+                                            />
+                                        </FormGroup>
+                                        
+                                        <Button variant="contained" 
+                                            fullWidth type="submit" 
+                                            disabled={ !isValid || isSubmitting || !tnc } 
+                                            sx={{ 
+                                                bgcolor: "#fff",
+                                                "&.Mui-disabled": {
+                                                    background: "#9c9c9c",
+                                                    color: "#797979"
+                                                },
+                                                "&:hover": {
+                                                    bgcolor: "#fff"
+                                                },
+                                                "&:active": {
+                                                    bgcolor: "#fff"
+                                                },
+                                                "&:focus": {
+                                                    bgcolor: "#fff"
+                                                },
+                                                color: "#000",
+                                                borderRadius: "12px",
+                                                my: 3, py: 1.5
+                                            }}
+                                        >
+                                            <span style={{ display: isSubmitting ? "none" : "initial" }}>Sign up</span>
+                                            <CircularProgress size={25} sx={{ display: isSubmitting ? "initial" : "none", color: "#fff", fontWeight: "bold" }} />
+                                        </Button>
+
+                                        <Box sx={{my: 2}}>
+                                            <Typography sx={{
+                                                fontSize: 17,
+                                            }}>
+                                                Already have an account? 
+                                                <Link to='#' style={{
+                                                    fontWeight: "bold",
+                                                    color: "#8638E5",
+                                                }}> Login </Link>
+                                            </Typography>
+                                        </Box>
+
+                                    </form>
+                                </Box>
+                            </ThemeProvider>
+                        </Container>
+                    </Grid>
+
+
+                    
+                </Grid>
+
             </Box>
 
             <FooterComponent />

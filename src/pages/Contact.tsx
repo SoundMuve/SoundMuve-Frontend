@@ -1,19 +1,20 @@
+import { useForm } from 'react-hook-form';
+import * as yup from "yup";
+import { yupResolver } from '@hookform/resolvers/yup';
+
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
+import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
+import CircularProgress from '@mui/material/CircularProgress';
+import { createTheme, ThemeProvider, Theme, useTheme } from '@mui/material/styles';
+import { outlinedInputClasses } from '@mui/material/OutlinedInput';
 
 import HeaderComponent from '../components/Header';
 import FooterComponent from '../components/Footer';
 import style from './contactStyles.module.css';
-import TextField from '@mui/material/TextField';
-import { useForm } from 'react-hook-form';
-import * as yup from "yup";
-import { yupResolver } from '@hookform/resolvers/yup';
-import CircularProgress from '@mui/material/CircularProgress';
-import { createTheme, ThemeProvider, Theme, useTheme } from '@mui/material/styles';
-import { outlinedInputClasses } from '@mui/material/OutlinedInput';
 
 
 const formSchema = yup.object({
@@ -116,7 +117,7 @@ function Contact() {
     const outerTheme = useTheme();
 
     const { 
-        handleSubmit, register, formState: { errors, isSubmitting } 
+        handleSubmit, register, formState: { errors, isValid, isSubmitting } 
     } = useForm({ resolver: yupResolver(formSchema), mode: 'onChange', reValidateMode: 'onChange' });
 
         
@@ -227,7 +228,7 @@ function Contact() {
                                     <Box>
                                         <Button variant="contained" 
                                             fullWidth type="submit" 
-                                            // disabled={ !isValid || isSubmitting } 
+                                            disabled={ !isValid || isSubmitting } 
                                             sx={{ 
                                                 bgcolor: "#fff",
                                                 "&:hover": {
