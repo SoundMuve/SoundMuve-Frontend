@@ -419,7 +419,7 @@ function Signup() {
 
             </Box>
 
-            <FooterComponent />
+            {/* <FooterComponent /> */}
         </>
     )
 }

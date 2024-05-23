@@ -1,14 +1,13 @@
 import Box from '@mui/material/Box';
-import Container from '@mui/material/Container';
 
 import HeaderComponent from '../components/Header';
 import FooterComponent from '../components/Footer';
 import style from './pricingStyles.module.css';
+import Typography from '@mui/material/Typography';
 
 
 
 function TermsOfUse() {
-
 
     return (
         <>
@@ -32,11 +31,57 @@ function TermsOfUse() {
                 </Box>
 
 
-                <Container>
-                    <Box sx={{py: 30}}>
+                <Box sx={{px: {xs: 2, md: 5, lg: 12}, pb: 5 }}>
+                    <Typography sx={{
+                        fontWeight: "bold",
+                        fontSize: {xs: 25, md: 55},
+                        textAlign: "center"
+                    }}>
+                        TERMS AND CONDITIONS
+                    </Typography>
 
+                    <Box sx={{
+                        my: 4, 
+                        textAlign: "justify",
+                        fontSize: 20
+                    }}>
+                        <Typography sx={{pb: 4}}>
+                            Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quasi voluptates sapiente beatae consectetur eos amet obcaecati est ad minus ea saepe, a, facilis deleniti odit, assumenda sequi aliquam itaque. Mollitia!
+                            Lorem ipsum, dolor sit amet consectetur adipisicing elit. Cumque nisi odio non vel nesciunt ratione rerum architecto iusto, deserunt ea voluptatibus nostrum et voluptas atque ullam, optio magni. Iusto, similique?
+                            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ad quaerat saepe autem quos, similique beatae quae enim earum illum iure. Maxime quia esse rerum modi sunt optio nulla ullam sequi.
+                            Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quasi voluptates sapiente beatae consectetur eos amet obcaecati est ad minus ea saepe, a, facilis deleniti odit, assumenda sequi aliquam itaque. Mollitia!
+                            Lorem ipsum, dolor sit amet consectetur adipisicing elit. Cumque nisi odio non vel nesciunt ratione rerum architecto iusto, deserunt ea voluptatibus nostrum et voluptas atque ullam, optio magni. Iusto, similique?
+                            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ad quaerat saepe autem quos, similique beatae quae enim earum illum iure. Maxime quia esse rerum modi sunt optio nulla ullam sequi.
+                            Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quasi voluptates sapiente beatae consectetur eos amet obcaecati est ad minus ea saepe, a, facilis deleniti odit, assumenda sequi aliquam itaque. Mollitia!
+                            Lorem ipsum, dolor sit amet consectetur adipisicing elit. Cumque nisi odio non vel nesciunt ratione rerum architecto iusto, deserunt ea voluptatibus nostrum et voluptas atque ullam, optio magni. Iusto, similique?
+                            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ad quaerat saepe autem quos, similique beatae quae enim earum illum iure. Maxime quia esse rerum modi sunt optio nulla ullam sequi.
+                            Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quasi voluptates sapiente beatae consectetur eos amet obcaecati est ad minus ea saepe, a, facilis deleniti odit, assumenda sequi aliquam itaque. Mollitia!
+                            Lorem ipsum, dolor sit amet consectetur adipisicing elit. Cumque nisi odio non vel nesciunt ratione rerum architecto iusto, deserunt ea voluptatibus nostrum et voluptas atque ullam, optio magni. Iusto, similique?
+                            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ad quaerat saepe autem quos, similique beatae quae enim earum illum iure. Maxime quia esse rerum modi sunt optio nulla ullam sequi.
+                            Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quasi voluptates sapiente beatae consectetur eos amet obcaecati est ad minus ea saepe, a, facilis deleniti odit, assumenda sequi aliquam itaque. Mollitia!
+                            Lorem ipsum, dolor sit amet consectetur adipisicing elit. Cumque nisi odio non vel nesciunt ratione rerum architecto iusto, deserunt ea voluptatibus nostrum et voluptas atque ullam, optio magni. Iusto, similique?
+                            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ad quaerat saepe autem quos, similique beatae quae enim earum illum iure. Maxime quia esse rerum modi sunt optio nulla ullam sequi.
+                        </Typography>
+                        
+                        <Typography sx={{pb: 4}}>
+                            Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quasi voluptates sapiente beatae consectetur eos amet obcaecati est ad minus ea saepe, a, facilis deleniti odit, assumenda sequi aliquam itaque. Mollitia!
+                            Lorem ipsum, dolor sit amet consectetur adipisicing elit. Cumque nisi odio non vel nesciunt ratione rerum architecto iusto, deserunt ea voluptatibus nostrum et voluptas atque ullam, optio magni. Iusto, similique?
+                            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ad quaerat saepe autem quos, similique beatae quae enim earum illum iure. Maxime quia esse rerum modi sunt optio nulla ullam sequi.
+                            Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quasi voluptates sapiente beatae consectetur eos amet obcaecati est ad minus ea saepe, a, facilis deleniti odit, assumenda sequi aliquam itaque. Mollitia!
+                            Lorem ipsum, dolor sit amet consectetur adipisicing elit. Cumque nisi odio non vel nesciunt ratione rerum architecto iusto, deserunt ea voluptatibus nostrum et voluptas atque ullam, optio magni. Iusto, similique?
+                            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ad quaerat saepe autem quos, similique beatae quae enim earum illum iure. Maxime quia esse rerum modi sunt optio nulla ullam sequi.
+                            Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quasi voluptates sapiente beatae consectetur eos amet obcaecati est ad minus ea saepe, a, facilis deleniti odit, assumenda sequi aliquam itaque. Mollitia!
+                            Lorem ipsum, dolor sit amet consectetur adipisicing elit. Cumque nisi odio non vel nesciunt ratione rerum architecto iusto, deserunt ea voluptatibus nostrum et voluptas atque ullam, optio magni. Iusto, similique?
+                            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ad quaerat saepe autem quos, similique beatae quae enim earum illum iure. Maxime quia esse rerum modi sunt optio nulla ullam sequi.
+                            Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quasi voluptates sapiente beatae consectetur eos amet obcaecati est ad minus ea saepe, a, facilis deleniti odit, assumenda sequi aliquam itaque. Mollitia!
+                            Lorem ipsum, dolor sit amet consectetur adipisicing elit. Cumque nisi odio non vel nesciunt ratione rerum architecto iusto, deserunt ea voluptatibus nostrum et voluptas atque ullam, optio magni. Iusto, similique?
+                            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ad quaerat saepe autem quos, similique beatae quae enim earum illum iure. Maxime quia esse rerum modi sunt optio nulla ullam sequi.
+                            Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quasi voluptates sapiente beatae consectetur eos amet obcaecati est ad minus ea saepe, a, facilis deleniti odit, assumenda sequi aliquam itaque. Mollitia!
+                            Lorem ipsum, dolor sit amet consectetur adipisicing elit. Cumque nisi odio non vel nesciunt ratione rerum architecto iusto, deserunt ea voluptatibus nostrum et voluptas atque ullam, optio magni. Iusto, similique?
+                            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ad quaerat saepe autem quos, similique beatae quae enim earum illum iure. Maxime quia esse rerum modi sunt optio nulla ullam sequi.
+                        </Typography>
                     </Box>
-                </Container>
+                </Box>
             </Box>
 
             <FooterComponent />

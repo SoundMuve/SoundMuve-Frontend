@@ -1,5 +1,5 @@
 // import * as React from 'react';
-import { Box } from '@mui/material';
+import Box from '@mui/material/Box';
 import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
 import ImageListItemBar from '@mui/material/ImageListItemBar';
@@ -21,9 +21,9 @@ const ArtistTestimony: React.FC<MyComponentProps> = ({artistTestimonies}) => {
     return (
         <Box sx={{
             borderRadius: "13px",
-            overflow: "hidden"
+            overflow: "hidden",
         }}>
-            <ImageList sx={{overflow: "hidden", height: "307px"}}>
+            <ImageList sx={{overflow: "hidden", height: "307px", m: 0}}>
                 <ImageListItem sx={{ width: "260px", height: "307px" }}>
                     <img
                         srcSet={`${artistTestimonies.img} 2x`}
@@ -38,7 +38,7 @@ const ArtistTestimony: React.FC<MyComponentProps> = ({artistTestimonies}) => {
                     />
                     <ImageListItemBar
                         title={artistTestimonies.title}
-                        subtitle={artistTestimonies.author}
+                        // subtitle={artistTestimonies.author}
                         // sx={{ width: "232px", }}
                         // actionIcon={
                         //     <IconButton

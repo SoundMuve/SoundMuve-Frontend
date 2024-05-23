@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -24,6 +24,7 @@ import SoundMuve from "./../assets/images/SoundMuve.png";
 const drawerWidth = 240;
 
 export default function HeaderComponent() {
+    const navigate = useNavigate();
     const location = useLocation();
     const pathname = location.pathname;
     const [mobileOpen, setMobileOpen] = React.useState(false);
@@ -107,7 +108,7 @@ export default function HeaderComponent() {
             <CssBaseline />
             <AppBar component="nav" color='transparent' position="static">
                 <Toolbar>
-                    <Box sx={{flexGrow: 1}}>
+                    <Box sx={{flexGrow: 1}} onClick={() => navigate("/") }>
                         <img src={SoundMuve} alt="Logo" style={{width: 130}} />
                     </Box>
 

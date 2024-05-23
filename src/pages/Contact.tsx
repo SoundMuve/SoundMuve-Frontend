@@ -179,7 +179,7 @@ function Contact() {
                                 <form noValidate onSubmit={ handleSubmit(onSubmit) } style={{margin: "50px auto"}}>
                                     <ThemeProvider theme={customTheme(outerTheme)}>
 
-                                        <Box mb="15px">
+                                        <Box mb={5}>
                                             <TextField variant="standard" fullWidth 
                                                 id="name" label="Your Full Name(s)" 
                                                 inputMode="text" type="text"
@@ -191,10 +191,10 @@ function Contact() {
                                                 }}
                                             />
 
-                                            <Box sx={{fontSize: 13, color: "orange"}}>{ errors.name?.message}</Box>
+                                            <Box sx={{fontSize: 13, color: "red"}}>{ errors.name?.message}</Box>
                                         </Box>
 
-                                        <Box mb="15px">
+                                        <Box mb={5}>
                                             <TextField variant="standard" fullWidth 
                                                 id="email" label="Your Email Address" 
                                                 inputMode="email" type="email"
@@ -205,10 +205,10 @@ function Contact() {
                                                 }}
                                             />
 
-                                            <Box sx={{fontSize: 13, color: "orange"}}>{ errors.email?.message}</Box>
+                                            <Box sx={{fontSize: 13, color: "red"}}>{ errors.email?.message}</Box>
                                         </Box>
 
-                                        <Box mb="15px">
+                                        <Box mb={5}>
                                             <TextField variant="standard" fullWidth 
                                                 id="message" label="Write Us" 
                                                 multiline rows={2}
@@ -221,38 +221,21 @@ function Contact() {
                                                 }}
                                             />
                                             
-                                            <Box sx={{fontSize: 13, color: "orange"}}>{ errors.message?.message}</Box>
+                                            <Box sx={{fontSize: 13, color: "red"}}>{ errors.message?.message}</Box>
                                         </Box>
                                     </ThemeProvider>
 
                                     <Box>
-                                        <Button variant="contained" 
-                                            fullWidth type="submit" 
+                                        
+                                    <Button variant="outlined" 
+                                            fullWidth type="button" 
                                             disabled={ !isValid || isSubmitting } 
                                             sx={{ 
-                                                bgcolor: "#fff",
-                                                "&:hover": {
-                                                    bgcolor: "#fff"
-                                                },
-                                                "&:active": {
-                                                    bgcolor: "#fff"
-                                                },
-                                                "&:focus": {
-                                                    bgcolor: "#fff"
-                                                },
-                                                color: "#000",
-                                                borderRadius: "12px"
-                                            }}
-                                        >
-                                            <span style={{ display: isSubmitting ? "none" : "initial" }}>Send Message</span>
-                                            <CircularProgress size={25} sx={{ display: isSubmitting ? "initial" : "none", color: "#fff", fontWeight: "bold" }} />
-                                        </Button>
-
-                                        <Button variant="outlined" 
-                                            fullWidth type="button" 
-                                            // disabled={ !isValid || isSubmitting } 
-                                            sx={{ 
                                                 // bgcolor: "#fff",
+                                                "&.Mui-disabled": {
+                                                    borderColor: "#c4c4c4",
+                                                    color: "#fff"
+                                                },
                                                 "&:hover": {
                                                     borderColor: "#fff",
                                                 },
@@ -265,15 +248,44 @@ function Contact() {
                                                 color: "#fff",
                                                 borderRadius: "12px",
                                                 borderColor: "#fff",
-                                                my: 2
+                                                my: 2,
+                                                textTransform: "unset"
                                             }}
+                                        >
+                                            <span style={{ display: isSubmitting ? "none" : "initial" }}>Send Message</span>
+                                            <CircularProgress size={25} sx={{ display: isSubmitting ? "initial" : "none", color: "#fff", fontWeight: "bold" }} />
+                                        </Button>
 
+                                        <Button variant="contained" 
+                                            fullWidth type="submit" 
+                                            // disabled={ !isValid || isSubmitting } 
+                                            sx={{ 
+                                                bgcolor: "#fff",
+                                                "&.Mui-disabled": {
+                                                    background: "#c4c4c4",
+                                                    color: "#797979"
+                                                },
+                                                "&:hover": {
+                                                    bgcolor: "#fff"
+                                                },
+                                                "&:active": {
+                                                    bgcolor: "#fff"
+                                                },
+                                                "&:focus": {
+                                                    bgcolor: "#fff"
+                                                },
+                                                color: "#000",
+                                                borderRadius: "12px",
+                                                mb: 1,
+                                                textTransform: "unset"
+                                            }}
                                             onClick={(_e) => {
                                                 window.location.href = `mailto:admin@gsssecurity.ng?subject=Contact form!&body=Hi SoundMuve,\n`;
                                             }}
                                         >
                                             Send a Mail
                                         </Button>
+
                                     </Box>
                                 </form>
                             </Grid>

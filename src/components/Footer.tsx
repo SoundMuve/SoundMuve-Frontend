@@ -2,7 +2,7 @@
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
-// import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import FacebookIcon from '@mui/icons-material/Facebook';
 import TwitterIcon from '@mui/icons-material/Twitter';
@@ -16,19 +16,19 @@ import SoundMuve from "./../assets/images/SoundMuve.png";
 
 
 export default function FooterComponent() {
-    // const navigate = useNavigate();
+    const navigate = useNavigate();
     // const location = useLocation();
 
 
     return (
-        <Box position="relative">
-            <Grid container spacing={2} bgcolor="#21262C" position="relative" p={2}>
+        <Box bgcolor="#21262C" p={2}>
+            <Grid container spacing={2}>
                 <Grid item
-                    xs={6} sm={6} md={4} lg={3}
+                    xs={6} sm={6} md={4} // lg={3}
                     sx={{ display: "flex", justifyContent: "center" }}
                 >
                     <div>
-                        <img src={SoundMuve} alt="Logo" style={{width: 130}} />
+                        <img src={SoundMuve} alt="Logo" style={{width: 130}} onClick={() => navigate("/") } />
 
                         <Box my={2}>
                             <Typography className={style.text}>
@@ -46,10 +46,9 @@ export default function FooterComponent() {
                             <InstagramIcon className={style.icons} />
                         </Box>
                     </div>
-
                 </Grid>
                 
-                <Grid item
+                {/* <Grid item
                     xs={6} sm={6} md={4} lg={3}
                     sx={{ display: "flex", justifyContent: "center" }}
                 >
@@ -75,10 +74,10 @@ export default function FooterComponent() {
                         </Box>
                     </div>
 
-                </Grid>
+                </Grid> */}
                 
                 <Grid item
-                    xs={4} sm={6} md={4} lg={3}
+                    xs={6} sm={6} md={4} // lg={3}
                     sx={{ display: "flex", justifyContent: "center" }}
                 >
                     <div>
@@ -91,11 +90,6 @@ export default function FooterComponent() {
                                 <li className={style.text}>
                                     <Link to="/about" className={style.link} title='About Us'>
                                         About Us
-                                    </Link>
-                                </li>
-                                <li className={style.text}>
-                                    <Link to="/resources" className={style.link} title='Resources'>
-                                        Resources
                                     </Link>
                                 </li>
                                 <li className={style.text}>
@@ -121,11 +115,10 @@ export default function FooterComponent() {
                             </ul>
                         </Box>
                     </div>
-
                 </Grid>
                 
                 <Grid item
-                    xs={8} sm={6} md={4} lg={3}
+                    xs={12} sm={6} md={4} // lg={3}
                     sx={{ display: "flex", justifyContent: "center", overflow: "hidden" }}
                 >
                     <div>
@@ -151,7 +144,6 @@ export default function FooterComponent() {
                             </div>
                         </Box>
                     </div>
-
                 </Grid>
             </Grid>
         </Box>

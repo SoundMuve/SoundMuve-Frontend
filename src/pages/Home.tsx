@@ -6,7 +6,7 @@ import { A11y, Navigation, Pagination, Scrollbar } from "swiper/modules";
 
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
-import Container from '@mui/material/Container';
+// import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import useMediaQuery  from '@mui/material/useMediaQuery';
@@ -118,16 +118,20 @@ export default function Home() {
                     <div className={style.mobileCenteredGradient}></div>
                 </Box>
 
-                <Box sx={{pt: 5}}>
-                    <Grid container spacing={2} position="unset" >
+                <Box sx={{mt: 5}}>
+                    <Grid container>
                         <Grid item
-                            xs={12} md={6}
+                            xs={12} md={5}
                             sx={{ alignSelf: "center", textAlign: {xs: "center", md: "left"}, color: "#fff" }}
                         >
-                            <Box sx={{px: {xs: 2, md: 5, lg: 12}}}>
+                            <Box sx={{
+                                pl: {xs: 2, md: 5, lg: 12}, 
+                                pr: {xs: 2, md: 0},
+                                py: 5 
+                            }}>
                                 <Typography sx={{
                                     fontWeight: "900",
-                                    fontSize: {xs: 25, md: 35},
+                                    fontSize: {xs: "33px", md: "67px"},
                                     lineHeight: 1
                                 }}>
                                     Make the most of your music on Soundmuve
@@ -135,8 +139,9 @@ export default function Home() {
 
                                 <Typography sx={{
                                     fontWeight: "400",
-                                    fontSize: {xs: 13, md: 16},
-                                    pt: 2
+                                    fontSize: {xs: 13, md: 17},
+                                    textAlign: "justify",
+                                    pt: 3
                                 }}>
                                     Increase the reach of your music across the most popular stores & platforms like Spotify, 
                                     Apple Music, TikTok, YouTube and many more.
@@ -147,9 +152,9 @@ export default function Home() {
                                     justifyContent: {xs: "center", md: "flex-start"}, 
                                     alignItems: "center", 
                                     flexDirection: "row",
-                                    gap: {xs: 1, md: 3}, 
+                                    gap: {xs: 1, md: 2}, 
                                     flexWrap: "wrap", 
-                                    mt: {xs: 3, md: 5}
+                                    mt: {xs: 3, md: 4}
                                 }}>
 
                                     <Button 
@@ -160,8 +165,10 @@ export default function Home() {
                                             color: "#fff",
                                             outline: "none",
                                             boxShadow: "none",
-                                            padding: {xs: "10px", md: "15px"},
-                                            borderRadius: {xs: "8px", md: "14px"},
+                                            // padding: {xs: "10px", md: "15px"},
+                                            px: "10px",
+                                            py: "5px",
+                                            borderRadius: {xs: "8px", md: "10px"},
                                             fontSize: {xs: "13px", md: "15px"},
                                             fontWeight: "900",
                                             '&:active': {
@@ -173,19 +180,24 @@ export default function Home() {
                                             '&:hover': {
                                                 backgroundColor: '#644986',
                                             },
+                                            textTransform: "unset"
                                         }}
                                     >
                                         Sign up now
                                     </Button>
 
                                     <Button variant="contained" 
+                                        onClick={() => navigate("/about")}
                                         sx={{
                                             background: "#797979",
-                                            color: "#5F5D5D",
+                                            // color: "#5F5D5D",
+                                            color: "#fff",
                                             outline: "none",
                                             boxShadow: "none",
-                                            padding: {xs: "10px", md: "15px"},
-                                            borderRadius: {xs: "8px", md: "14px"},
+                                            // padding: {xs: "10px", md: "15px"},
+                                            px: "10px",
+                                            py: "5px",
+                                            borderRadius: {xs: "8px", md: "10px"},
                                             fontSize: {xs: "13px", md: "15px"},
                                             fontWeight: "900",
                                             '&:active': {
@@ -197,20 +209,22 @@ export default function Home() {
                                             '&:hover': {
                                                 backgroundColor: '#797979',
                                             },
+                                            textTransform: "unset"
                                         }}
                                     >
-                                        Download Soundmuve
+                                        Learn More
                                     </Button>
                                 </Box>
                             </Box>
                         </Grid>
 
                         <Grid item
-                            xs={12} md={6}
-                            sx={{ alignSelf: "center" }}
+                            xs={12} md={7}
+                            sx={{ alignSelf: "end" }}
                         >
                             <Box sx={{
-                                mt: {xs: 5, md: 1}
+                                mt: {xs: 5, md: 0},
+                                // bgcolor: "yellow"
                             }}>
                                 <img src={section1home} alt="section6home"  style={{width: "100%"}} />
                             </Box>
@@ -218,208 +232,219 @@ export default function Home() {
                     </Grid>
                 </Box>
 
-                <Box sx={{position: "relative", mb: {xs: 5, md: 1}, bottom: {xs: 5, md: 45} }}>
-                    <Container>
-                        <Box className={isMediumScreen ? style.dsplogoContainer : ''} sx={{ px: {xs: 0, md: 2} }}>
-                            <Swiper
-                                autoplay={true}
-                                loop
-                                // speed={100}
-                                spaceBetween={50}
-                                slidesPerView={2.4}
-                                // navigation
-                                // modules={[Navigation, Pagination, Scrollbar, A11y]}
-                                breakpoints={{
-                                    // when window width is >= 320px
-                                    320: {
-                                        slidesPerView: 2.5,
-                                        // spaceBetween: 20
-                                    },
-                                    450: {
-                                    slidesPerView: 3.5,
-                                    // spaceBetween: 20
-                                    },
-                                    // sm, small
-                                    600: {
-                                        slidesPerView: 4.5,
-                                        // spaceBetween: 40
-                                    },
-                                    // md, medium
-                                    900: {
-                                        slidesPerView: 5.5,
-                                        // spaceBetween: 40
-                                    },
-                                    // lg, large
-                                    1200:{
-                                        slidesPerView: 6
-                                    }
-
-                                }}
-                                // modules={[Navigation, Autoplay]}
-                                // className="mySwiper"
-                            >
-                                {musicDSPlogos.map((dspLogo, index) => {
-                                    return (
-                                        <SwiperSlide key={index}>
-                                            <Box sx={{p: {xs: 0, md: 5} }}>
-                                                <img src={dspLogo.src} alt={dspLogo.alt} />
-                                            </Box>
-                                        </SwiperSlide>
-                                    );
-                                })}
-                            </Swiper>
-                        </Box>
-                    </Container>
-                </Box>
-
-                <Box>
-                    <Container>
-                        <Grid container spacing={2} position="unset" >
-                            <Grid item
-                                xs={12} md={6}
-                                sx={{ 
-                                    alignSelf: "center", p: 5,
-                                    textAlign: {xs: "center", md: "left"}, 
-                                    order: {xs: 1, md: "unset"}
-                                }}
-                            >
-                                <Typography 
-                                    variant="h4" component="h4"
-                                    sx={{
-                                        fontSize: {xs: 20, md: 35},
-                                        fontWeight: "900",
-                                        my: {xs: 1, md: 2.5}
-                                    }}
-                                >
-                                    Tools built for your music
-                                </Typography>
-
-                                <Typography sx={{
-                                    fontSize: {xs: "14px", md: "16px"},
-                                    fontWeight: "400"
-                                }}>
-                                    Grow your career while keeping your music at the center. 
-                                    With Soundmuv, you can amplify your reach, increase your revenue potential, 
-                                    and grow rapidly in the music industry.
-                                </Typography>
-                            </Grid>
-
-                            <Grid item
-                                xs={12} md={6}
-                                sx={{ alignSelf: "center", overflow: "hidden", order: {xs: "unset", md: 2} }}
-                            >
-                                <Typography sx={{
-                                    fontSize: "12px",
-                                    fontWeight: "900",
-                                    color: "#fff",
-                                    mb: 2,
-                                    display: { xs: 'block', sm: 'none' }
-                                }}>
-                                    See how it works
-                                </Typography>
-                                
-                                <Box sx={{p: "15px"}}>
-
-                                    <Box sx={{
-                                        width: "100%", 
-                                        maxWidth: {xs: "381px", md: "533px"}, 
-                                        height: {xs: "204px", md: "285px"}, 
-                                        borderRadius: "16px", bgcolor: "#C8F452",
-                                        // position: "relative"
-                                    }}>
-                                        <Box sx={{
-                                            width: "100%",
-                                            maxWidth: {xs: "381px", md: "533px"},
-                                            height: {xs: "204px", md: "285px"},
-                                            borderRadius: {xs: "12px", md: "16px"},
-                                            bgcolor: "#644986", 
-                                            position: "relative", bottom: "10px", right: "10px" 
-                                        }}>
-                                            <Box sx={{
-                                                width: "100%",
-                                                maxWidth: {xs: "381px", md: "533px"},
-                                                height: {xs: "204px", md: "285px"},
-                                                borderRadius: {xs: "12px", md: "16px"},
-                                                // bgcolor: "green", 
-                                                overflow: "hidden",
-                                                position: "relative", bottom: "10px", right: "10px" 
-                                            }}>
-                                                <iframe width="100%" height="100%" 
-                                                    src="https://www.youtube.com/embed/7lno59aLJ7I?si=2sBO0XzYedg-GUZD&amp;controls=0" 
-                                                    title="YouTube video player" frameBorder="0" 
-                                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-                                                    referrerPolicy="strict-origin-when-cross-origin" allowFullScreen={false}
-                                                ></iframe>
-                                            </Box>
-                                        </Box>
-                                    </Box>
-                                </Box>
-                            </Grid>
-                        </Grid>
-                    </Container>
-                </Box>
-
-                <Box>
-                    <Container>
-                        <Typography 
-                            variant="h4" my={2.5} component="h4"
-                            sx={{
-                                fontSize: {xs: 20, md: 35},
-                                fontWeight: "900"
-                            }}
-                        >
-                            Don’t just take our words for it
-                        </Typography>
+                <Box sx={{
+                    position: "relative", 
+                    bottom: {xs: 5, md: 35, lg: 55}, 
+                    mb: {xs: 5, md: 1}, 
+                    px: {xs: 2, md: 5, lg: 12} 
+                }}>
+                    <Box className={isMediumScreen ? style.dsplogoContainer : ''} sx={{ px: {xs: 0, md: 2} }}>
                         <Swiper
-                            autoplay={{
-                                delay: 2500,
-                                disableOnInteraction: false,
-                            }}
-                            spaceBetween={10}
-                            slidesPerView={1.4}
+                            autoplay={true}
+                            loop
+                            // speed={100}
+                            spaceBetween={50}
+                            slidesPerView={2.4}
                             // navigation
-                            modules={[Navigation, Pagination, Scrollbar, A11y]}
+                            // modules={[Navigation, Pagination, Scrollbar, A11y]}
                             breakpoints={{
                                 // when window width is >= 320px
                                 320: {
-                                    slidesPerView: 1.5,
+                                    slidesPerView: 2.5,
                                     // spaceBetween: 20
                                 },
                                 450: {
-                                    slidesPerView: 2.3,
-                                    // spaceBetween: 20
+                                slidesPerView: 3.5,
+                                // spaceBetween: 20
                                 },
                                 // sm, small
                                 600: {
-                                    slidesPerView: 3.3,
+                                    slidesPerView: 4.5,
                                     // spaceBetween: 40
                                 },
                                 // md, medium
                                 900: {
-                                    slidesPerView: 3.8,
+                                    slidesPerView: 5.5,
                                     // spaceBetween: 40
                                 },
                                 // lg, large
                                 1200:{
-                                    slidesPerView: 4.3
+                                    slidesPerView: 6
                                 }
 
                             }}
                             // modules={[Navigation, Autoplay]}
                             // className="mySwiper"
                         >
-                            {ArtistTestimonies.map((testimony, index) => {
+                            {musicDSPlogos.map((dspLogo, index) => {
                                 return (
-                                    <SwiperSlide
-                                        key={index}
-                                        style={{ height: "100%", width: "100%" }}
-                                    >
-                                        <ArtistTestimony artistTestimonies={testimony} />
+                                    <SwiperSlide key={index}>
+                                        <Box sx={{p: {xs: 0, md: 5} }}>
+                                            <img src={dspLogo.src} alt={dspLogo.alt} />
+                                        </Box>
                                     </SwiperSlide>
                                 );
                             })}
                         </Swiper>
-                    </Container>
+                    </Box>
+                </Box>
+
+                <Box sx={{px: {xs: 2, md: 5, lg: 12}}}>
+                    <Grid container spacing={2} position="unset" >
+                        <Grid item
+                            xs={12} md={6}
+                            sx={{ 
+                                alignSelf: "center",
+                                textAlign: {xs: "center", md: "left"}, 
+                                order: {xs: 1, md: "unset"}
+                            }}
+                        >
+                            <Typography 
+                                variant="h4" component="h4"
+                                sx={{
+                                    fontSize: {xs: 20, md: 35},
+                                    fontWeight: "900",
+                                    my: {xs: 1, md: 2.5}
+                                }}
+                            >
+                                Tools built for your music
+                            </Typography>
+
+                            <Typography sx={{
+                                fontSize: {xs: "14px", md: "16px"},
+                                fontWeight: "400",
+                                textAlign: "justify",
+                                pr: {md: 4}
+                            }}>
+                                Grow your career while keeping your music at the center. 
+                                With Soundmuv, you can amplify your reach, increase your revenue potential, 
+                                and grow rapidly in the music industry.
+                            </Typography>
+                        </Grid>
+
+                        <Grid item
+                            xs={12} md={6}
+                            sx={{ alignSelf: "center", overflow: "hidden", order: {xs: "unset", md: 2} }}
+                        >
+                            <Typography sx={{
+                                fontSize: "12px",
+                                fontWeight: "900",
+                                color: "#fff",
+                                mb: 2,
+                                display: { xs: 'block', sm: 'none' }
+                            }}>
+                                See how it works
+                            </Typography>
+                            
+                            <Box sx={{
+                                p: "15px", 
+                                pl: {xs: "30px", md: "15px"},
+                                alignSelf: "baseline",
+                                position: "relative",
+                                bottom: 0, right: 0
+                            }}>
+
+                                <Box sx={{
+                                    width: "100%", 
+                                    maxWidth: {xs: "381px", md: "533px"}, 
+                                    height: {xs: "204px", md: "285px"}, 
+                                    borderRadius: "16px", bgcolor: "#C8F452",
+                                    position: "relative"
+                                }}>
+                                    <Box sx={{
+                                        width: "100%",
+                                        maxWidth: {xs: "381px", md: "533px"},
+                                        height: {xs: "204px", md: "285px"},
+                                        borderRadius: {xs: "12px", md: "16px"},
+                                        bgcolor: "#644986", 
+                                        position: "relative", bottom: "10px", right: "10px" 
+                                    }}>
+                                        <Box sx={{
+                                            width: "100%",
+                                            maxWidth: {xs: "381px", md: "533px"},
+                                            height: {xs: "204px", md: "285px"},
+                                            borderRadius: {xs: "12px", md: "16px"},
+                                            // bgcolor: "green", 
+                                            overflow: "hidden",
+                                            position: "relative", bottom: "10px", right: "10px" 
+                                        }}>
+                                            <iframe width="100%" height="100%" 
+                                                src="https://www.youtube.com/embed/7lno59aLJ7I?si=2sBO0XzYedg-GUZD&amp;controls=0" 
+                                                title="YouTube video player" frameBorder="0" 
+                                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                                                referrerPolicy="strict-origin-when-cross-origin" allowFullScreen={false}
+                                            ></iframe>
+                                        </Box>
+                                    </Box>
+                                </Box>
+                            </Box>
+                        </Grid>
+                    </Grid>
+                </Box>
+
+                <Box sx={{px: {xs: 2, md: 5, lg: 12}}}>
+                    <Typography 
+                        variant="h4" my={2.5} component="h4"
+                        sx={{
+                            fontSize: {xs: 20, md: 35},
+                            fontWeight: "900"
+                        }}
+                    >
+                        Don’t just take our words for it
+                    </Typography>
+                    <Swiper
+                        autoplay={{
+                            delay: 2500,
+                            disableOnInteraction: false,
+                        }}
+                        spaceBetween={10}
+                        slidesPerView={1.4}
+                        // navigation
+                        modules={[Navigation, Pagination, Scrollbar, A11y]}
+                        breakpoints={{
+                            // when window width is >= 320px
+                            320: {
+                                slidesPerView: 1.5,
+                                // spaceBetween: 20
+                            },
+                            450: {
+                                slidesPerView: 2.3,
+                                // spaceBetween: 20
+                            },
+                            // sm, small
+                            600: {
+                                slidesPerView: 3.3,
+                                // spaceBetween: 40
+                            },
+                            // md, medium
+                            900: {
+                                slidesPerView: 3.8,
+                                // spaceBetween: 40
+                            },
+                            // lg, large
+                            1200:{
+                                slidesPerView: 4.3
+                            },
+
+                            1500: {
+                                slidesPerView: 6.3
+                            }
+
+                        }}
+                        // modules={[Navigation, Autoplay]}
+                        // className="mySwiper"
+                    >
+                        {ArtistTestimonies.map((testimony, index) => {
+                            return (
+                                <SwiperSlide
+                                    key={index}
+                                    style={{ height: "100%", width: "100%" }}
+                                >
+                                    <ArtistTestimony artistTestimonies={testimony} />
+                                </SwiperSlide>
+                            );
+                        })}
+                    </Swiper>
                 </Box>
 
                 <Box sx={{ px: {xs: 0.5, md: 0}, mt: {xs: 5, md: 5}, bottom: -30, position: "relative" }}>
@@ -434,65 +459,66 @@ export default function Home() {
                         borderRadius: {xs: "33px", md: "36px" },
                         pb: 5,
                         overflow: "hidden",
-                        bgcolor: "#141414"
+                        bgcolor: "#141414",
+
+                        px: {xs: 2, md: 5, lg: 12}
                     }}>
-                        <Container>
-                            <Grid container spacing={2} position="unset" >
-                                <Grid item
-                                    xs={12} md={6}
-                                    sx={{ alignSelf: "center" }}
-                                >
-                                    <Box sx={{py: "15px"}}>
-                                        <img src={section4home} alt="section4home"  style={{width: "100%"}} />
-                                    </Box>
-                                </Grid>
+                        <Grid container spacing={2} position="unset" >
+                            <Grid item
+                                xs={12} md={6}
+                                sx={{ alignSelf: "center" }}
+                            >
+                                <Box sx={{py: "15px"}}>
+                                    <img src={section4home} alt="section4home"  style={{width: "100%"}} />
+                                </Box>
+                            </Grid>
 
-                                <Grid item
-                                    xs={12} md={6}
-                                    sx={{ 
-                                        alignSelf: "center", 
-                                        textAlign: {xs: "center", md: "left"}, 
-                                        color: "#fff", 
-                                    }}
-                                >
-                                    <Box>
-                                        <Typography sx={{
-                                            fontWeight: "900",
-                                            fontSize: {xs: 30, md: 45},
-                                            pt: {xs: 5, md: 1}
+                            <Grid item
+                                xs={12} md={6}
+                                sx={{ 
+                                    alignSelf: "center", 
+                                    textAlign: {xs: "center", md: "left"}, 
+                                    color: "#fff", 
+                                }}
+                            >
+                                <Box>
+                                    <Typography sx={{
+                                        fontWeight: "900",
+                                        fontSize: {xs: 30, md: 45},
+                                        pt: {xs: 5, md: 1}
+                                    }}>
+                                        Maximize your revenue
+                                    </Typography>
+
+                                    <Typography sx={{
+                                        fontWeight: "400",
+                                        fontSize: {xs: 13, md: 16},
+                                        textAlign: "justify"
+                                    }}>
+                                        Independent musicians can make money from their original songs through royalties. 
+                                        We help you collect royalties globally from various sources like Spotify, YouTube, 
+                                        TikTok, radio, and others. With advanced analytics, you can track your publishing 
+                                        royalties and know where your performance and mechanical royalties come from. 
+                                        You keep 100% of your copyrights.
+                                    </Typography>
+
+                                    
+                                    <Box sx={{mt: {xs: 5, md: 7}}}>
+                                        <Link to="/auth/signup" style={{
+                                            background: "#644986",
+                                            color: "#fff",
+                                            borderRadius: '14px',
+                                            padding: "15px",
+                                            textDecoration: "none",
                                         }}>
-                                            Maximize your revenue
-                                        </Typography>
-
-                                        <Typography sx={{
-                                            fontWeight: "400",
-                                            fontSize: {xs: 13, md: 16}
-                                        }}>
-                                            Independent musicians can make money from their original songs through royalties. 
-                                            We help you collect royalties globally from various sources like Spotify, YouTube, 
-                                            TikTok, radio, and others. With advanced analytics, you can track your publishing 
-                                            royalties and know where your performance and mechanical royalties come from. 
-                                            You keep 100% of your copyrights.
-                                        </Typography>
-
-                                        
-                                        <Box sx={{mt: {xs: 5, md: 7}}}>
-                                            <Link to="/auth/signup" style={{
-                                                background: "#644986",
-                                                color: "#fff",
-                                                borderRadius: '14px',
-                                                padding: "15px",
-                                                textDecoration: "none",
-                                            }}>
-                                                Sign up to learn more
-                                            </Link>
-                                        </Box>
+                                            Sign up to learn more
+                                        </Link>
                                     </Box>
-
-                                </Grid>
+                                </Box>
 
                             </Grid>
-                        </Container>
+
+                        </Grid>
                     </Box>
                 </Box>
 
@@ -508,49 +534,49 @@ export default function Home() {
                         borderRadius: {xs: "43px", md: "36px" },
                         pb: 5,
                         overflow: "hidden",
-                        bgcolor: "#141414"
+                        bgcolor: "#141414",
+                        px: {xs: 2, md: 5, lg: 12}
                     }}>
-                        <Container>
-                            <Grid container spacing={2} position="unset" >
-                                <Grid item
-                                    xs={12} md={6}
-                                    sx={{ 
-                                        alignSelf: "center", 
-                                        textAlign: {xs: "center", md: "left"}, 
-                                        color: "#fff", 
-                                        order: {xs: 2, md: "unset"} 
-                                    }}
-                                >
-                                    <Box>
-                                        <Typography sx={{
-                                            fontWeight: "900",
-                                            fontSize: {xs: 30, md: 45},
-                                            pt: {xs: 5, md: 1}
-                                        }}>
-                                            See how your music is doing
-                                        </Typography>
+                        <Grid container spacing={2} position="unset" >
+                            <Grid item
+                                xs={12} md={6}
+                                sx={{ 
+                                    alignSelf: "center", 
+                                    textAlign: {xs: "center", md: "left"}, 
+                                    color: "#fff", 
+                                    order: {xs: 2, md: "unset"} 
+                                }}
+                            >
+                                <Box>
+                                    <Typography sx={{
+                                        fontWeight: "900",
+                                        fontSize: {xs: 30, md: 45},
+                                        pt: {xs: 5, md: 1}
+                                    }}>
+                                        See how your music is doing
+                                    </Typography>
 
-                                        <Typography sx={{
-                                            fontWeight: "400",
-                                            fontSize: {xs: 13, md: 16}
-                                        }}>
-                                            Grow your career while keeping your music at the center. 
-                                            With Soundmuv, you can amplify your reach, increase your revenue potential, 
-                                            and grow rapidly in the music industry.
-                                        </Typography>
-                                    </Box>
-                                </Grid>
-
-                                <Grid item
-                                    xs={12} md={6}
-                                    sx={{ alignSelf: "center", order: {xs: 1, md: "unset"} }}
-                                >
-                                    <Box sx={{py: "15px"}}>
-                                        <img src={section5home} alt="section6home"  style={{width: "100%"}} />
-                                    </Box>
-                                </Grid>
+                                    <Typography sx={{
+                                        fontWeight: "400",
+                                        fontSize: {xs: 13, md: 16},
+                                        textAlign: "justify"
+                                    }}>
+                                        Grow your career while keeping your music at the center. 
+                                        With Soundmuv, you can amplify your reach, increase your revenue potential, 
+                                        and grow rapidly in the music industry.
+                                    </Typography>
+                                </Box>
                             </Grid>
-                        </Container>
+
+                            <Grid item
+                                xs={12} md={6}
+                                sx={{ alignSelf: "center", order: {xs: 1, md: "unset"} }}
+                            >
+                                <Box sx={{py: "15px"}}>
+                                    <img src={section5home} alt="section6home"  style={{width: "100%"}} />
+                                </Box>
+                            </Grid>
+                        </Grid>
                     </Box>
                 </Box>
 
@@ -566,56 +592,57 @@ export default function Home() {
                         borderTopRightRadius: {xs: "67px", md: "36px" },
                         borderTopLeftRadius:  {xs: "67px", md: "36px" },
                         pb: 5,
-                        bgcolor: "#141414"
+                        bgcolor: "#141414",
+
+                        px: {xs: 2, md: 5, lg: 12}
                     }}>
-                        <Container>
-                            <Grid container spacing={2} position="unset" >
-                                <Grid item
-                                    xs={12} md={6}
-                                    sx={{ alignSelf: "center" }}
-                                >
-                                    <div>
-                                        <img src={section6home} alt="section6home"  style={{width: "100%"}} />
-                                    </div>
-                                </Grid>
-
-                                <Grid item
-                                    xs={12} md={6}
-                                    sx={{ alignSelf: "center", textAlign: {xs: "center", md: "left"}, color: "#fff" }}
-                                >
-                                    <Box>
-                                        <Typography sx={{
-                                            fontWeight: "900",
-                                            fontSize: {xs: 35, md: 45},
-                                        }}>
-                                            Expand your reach
-                                        </Typography>
-
-                                        <Typography sx={{
-                                            fontWeight: "400",
-                                            fontSize: {xs: 13, md: 16}
-                                        }}>
-                                            Grow your career while keeping your music at the center. 
-                                            With Soundmuv, you can amplify your reach, increase your revenue potential, 
-                                            and grow rapidly in the music industry.
-                                        </Typography>
-
-
-                                        <Box sx={{mt: {xs: 5, md: 7}}}>
-                                            <Link to="/auth/signup" style={{
-                                                background: "#644986",
-                                                color: "#fff",
-                                                borderRadius: '14px',
-                                                padding: "15px",
-                                                textDecoration: "none",
-                                            }}>
-                                                Sign up to learn more
-                                            </Link>
-                                        </Box>
-                                    </Box>
-                                </Grid>
+                        <Grid container spacing={2} position="unset" >
+                            <Grid item
+                                xs={12} md={6}
+                                sx={{ alignSelf: "center" }}
+                            >
+                                <div>
+                                    <img src={section6home} alt="section6home"  style={{ width: "100%", maxHeight: "430px", objectFit: 'contain' }} />
+                                </div>
                             </Grid>
-                        </Container>
+
+                            <Grid item
+                                xs={12} md={6}
+                                sx={{ alignSelf: "center", textAlign: {xs: "center", md: "left"}, color: "#fff" }}
+                            >
+                                <Box>
+                                    <Typography sx={{
+                                        fontWeight: "900",
+                                        fontSize: {xs: 35, md: 45},
+                                    }}>
+                                        Expand your reach
+                                    </Typography>
+
+                                    <Typography sx={{
+                                        fontWeight: "400",
+                                        fontSize: {xs: 13, md: 16},
+                                        textAlign: "justify"
+                                    }}>
+                                        Grow your career while keeping your music at the center. 
+                                        With Soundmuv, you can amplify your reach, increase your revenue potential, 
+                                        and grow rapidly in the music industry.
+                                    </Typography>
+
+
+                                    <Box sx={{mt: {xs: 5, md: 7}}}>
+                                        <Link to="/auth/signup" style={{
+                                            background: "#644986",
+                                            color: "#fff",
+                                            borderRadius: '14px',
+                                            padding: "15px",
+                                            textDecoration: "none",
+                                        }}>
+                                            Sign up to learn more
+                                        </Link>
+                                    </Box>
+                                </Box>
+                            </Grid>
+                        </Grid>
                     </Box>
                 </Box>
             </Box>
