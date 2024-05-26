@@ -12,6 +12,9 @@ import Login from './pages/auth/Login.tsx';
 import Signup from './pages/auth/Signup.tsx';
 
 import ScrollToTop from "./components/ScrollToTop.tsx";
+import Signup2 from "./pages/auth/Signup2.tsx";
+import ArtistDetails from "./pages/auth/ArtistDetails.tsx";
+import RecordLabelDetails from "./pages/auth/RecordLabelDetails.tsx";
 
 
 export const router = createBrowserRouter([
@@ -58,6 +61,18 @@ export const router = createBrowserRouter([
         {
           path: "signup",
           element: <ScrollToTop><Signup /></ScrollToTop>,
+        },
+        {
+          path: "signup-type",
+          element: <ScrollToTop><Signup2 /></ScrollToTop>,
+        },
+        {
+          path: "signup-artistDetails",
+          element: <ScrollToTop><ArtistDetails /></ScrollToTop>,
+        },
+        {
+          path: "signup-recordLabelDetails",
+          element: <ScrollToTop><RecordLabelDetails /></ScrollToTop>,
         },
       ]
     },

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import * as yup from "yup";
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -18,11 +18,12 @@ import TextField from '@mui/material/TextField';
 import { createTheme, ThemeProvider, Theme, useTheme } from '@mui/material/styles';
 import { outlinedInputClasses } from '@mui/material/OutlinedInput';
 
-import HeaderComponent from '../../components/Header';
-import FooterComponent from '../../components/Footer';
 import style from '../pricingStyles.module.css';
 
 import signupImg from "./../../assets/images/signup.jpg";
+import AuthHeaderComponent from '../../components/AuthHeader';
+import IconButton from '@mui/material/IconButton';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 
 
 const formSchema = yup.object({
@@ -129,15 +130,28 @@ const customTheme = (outerTheme: Theme) =>
 function Signup() {
     const [tnc, setTnc] = useState(true);
     const outerTheme = useTheme();
+    const navigate = useNavigate();
 
+
+    const [showPassword, setShowPassword] = useState(false);
+    const handleClickShowPassword = () => setShowPassword((show) => !show);
+  
     const { 
-        handleSubmit, register, formState: { errors, isValid, isSubmitting } 
+        handleSubmit, register, setError, formState: { errors, isValid, isSubmitting } 
     } = useForm({ resolver: yupResolver(formSchema), mode: 'onBlur', reValidateMode: 'onChange' });
 
 
         
     const onSubmit = (formData: typeof formSchema.__outputType) => {
         console.log(formData);
+        if (formData.password !== formData.confirmPassword) {
+            setError("password", {message: "Passwords do not match"});
+            setError("confirmPassword", {message: "Passwords do not match"});
+            return;
+        }
+
+
+        navigate("/auth/signup-type");
         
     }
 
@@ -146,31 +160,32 @@ function Signup() {
 
     return (
         <>
-            <HeaderComponent />
-
             <Box sx={{bgcolor: "#000", color: "#fff", position: "relative", overflow: "hidden"}}>
-                <Box sx={{display: { xs: 'none', md: 'block' }}}>
-                    <div className={style.topGradient}></div>
-                    <div className={style.leftGradient}></div>
-                    <div className={style.leftBottomGradient}></div>
-                    <div className={style.rightTopGradient}></div>
-                    <div className={style.rightBottom2Gradient}></div>
-                    <div className={style.btnCenteredGradient}></div>
-                    <div className={style.leftBottom2Gradient}></div>
-                </Box>
+                <AuthHeaderComponent />
 
-                <Box sx={{display: { xs: 'block', md: 'none' }}}>
-                    <div className={style.mobileLeftGradient}></div>
-                    <div className={style.mobileRightGradient}></div>
-                    <div className={style.mobileCenteredGradient}></div>
-                </Box>
+                <>
+                    <Box sx={{display: { xs: 'none', md: 'block' }}}>
+                        <div className={style.topGradient}></div>
+                        <div className={style.leftGradient}></div>
+                        <div className={style.leftBottomGradient}></div>
+                        <div className={style.rightTopGradient}></div>
+                        <div className={style.rightBottom2Gradient}></div>
+                        <div className={style.btnCenteredGradient}></div>
+                        <div className={style.leftBottom2Gradient}></div>
+                    </Box>
 
+                    <Box sx={{display: { xs: 'block', md: 'none' }}}>
+                        <div className={style.mobileLeftGradient}></div>
+                        <div className={style.mobileRightGradient}></div>
+                        <div className={style.mobileCenteredGradient}></div>
+                    </Box>
+                </>
                 
                 <Grid container >
                     <Grid item
                         xs={12} md={6}
                         sx={{ 
-                            alignSelf: "center",
+                            // alignSelf: "center",
                             textAlign: {xs: "center", md: "left"},
                             display: {xs: "none", md: "block"}
                         }}
@@ -182,7 +197,6 @@ function Signup() {
                                 height: "100%"
                             }}
                         />
-
                     </Grid>
 
                     <Grid item
@@ -195,18 +209,20 @@ function Signup() {
                     >
                         <Container>
                             <ThemeProvider theme={customTheme(outerTheme)}>
-                                <Box sx={{ display: "flex", justifyContent: "center" }}>
+                                <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
                                     <form noValidate onSubmit={ handleSubmit(onSubmit) } 
                                         style={{
-                                            maxWidth: 643,
                                             width: "100%",
+                                            maxWidth: "470px",
                                             textAlign: "center"
                                         }}
                                     >
 
                                         <Typography sx={{
-                                            fontWeight: "bolder",
-                                            fontSize: {xs: 25, md: 45},
+                                            fontWeight: "900",
+                                            fontSize: {xs: "30px", md: "43px"},
+                                            letterSpacing: {xs: "-1.12px", md: "-1.29px"},
+                                            lineHeight: {xs: "61.49px", md: "71px"}
                                         }}>
                                             Start your music journey
                                         </Typography>
@@ -214,17 +230,28 @@ function Signup() {
                                         <Box sx={{
                                             display: "flex",
                                             flexDirection: "row",
-                                            gap: 3,
-                                            flexWrap: "nowrap"
+                                            gap: 2,
+                                            flexWrap: "nowrap",
+                                            textAlign: "left",
+                                            py: 2
                                         }}>
 
-                                            <Box sx={{ py: 3, flexGrow: 1 }}>
+                                            <Box sx={{ flexGrow: 1 }}>
+                                                <Typography sx={{
+                                                    fontWeight: "400",
+                                                    fontSize: "15.38px",
+                                                    lineHeight: "38.44px",
+                                                    letterSpacing: "-0.12px"
+                                                }}>
+                                                    First Name
+                                                </Typography>
+
                                                 <TextField 
                                                     variant="outlined" 
                                                     fullWidth 
                                                     id='firstName'
                                                     type='text'
-                                                    label='First Name'
+                                                    label=''
                                                     inputMode='text'
                                                     defaultValue=""
                                                     InputLabelProps={{
@@ -243,13 +270,22 @@ function Signup() {
 
                                             </Box>
 
-                                            <Box sx={{ py: 3, flexGrow: 1 }}>
+                                            <Box sx={{ flexGrow: 1 }}>
+                                                <Typography sx={{
+                                                    fontWeight: "400",
+                                                    fontSize: "15.38px",
+                                                    lineHeight: "38.44px",
+                                                    letterSpacing: "-0.12px"
+                                                }}>
+                                                    Last Name
+                                                </Typography>
+
                                                 <TextField 
                                                     variant="outlined" 
                                                     fullWidth 
                                                     id='lastName'
                                                     type='text'
-                                                    label='Last Name'
+                                                    label=''
                                                     inputMode='text'
                                                     defaultValue=""
                                                     InputLabelProps={{
@@ -270,13 +306,23 @@ function Signup() {
                                         </Box>
 
 
-                                        <Box sx={{ py: 3 }}>
+                                        <Box sx={{ py: 2 }}>
+                                            <Typography sx={{
+                                                fontWeight: "400",
+                                                fontSize: "15.38px",
+                                                lineHeight: "38.44px",
+                                                letterSpacing: "-0.12px",
+                                                textAlign: "left"
+                                            }}>
+                                                Email Address
+                                            </Typography>
+
                                             <TextField 
                                                 variant="outlined" 
                                                 fullWidth 
                                                 id='email'
                                                 type='email'
-                                                label='Email Address'
+                                                label=''
                                                 inputMode='email'
                                                 defaultValue=""
                                                 InputLabelProps={{
@@ -295,11 +341,21 @@ function Signup() {
 
                                         </Box>
 
-                                        <Box sx={{ py: 3 }}>
+                                        <Box sx={{ py: 2 }}>
+                                            <Typography sx={{
+                                                fontWeight: "400",
+                                                fontSize: "15.38px",
+                                                lineHeight: "38.44px",
+                                                letterSpacing: "-0.12px",
+                                                textAlign: "left"
+                                            }}>
+                                                Password
+                                            </Typography>
+
                                             <TextField 
                                                 id='password'
-                                                type='password'
-                                                label='Password'
+                                                type={showPassword ? "text" : 'password' }
+                                                label=''
                                                 inputMode='text'
                                                 variant="outlined" 
                                                 fullWidth 
@@ -308,6 +364,15 @@ function Signup() {
                                                     style: { color: '#c1c1c1', fontWeight: "400" },
                                                 }}
                                                 InputProps={{
+                                                    endAdornment: 
+                                                    <IconButton
+                                                        aria-label="toggle password visibility"
+                                                        onClick={handleClickShowPassword}
+                                                        edge="end"
+                                                        sx={{color: "#fff"}}
+                                                    >
+                                                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                                                    </IconButton>,
                                                     sx: {
                                                         borderRadius: "16px",
                                                     },
@@ -320,11 +385,22 @@ function Signup() {
 
                                         </Box>
 
-                                        <Box sx={{ py: 3 }}>
+
+                                        <Box sx={{ py: 2 }}>
+                                            <Typography sx={{
+                                                fontWeight: "400",
+                                                fontSize: "15.38px",
+                                                lineHeight: "38.44px",
+                                                letterSpacing: "-0.12px",
+                                                textAlign: "left"
+                                            }}>
+                                                Confirm Password
+                                            </Typography>
+
                                             <TextField 
                                                 id='confirmPassword'
-                                                type='password'
-                                                label='Confirm Password'
+                                                type={showPassword ? "text" : 'password' }
+                                                label=''
                                                 inputMode='text'
                                                 variant="outlined" 
                                                 fullWidth 
@@ -333,6 +409,15 @@ function Signup() {
                                                     style: { color: '#c1c1c1', fontWeight: "400" },
                                                 }}
                                                 InputProps={{
+                                                    endAdornment: 
+                                                    <IconButton
+                                                        aria-label="toggle password visibility"
+                                                        onClick={handleClickShowPassword}
+                                                        edge="end"
+                                                        sx={{color: "#fff"}}
+                                                    >
+                                                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                                                    </IconButton>,
                                                     sx: {
                                                         borderRadius: "16px",
                                                     },
@@ -363,7 +448,10 @@ function Signup() {
                                                     />
                                                 } 
                                                 label={<Typography sx={{
-                                                    fontSize: {xs: 14, md: 16}
+                                                    fontSize: {xs: 14, md: "15.38px"},
+                                                    fontWeight: "400",
+                                                    lineHeight: "38.44px",
+                                                    letterSpacing: "-0.12px"
                                                 }}>I agree with SoundMuv terms and conditions</Typography>}
                                             />
                                         </FormGroup>
@@ -388,7 +476,11 @@ function Signup() {
                                                 },
                                                 color: "#000",
                                                 borderRadius: "12px",
-                                                my: 3, py: 1.5
+                                                my: 3, py: 1.5,
+                                                fontSize: {md: "15.38px"},
+                                                fontWeight: "900",
+                                                letterSpacing: "-0.12px",
+                                                textTransform: "none"
                                             }}
                                         >
                                             <span style={{ display: isSubmitting ? "none" : "initial" }}>Sign up</span>
@@ -397,10 +489,13 @@ function Signup() {
 
                                         <Box sx={{my: 2}}>
                                             <Typography sx={{
-                                                fontSize: 17,
+                                                fontSize: {xs: 14, md: "15.38px"},
+                                                fontWeight: "400",
+                                                lineHeight: "38.44px",
+                                                letterSpacing: "-0.12px"
                                             }}>
                                                 Already have an account? 
-                                                <Link to='#' style={{
+                                                <Link to='/auth/login' style={{
                                                     fontWeight: "bold",
                                                     color: "#8638E5",
                                                 }}> Login </Link>
@@ -416,10 +511,7 @@ function Signup() {
 
                     
                 </Grid>
-
             </Box>
-
-            {/* <FooterComponent /> */}
         </>
     )
 }

@@ -1,21 +1,24 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import * as yup from "yup";
 import { yupResolver } from '@hookform/resolvers/yup';
 
 import Box from '@mui/material/Box';
-// import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
-
 import TextField from '@mui/material/TextField';
-import { createTheme, ThemeProvider, Theme, useTheme } from '@mui/material/styles';
+import Container from '@mui/material/Container';
+import IconButton from '@mui/material/IconButton';
 import { outlinedInputClasses } from '@mui/material/OutlinedInput';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
+
+
+import { createTheme, ThemeProvider, Theme, useTheme } from '@mui/material/styles';
 
 import AuthHeaderComponent from '../../components/AuthHeader';
 import style from '../pricingStyles.module.css';
-import { Container } from '@mui/material';
 
 
 const formSchema = yup.object({
@@ -107,6 +110,10 @@ const customTheme = (outerTheme: Theme) =>
   
 function Login() {
     const outerTheme = useTheme();
+    
+    const [showPassword, setShowPassword] = useState(false);
+    const handleClickShowPassword = () => setShowPassword((show) => !show);
+  
 
     const { 
         handleSubmit, register, formState: { errors, isValid, isSubmitting } 
@@ -123,10 +130,9 @@ function Login() {
 
     return (
         <>
-
             <Box sx={{bgcolor: "#000", color: "#fff", minHeight: "100vh", position: "relative", overflow: "hidden"}}>
                 <AuthHeaderComponent />
-                
+
                 <>
                     <Box sx={{display: { xs: 'none', md: 'block' }}}>
                         <div className={style.topGradient}></div>
@@ -165,14 +171,22 @@ function Login() {
                             >
 
                                 <Typography sx={{
-                                    fontWeight: "bolder",
+                                    fontWeight: "900",
                                     fontSize: {xs: 35, md: 60},
+                                    lineHeight: {xs: "49.28px", md: "82.28px"},
+                                    letterSpacing: {xs: "-0.9px", md: "-1.5px"}
                                 }}>
-                                    Login
+                                    login
                                 </Typography>
 
                                 <Box sx={{ py: 2 }}>
-                                    <Typography sx={{textAlign: "left", fontSize: {xs: 13, md: 17}, pb: 1}}>
+                                    <Typography sx={{
+                                        textAlign: "left", 
+                                        fontSize: {xs: "13.5px", md: "17.84px"}, 
+                                        fontWeight: "400",
+                                        letterSpacing: {xs: "-0.69px", md: "-0.14px"},
+                                        lineHeight: {xs: "30.69px", md: "44.6px" },
+                                    }}>
                                         Email Address
                                     </Typography>
 
@@ -202,13 +216,19 @@ function Login() {
                                 </Box>
 
                                 <Box sx={{ py: 2 }}>
-                                    <Typography sx={{textAlign: "left", fontSize: {xs: 13, md: 17}, pb: 1}}>
+                                    <Typography sx={{
+                                        textAlign: "left", 
+                                        fontSize: {xs: "13.5px", md: "17.84px"}, 
+                                        fontWeight: "400",
+                                        letterSpacing: {xs: "-0.69px", md: "-0.14px"},
+                                        lineHeight: {xs: "30.69px", md: "44.6px" },
+                                    }}>
                                         Password
                                     </Typography>
 
                                     <TextField 
                                         id='password'
-                                        type='password'
+                                        type={showPassword ? "text" : 'password' }
                                         label=''
                                         inputMode='text'
                                         variant="outlined" 
@@ -218,6 +238,15 @@ function Login() {
                                             style: { color: '#c1c1c1', fontWeight: "400" },
                                         }}
                                         InputProps={{
+                                            endAdornment: 
+                                            <IconButton
+                                                aria-label="toggle password visibility"
+                                                onClick={handleClickShowPassword}
+                                                edge="end"
+                                                sx={{color: "#fff"}}
+                                            >
+                                                {showPassword ? <VisibilityOff /> : <Visibility />}
+                                            </IconButton>,
                                             sx: {
                                                 borderRadius: "16px",
                                             },
@@ -230,13 +259,20 @@ function Login() {
 
                                 </Box>
 
-                                {/* <Link to="#" style={{
-                                    textAlign: "right",
-                                    color: "#8638E5",
-                                    float: 'right'
+                                <Typography sx={{
+                                    fontWeight: "400",
+                                    fontSize: {xs: "10.69px", md: "17.84px"},
+                                    lineHeight: {xs: "26.72px", md: "44.6px" },
+                                    letterSpacing: {xs: "-0.09px", md: "-0.14px"}
                                 }}>
-                                    Forgot Password?
-                                </Link> */}
+                                    <Link to="/auth/forgot-password" style={{
+                                        textAlign: "right",
+                                        color: "#8638E5",
+                                        float: 'right',
+                                    }}>
+                                        Forgot Password?
+                                    </Link>
+                                </Typography>
 
                                 
                                 <Button variant="contained" 
@@ -269,13 +305,15 @@ function Login() {
 
                                 <Box sx={{my: 2}}>
                                     <Typography sx={{
-                                        fontSize: 17,
+                                        fontWeight: "400",
+                                        fontSize: {xs: "10.69px", md: "17.84px"},
+                                        lineHeight: {xs: "26.72px", md: "44.6px" },
+                                        letterSpacing: {xs: "-0.09px", md: "-0.14px"}
                                     }}>
                                         Don't have an account?
-                                        <Link to='#' style={{
+                                        <Link to='/auth/signup' style={{
                                             fontWeight: "bold",
                                             color: "#8638E5",
-                                            // position: "inherit"
                                         }}> sign up </Link>
                                     </Typography>
                                 </Box>
@@ -285,8 +323,6 @@ function Login() {
                     </Box>
                 </Container>
             </Box>
-
-            {/* <FooterComponent /> */}
         </>
     )
 }

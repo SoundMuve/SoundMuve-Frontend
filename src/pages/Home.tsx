@@ -132,7 +132,8 @@ export default function Home() {
                                 <Typography sx={{
                                     fontWeight: "900",
                                     fontSize: {xs: "33px", md: "67px"},
-                                    lineHeight: 1
+                                    lineHeight: 1, // "73.79px",
+                                    letterSpacing: "-1.34px"
                                 }}>
                                     Make the most of your music on Soundmuve
                                 </Typography>
@@ -602,7 +603,7 @@ export default function Home() {
                                 sx={{ alignSelf: "center" }}
                             >
                                 <div>
-                                    <img src={section6home} alt="section6home"  style={{ width: "100%", maxHeight: "430px", objectFit: 'contain' }} />
+                                    <img src={section6home} alt="section6home"  style={{ width: "100%", maxHeight: "400px", objectFit: 'contain' }} />
                                 </div>
                             </Grid>
 
