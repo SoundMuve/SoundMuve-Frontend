@@ -11,7 +11,7 @@ const EmptyListComponent: React.FC<MyComponentProps> = ({notFoundText = 'not fou
             justifyContent: 'center',
             marginVertical: '20%',
         }}>
-            <img src='/src/assets/images/empty.png' style={{ width: 200, height: 200 }} />
+            <img src='/src/assets/images/empty.png' alt='empty image' style={{ width: 200, height: 200 }} />
             <h4 style={{
                 color: 'gray',
                 fontSize: 20,

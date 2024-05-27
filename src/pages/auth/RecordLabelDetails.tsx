@@ -118,6 +118,8 @@ function RecordLabelDetails() {
     useEffect(() => {
         getCountries().then((countryRes) => {
             setCountries(countryRes);
+            console.log(countryRes);
+            
     
             getUserLocation().then((res) => {
                 setUserCountry(res.country);
@@ -128,6 +130,40 @@ function RecordLabelDetails() {
 
     }, []);
     
+    const [image, setImage] = useState();
+    const [imagePreview, setImagePreview] = useState();
+    const handleFileUpload = async (e: any) => {
+        const file = e.target.files[0]; 
+        setImage(file);
+
+        const base64: any = await convertToBase64(file);
+        setImagePreview(base64);
+    
+        e.target.value = "";
+    }
+
+    const convertToBase64 = (file: any) => {
+        return new Promise((resolve, reject) => {
+            const fileReader = new FileReader();
+            if (!file) {
+                // setToastNotification({
+                //     display: true,
+                //     message: "Please select an image!",
+                //     status: "info"
+                // })
+            } else {
+                fileReader.readAsDataURL(file);
+                fileReader.onload = () => {
+                    resolve(fileReader.result);
+                }
+            }
+
+            fileReader.onerror = (error) => {
+                reject(error);
+            }
+        });
+    }
+
         
     const onSubmit = (formData: typeof formSchema.__outputType) => {
         console.log(formData);
@@ -331,6 +367,7 @@ function RecordLabelDetails() {
                                                             maxWidth: "20px",
                                                             marginRight: "10px"
                                                         }}
+                                                        alt={country.flags.alt}
                                                     />
                                                     {country.name.common}
                                                 </MenuItem>
@@ -343,30 +380,41 @@ function RecordLabelDetails() {
                                 </Box>
 
                                 <Box sx={{ my: 5, display: "flex", justifyContent: "center" }}>
-                                    <Box sx={{
-                                        width: "340px",
-                                        height: "292px",
-                                        border: "2px solid #fff",
-                                        borderRadius: "18px",
-                                        display: "flex",
-                                        alignItems: "center"
-                                    }}>
-                                        <Box sx={{
-                                            textAlign: "center",
-                                            m: "auto"
-                                        }}>
-                                            <Typography sx={{
-                                                fontWeight: "700",
-                                                fontSize: "20px",
-                                                lineHeight: "38.44px",
-                                                letterSpacing: "-0.12px",
-                                                mb: 3
+                                    <Box 
+                                        sx={{
+                                            width: "340px",
+                                            height: "292px",
+                                            border: "2px solid #fff",
+                                            borderRadius: "18px",
+                                            display: "flex",
+                                            alignItems: "center",
+                                            overflow: "hidden"
+                                        }}
+                                        onClick={() => {
+                                            document.getElementById("imageUpload")?.click();
+                                        }}
+                                    >
+                                        { imagePreview ? (
+                                            <Box>
+                                                <img src={imagePreview} alt='record label logo image preview' />
+                                            </Box>
+                                        ) : (
+                                            <Box sx={{
+                                                textAlign: "center",
+                                                m: "auto"
                                             }}>
-                                                Upload logo
-                                            </Typography>
-                                            <img src={cloudUpload} alt='cloud Upload' />
-                                        </Box>
-
+                                                <Typography sx={{
+                                                    fontWeight: "700",
+                                                    fontSize: "20px",
+                                                    lineHeight: "38.44px",
+                                                    letterSpacing: "-0.12px",
+                                                    mb: 3
+                                                }}>
+                                                    Upload logo
+                                                </Typography>
+                                                <img src={cloudUpload} alt='cloud Upload icon' />
+                                            </Box>
+                                        ) }
                                     </Box>
                                 </Box>
 
@@ -401,12 +449,21 @@ function RecordLabelDetails() {
                                     <span style={{ display: isSubmitting ? "none" : "initial" }}>Continue</span>
                                     <CircularProgress size={25} sx={{ display: isSubmitting ? "initial" : "none", color: "#fff", fontWeight: "bold" }} />
                                 </Button>
-
                             </form>
                         </Box>
                     </ThemeProvider>
 
                 </Container>
+
+                
+                <input 
+                    type="file" 
+                    id='imageUpload' 
+                    name="imageUpload" 
+                    accept='image/*' 
+                    onChange={handleFileUpload}
+                    style={{display: "none"}}
+                />
             </Box>
         </>
     )

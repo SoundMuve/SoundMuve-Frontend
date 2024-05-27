@@ -2,7 +2,7 @@ export default function LoadingComponent() {
     return (
         <main>
             <div className="breathing-image">
-                <img src="/src/assets/images/icon.png" alt="Logo" style={{width: 130}} />
+                <img src="/src/assets/images/icon.png" alt="loading icon" style={{width: 130}} />
                 <style>
                     {`
                         .breathing-image {

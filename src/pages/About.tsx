@@ -364,7 +364,7 @@ function About() {
                                 <Box key={index}>
                                     <img 
                                         src={patner.logo} 
-                                        alt={patner.name} 
+                                        alt={`${patner.name} logo`} 
                                         title={patner.name} 
                                         style={{maxWidth: "45px"}} 
                                     />

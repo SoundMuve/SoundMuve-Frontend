@@ -196,6 +196,7 @@ function Signup() {
                                 width: "100%",
                                 height: "100%"
                             }}
+                            alt='signup page image'
                         />
                     </Grid>
 

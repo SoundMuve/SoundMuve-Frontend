@@ -109,7 +109,7 @@ export default function HeaderComponent() {
             <AppBar component="nav" color='transparent' position="static">
                 <Toolbar>
                     <Box sx={{flexGrow: 1}} onClick={() => navigate("/") }>
-                        <img src={SoundMuve} alt="Logo" style={{width: 130}} />
+                        <img src={SoundMuve} alt="SoundMuve logo" style={{width: 130}} />
                     </Box>
 
                     <Box sx={{ display: { xs: 'none', sm: 'block' } }}>

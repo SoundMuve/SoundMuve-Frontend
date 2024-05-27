@@ -328,7 +328,7 @@ function ArtistDetails() {
                                         >
                                             { countries.map((country: any, index) => (
                                                 <MenuItem key={index} value={country.name.common} selected={userCountry == country.name.common ? true : false}>
-                                                    <img src={country.flags.png} 
+                                                    <img src={country.flags.png} alt={country.flags.alt}
                                                         style={{
                                                             maxWidth: "20px",
                                                             marginRight: "10px"

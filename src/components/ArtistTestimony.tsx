@@ -28,7 +28,7 @@ const ArtistTestimony: React.FC<MyComponentProps> = ({artistTestimonies}) => {
                     <img
                         srcSet={`${artistTestimonies.img} 2x`}
                         src={`${artistTestimonies.img}`}
-                        alt={artistTestimonies.title}
+                        alt={`${artistTestimonies.title} image`}
                         loading="lazy"
                         style={{
                             width: "100%", maxWidth: "260px",

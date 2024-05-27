@@ -25,7 +25,7 @@ export default function FooterComponent() {
                     sx={{ display: "flex", justifyContent: "center" }}
                 >
                     <div>
-                        <img src="/src/assets/images/SoundMuve.png" alt="Logo" style={{width: 130}} />
+                        <img src="/src/assets/images/SoundMuve.png" alt="SoundMuve Logo" style={{width: 130}} />
 
                         <Box my={2}>
                             <Typography className={style.text}>

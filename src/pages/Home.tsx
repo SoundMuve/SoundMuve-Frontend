@@ -227,7 +227,7 @@ export default function Home() {
                                 mt: {xs: 5, md: 0},
                                 // bgcolor: "yellow"
                             }}>
-                                <img src={section1home} alt="section6home"  style={{width: "100%"}} />
+                                <img src={section1home} alt="Make the most of your music on Soundmuve section"  style={{width: "100%"}} />
                             </Box>
                         </Grid>
                     </Grid>
@@ -470,7 +470,7 @@ export default function Home() {
                                 sx={{ alignSelf: "center" }}
                             >
                                 <Box sx={{py: "15px"}}>
-                                    <img src={section4home} alt="section4home"  style={{width: "100%"}} />
+                                    <img src={section4home} alt="Maximize your revenue section"  style={{width: "100%"}} />
                                 </Box>
                             </Grid>
 
@@ -574,7 +574,7 @@ export default function Home() {
                                 sx={{ alignSelf: "center", order: {xs: 1, md: "unset"} }}
                             >
                                 <Box sx={{py: "15px"}}>
-                                    <img src={section5home} alt="section6home"  style={{width: "100%"}} />
+                                    <img src={section5home} alt="See how your music is doing section"  style={{width: "100%"}} />
                                 </Box>
                             </Grid>
                         </Grid>
@@ -603,7 +603,7 @@ export default function Home() {
                                 sx={{ alignSelf: "center" }}
                             >
                                 <div>
-                                    <img src={section6home} alt="section6home"  style={{ width: "100%", maxHeight: "400px", objectFit: 'contain' }} />
+                                    <img src={section6home} alt="Expand your reach section"  style={{ width: "100%", maxHeight: "400px", objectFit: 'contain' }} />
                                 </div>
                             </Grid>
 
