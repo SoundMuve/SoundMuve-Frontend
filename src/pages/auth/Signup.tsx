@@ -14,7 +14,9 @@ import FormGroup from '@mui/material/FormGroup';
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import TextField from '@mui/material/TextField';
+import IconButton from '@mui/material/IconButton';
 
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { createTheme, ThemeProvider, Theme, useTheme } from '@mui/material/styles';
 import { outlinedInputClasses } from '@mui/material/OutlinedInput';
 
@@ -22,8 +24,6 @@ import style from '../pricingStyles.module.css';
 
 import signupImg from "./../../assets/images/signup.jpg";
 import AuthHeaderComponent from '../../components/AuthHeader';
-import IconButton from '@mui/material/IconButton';
-import { Visibility, VisibilityOff } from '@mui/icons-material';
 
 
 const formSchema = yup.object({

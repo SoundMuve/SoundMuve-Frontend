@@ -1,20 +1,146 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import * as yup from "yup";
+import { yupResolver } from '@hookform/resolvers/yup';
 
 import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+import CircularProgress from '@mui/material/CircularProgress';
+import TextField from '@mui/material/TextField';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import { createTheme, ThemeProvider, Theme, useTheme } from '@mui/material/styles';
+import { outlinedInputClasses } from '@mui/material/OutlinedInput';
 
 import AuthHeaderComponent from '../../components/AuthHeader';
 import style from '../pricingStyles.module.css';
 
-import recordLabelSignup from "./../../assets/images/recordLabelSignup.jpg"
-import artistSignup from "./../../assets/images/artistSignup.jpg"
+import artistSignupImage from "./../../assets/images/artistSignup.jpg"
+
+import { getCountries, getUserLocation } from '../../util/location';
 
 
+const formSchema = yup.object({
+    artistName: yup.string().required().min(2).trim().label("First Name"),
+    phoneNumber: yup.string().required().min(7, "Incorrect phone number").max(15, "Incorrect phone number").trim().label("Last Name"),
+    country: yup.string().required().min(2).trim().label("Country"),
+    gender: yup.string().required().min(2).trim().label("Gender"),
+});
+
+const customTheme = (outerTheme: Theme) =>
+    createTheme({
+        palette: {
+            mode: outerTheme.palette.mode,
+        },
+        components: {
+            MuiTextField: {
+                styleOverrides: {
+                    root: {
+                        '--TextField-brandBorderColor': '#FFFFFF',
+                        '--TextField-brandBorderHoverColor': '#B2BAC2',
+                        '--TextField-brandBorderFocusedColor': '#6F7E8C',
+                        '& label.Mui-focused': {
+                            color: 'var(--TextField-brandBorderFocusedColor)',
+                        },
+                        '& .MuiInputBase-input': { // Target input text
+                            color: '#fff', // Change to your desired text color
+                        },
+                        '& .MuiInputBase-placeholder': { // Target placeholder text
+                            color: 'gray', // Change to your desired placeholder color
+                        },
+                    },
+                },
+            },
+            MuiOutlinedInput: {
+                styleOverrides: {
+                    notchedOutline: {
+                        borderColor: 'var(--TextField-brandBorderColor)',
+                    },
+                    root: {
+                        [`&:hover .${outlinedInputClasses.notchedOutline}`]: {
+                            borderColor: 'var(--TextField-brandBorderHoverColor)',
+                        },
+                        [`&.Mui-focused .${outlinedInputClasses.notchedOutline}`]: {
+                            borderColor: 'var(--TextField-brandBorderFocusedColor)',
+                        },
+                    },
+                },
+            },
+            MuiFilledInput: {
+                styleOverrides: {
+                    root: {
+                        '&::before, &::after': {
+                            borderBottom: '2px solid var(--TextField-brandBorderColor)',
+                        },
+                        '&:hover:not(.Mui-disabled, .Mui-error):before': {
+                            borderBottom: '2px solid var(--TextField-brandBorderHoverColor)',
+                        },
+                        '&.Mui-focused:after': {
+                            borderBottom: '2px solid var(--TextField-brandBorderFocusedColor)',
+                        },
+                    },
+                },
+            },
+            MuiInput: {
+                styleOverrides: {
+                    root: {
+                        '&::before': {
+                            borderBottom: '2px solid var(--TextField-brandBorderColor)',
+                        },
+                        '&:hover:not(.Mui-disabled, .Mui-error):before': {
+                            borderBottom: '2px solid var(--TextField-brandBorderHoverColor)',
+                        },
+                        '&.Mui-focused:after': {
+                            borderBottom: '2px solid var(--TextField-brandBorderFocusedColor)',
+                        },
+                    },
+                },
+            },
+        },
+    });
+  
   
 function ArtistDetails() {
     const navigate = useNavigate();
+    const outerTheme = useTheme();
+    const [countries, setCountries] = useState([]);
+    const [userCountry, setUserCountry] = useState("");
+
+    const { 
+        handleSubmit, register, setValue, formState: { errors, isValid, isSubmitting } 
+    } = useForm({ resolver: yupResolver(formSchema), mode: 'onBlur', reValidateMode: 'onChange' });
+
+    useEffect(() => {
+        getCountries().then((countryRes) => {
+            setCountries(countryRes);
     
+            getUserLocation().then((res) => {
+                setValue("country", res.country);
+
+                setTimeout(() => {
+                    
+                    setUserCountry(res.country);
+                }, 500);
+            })
+        });
+
+    }, []);
+    
+        
+    const onSubmit = (formData: typeof formSchema.__outputType) => {
+        console.log(formData);
+
+
+        navigate("/auth/signup-type");
+        
+    }
+
+
+
 
     return (
         <>
@@ -25,7 +151,7 @@ function ArtistDetails() {
                     sx={{
                         width: '100%',
                         height: '221px',
-                        backgroundImage: `url(${artistSignup})`, // Replace with your image URL
+                        backgroundImage: `url(${artistSignupImage})`, // Replace with your image URL
                         backgroundPosition: 'center',
                         backgroundSize: 'cover',
                         display: 'flex',
@@ -36,6 +162,7 @@ function ArtistDetails() {
                         top: "-47px",
                         cursor: 'pointer',
                         overflow: "hidden",
+                        zIndex: 1
                     }}
                 >
                     <Box
@@ -49,15 +176,16 @@ function ArtistDetails() {
                         }}
                     />
                     <Typography sx={{
-                        fontWeight: "700",
-                        fontSize: "34px",
-                        lineHeight: "40px",
-                        letterSpacing: "-0.13px",
+                        fontWeight: "900",
+                        fontSize: "60px",
+                        lineHeight: "73.79px",
+                        letterSpacing: "-1.34px",
                         position: "absolute",
-                        bottom: 80,
-                        left: 130
+                        mx: "auto",
+                        bottom: 20,
+                        // left: "40%"
                     }}>
-                        Artist
+                        Artist Details
                     </Typography>
                 </Box>
 
@@ -81,133 +209,224 @@ function ArtistDetails() {
 
 
                 <Container sx={{pt: 7, pb: 10}}>
-                    <Box sx={{
-                        textAlign: "center",
-                        my: 5
-                    }}>
-                        <Typography sx={{
-                            fontWeight: "900",
-                            fontSize: {xs: 35, md: 60},
-                            lineHeight: {xs: "49.28px", md: "82.28px"},
-                            letterSpacing: {xs: "-0.9px", md: "-1.5px"}
-                        }}>
-                            Get access to SoundMuve
-                        </Typography>
 
-                        <Typography>
-                            Tell us who you are
-                        </Typography>
-                    </Box>
-
-
-                    <Box sx={{
-                        display: "flex",
-                        flexDirection: "row",
-                        gap: "10px",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        flexWrap: "wrap"
-                    }}>
-                        <Box onClick={() => navigate("/auth/artistDetails")}
-                            sx={{
-                                width: '362.89px',
-                                height: '296.99px',
-                                backgroundImage: `url(${artistSignup})`, // Replace with your image URL
-                                backgroundPosition: 'center',
-                                backgroundSize: 'cover',
-                                display: 'flex',
-                                flexDirection: 'column',
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                                position: 'relative',
-                                cursor: 'pointer',
-                                borderRadius: "13.69px",
-                                border: "1px solid #fff",
-                                overflow: "hidden",
-                            }}
-                        >
-                            <Box
-                                sx={{
-                                    position: 'absolute',
-                                    top: 0,
-                                    left: 0,
-                                    width: '100%',
-                                    height: '100%',
-                                    background: 'linear-gradient(180.1deg, rgba(0, 0, 0, 0) 0.08%, #000000 109.84%)',
+                    <ThemeProvider theme={customTheme(outerTheme)}>
+                        <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+                            <form noValidate onSubmit={ handleSubmit(onSubmit) } 
+                                style={{
+                                    width: "100%",
+                                    maxWidth: "470px",
+                                    // textAlign: "lef"
                                 }}
-                            />
-                            <Typography sx={{
-                                fontWeight: "700",
-                                fontSize: "34px",
-                                lineHeight: "40px",
-                                letterSpacing: "-0.13px",
-                                position: "absolute",
-                                bottom: 80,
-                                left: 130
-                            }}>
-                                Artist
-                            </Typography>
-                        </Box>
+                            >
 
-                        <Box onClick={() => navigate("/auth/recordLabelDetails")}
-                            sx={{
-                                width: '362.89px',
-                                height: '296.99px',
-                                backgroundImage: `url(${recordLabelSignup})`, // Replace with your image URL
-                                backgroundPosition: 'center',
-                                backgroundSize: 'cover',
-                                display: 'flex',
-                                flexDirection: 'column',
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                                position: 'relative',
-                                cursor: 'pointer',
-                                borderRadius: "13.69px",
-                                border: "1px solid #fff",
-                                overflow: "hidden",
-                            }}
-                        >
-                            <Box
-                                sx={{
-                                    position: 'absolute',
-                                    top: 0,
-                                    left: 0,
-                                    width: '100%',
-                                    height: '100%',
-                                    background: 'linear-gradient(180.1deg, rgba(0, 0, 0, 0) 0.08%, #000000 109.84%)',
-                                }}
-                            />
-                            
-                            <Typography sx={{
-                                fontWeight: "700",
-                                fontSize: "34px",
-                                lineHeight: "40px",
-                                letterSpacing: "-0.13px",
-                                position: "absolute",
-                                bottom: 80,
-                                left: 80
-                            }}>
-                                Record Label
-                            </Typography>
-                        </Box>
-                    </Box>
+                                <Box sx={{ my: 3 }}>
+                                    <Typography sx={{
+                                        fontWeight: "400",
+                                        fontSize: "15.38px",
+                                        lineHeight: "38.44px",
+                                        letterSpacing: "-0.12px"
+                                    }}>
+                                        Artist Name
+                                    </Typography>
 
-                    
-                    <Box sx={{my: 7}}>
-                        <Typography sx={{
-                            fontSize: {xs: 14, md: "15.38px"},
-                            fontWeight: "400",
-                            lineHeight: "38.44px",
-                            letterSpacing: "-0.12px",
-                            textAlign: "center"
-                        }}>
-                            Already part of a team?
-                            <Link to='/auth/login' style={{
-                                fontWeight: "bold",
-                                color: "#8638E5",
-                            }}> Login </Link>
-                        </Typography>
-                    </Box>
+                                    <TextField 
+                                        variant="outlined" 
+                                        fullWidth 
+                                        id='artistName'
+                                        type='text'
+                                        label=''
+                                        inputMode='text'
+                                        defaultValue=""
+                                        InputLabelProps={{
+                                            style: { color: '#c1c1c1', fontWeight: "400" },
+                                        }}
+                                        InputProps={{
+                                            sx: {
+                                                borderRadius: "16px",
+                                            },
+                                        }}
+                                        
+                                        error={ errors.artistName ? true : false }
+                                        { ...register('artistName') }
+                                    />
+                                    { errors.artistName && <Box sx={{fontSize: 13, color: "red", textAlign: "left"}}>{ errors.artistName?.message }</Box> }
+                                </Box>
+
+                                <Box sx={{ my: 3 }}>
+                                    <Typography sx={{
+                                        fontWeight: "400",
+                                        fontSize: "15.38px",
+                                        lineHeight: "38.44px",
+                                        letterSpacing: "-0.12px"
+                                    }}>
+                                        Phone number
+                                    </Typography>
+
+                                    <TextField 
+                                        variant="outlined" 
+                                        fullWidth 
+                                        id='phoneNumber'
+                                        type='text'
+                                        label=''
+                                        inputMode='text'
+                                        defaultValue=""
+                                        InputLabelProps={{
+                                            style: { color: '#c1c1c1', fontWeight: "400" },
+                                        }}
+                                        InputProps={{
+                                            sx: {
+                                                borderRadius: "16px",
+                                            },
+                                        }}
+                                        
+                                        error={ errors.phoneNumber ? true : false }
+                                        { ...register('phoneNumber') }
+                                    />
+                                    { errors.phoneNumber && <Box sx={{fontSize: 13, color: "red", textAlign: "left"}}>{ errors.phoneNumber?.message }</Box> }
+
+                                </Box>
+
+                                <Box sx={{ my: 3 }}>
+                                    <Typography sx={{
+                                        fontWeight: "400",
+                                        fontSize: "15.38px",
+                                        lineHeight: "38.44px",
+                                        letterSpacing: "-0.12px",
+                                        textAlign: "left"
+                                    }}>
+                                        Country
+                                    </Typography>
+
+                                    <FormControl fullWidth>
+                                        <Select
+                                            labelId="country"
+                                            id="country-select"
+                                            label=""
+                                            defaultValue=""
+                                            // value={userCountry}
+
+                                            sx={{
+                                                color: "white",
+                                                borderRadius: "16px",
+                                                '.MuiOutlinedInput-notchedOutline': {
+                                                    borderColor: '#fff',
+                                                },
+                                                '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                                                    borderColor: 'rgba(228, 219, 233, 0.25)',
+                                                },
+                                                '&:hover .MuiOutlinedInput-notchedOutline': {
+                                                    borderColor: 'var(--TextField-brandBorderHoverColor)', // 'rgba(228, 219, 233, 0.25)',
+                                                },
+                                                '.MuiSvgIcon-root ': {
+                                                    fill: "white !important",
+                                                }
+                                            }}
+                                            
+                                            error={ errors.country ? true : false }
+                                            { ...register('country') }
+                                        >
+                                            { countries.map((country: any, index) => (
+                                                <MenuItem key={index} value={country.name.common} selected={userCountry == country.name.common ? true : false}>
+                                                    <img src={country.flags.png} 
+                                                        style={{
+                                                            maxWidth: "20px",
+                                                            marginRight: "10px"
+                                                        }}
+                                                    />
+                                                    {country.name.common}
+                                                </MenuItem>
+                                            )) }
+                                        </Select>
+                                    </FormControl>
+
+                                    { errors.country && <Box sx={{fontSize: 13, color: "red", textAlign: "left"}}>{ errors.country?.message }</Box> }
+
+                                </Box>
+
+                                <Box sx={{ my: 3 }}>
+                                    <Typography sx={{
+                                        fontWeight: "400",
+                                        fontSize: "15.38px",
+                                        lineHeight: "38.44px",
+                                        letterSpacing: "-0.12px",
+                                        textAlign: "left"
+                                    }}>
+                                        Gender
+                                    </Typography>
+
+                                    <FormControl fullWidth>
+                                        <Select
+                                            labelId="gender"
+                                            id="gender-select"
+                                            label=""
+                                            defaultValue=""
+
+                                            sx={{
+                                                color: "white",
+                                                borderRadius: "16px",
+                                                '.MuiOutlinedInput-notchedOutline': {
+                                                    borderColor: '#fff',
+                                                },
+                                                '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                                                    borderColor: 'rgba(228, 219, 233, 0.25)',
+                                                },
+                                                '&:hover .MuiOutlinedInput-notchedOutline': {
+                                                    borderColor: 'var(--TextField-brandBorderHoverColor)', // 'rgba(228, 219, 233, 0.25)',
+                                                },
+                                                '.MuiSvgIcon-root ': {
+                                                    fill: "white !important",
+                                                }
+                                            }}
+                                            
+                                            error={ errors.gender ? true : false }
+                                            { ...register('gender') }
+
+                                        >
+                                            <MenuItem value="Male">Male</MenuItem>
+                                            <MenuItem value="Female">Female</MenuItem>
+                                            <MenuItem value="Others">Others</MenuItem>
+                                        </Select>
+                                    </FormControl>
+
+                                    { errors.gender && <Box sx={{fontSize: 13, color: "red", textAlign: "left"}}>{ errors.gender?.message }</Box> }
+
+                                </Box>
+
+                                <Button variant="contained" 
+                                    fullWidth type="submit" 
+                                    disabled={ !isValid || isSubmitting } 
+                                    sx={{ 
+                                        bgcolor: "#fff",
+                                        "&.Mui-disabled": {
+                                            background: "#9c9c9c",
+                                            color: "#797979"
+                                        },
+                                        "&:hover": {
+                                            bgcolor: "#fff"
+                                        },
+                                        "&:active": {
+                                            bgcolor: "#fff"
+                                        },
+                                        "&:focus": {
+                                            bgcolor: "#fff"
+                                        },
+                                        color: "#000",
+                                        borderRadius: "12px",
+                                        my: 3, py: 1.5,
+                                        fontSize: {md: "15.38px"},
+                                        fontWeight: "900",
+                                        letterSpacing: "-0.12px",
+                                        textTransform: "none"
+                                    }}
+                                >
+                                    <span style={{ display: isSubmitting ? "none" : "initial" }}>Continue</span>
+                                    <CircularProgress size={25} sx={{ display: isSubmitting ? "initial" : "none", color: "#fff", fontWeight: "bold" }} />
+                                </Button>
+
+                            </form>
+                        </Box>
+                    </ThemeProvider>
 
                 </Container>
             </Box>

@@ -19,6 +19,12 @@ export async function getCountries() {
         const url = "https://restcountries.com/v3.1/all?fields=name,flags,idd";
         // const response: countryInterface[] = (await axios.get(`${url}`)).data;
         const response = (await axios.get(`${url}`)).data;
+
+        response.sort((a: any, b: any) => {
+            if (a.name.common < b.name.common) return -1;
+            if (a.name.common > b.name.common) return 1;
+            return 0;
+        });
         
         return response;
     } catch (error: any) {

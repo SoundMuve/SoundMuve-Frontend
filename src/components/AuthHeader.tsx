@@ -11,6 +11,8 @@ export default function AuthHeaderComponent() {
         <Box sx={{
             height: {xs: "56px", md: "64px"}, 
             bgcolor: "#000000C4",
+            backdropFilter: "blur(5px)",
+
             display: "flex",
             flexDirection: "row",
             alignItems: 'centers',
