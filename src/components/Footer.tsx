@@ -28,7 +28,7 @@ export default function FooterComponent() {
                     sx={{ display: "flex", justifyContent: "center" }}
                 >
                     <div>
-                        <img src={SoundMuve} alt="SoundMuve logo" style={{width: 130}} onClick={() => navigate("/") } />
+                        <img src={SoundMuve} alt="SoundMuve logo" style={{width: 130, cursor: 'pointer'}} onClick={() => navigate("/") } />
 
                         <Box my={2}>
                             <Typography className={style.text}>

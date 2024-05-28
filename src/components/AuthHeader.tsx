@@ -21,7 +21,7 @@ export default function AuthHeaderComponent() {
             zIndex: 9,
             position: "relative"
         }}>
-            <Box sx={{ alignSelf: "center"}} onClick={() => navigate("/") }>
+            <Box sx={{ alignSelf: "center", cursor: 'pointer' }} onClick={() => navigate("/") }>
                 <img src={SoundMuve} alt="SoundMuve logo" style={{width: 130}} />
             </Box>
         </Box>

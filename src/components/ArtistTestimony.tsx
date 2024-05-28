@@ -24,7 +24,7 @@ const ArtistTestimony: React.FC<MyComponentProps> = ({artistTestimonies}) => {
             overflow: "hidden",
         }}>
             <ImageList sx={{overflow: "hidden", height: "307px", m: 0}}>
-                <ImageListItem sx={{ width: "260px", height: "307px" }}>
+                <ImageListItem sx={{ width: "260px", height: "307px", borderRadius: "13px", overflow: "hidden", }}>
                     <img
                         srcSet={`${artistTestimonies.img} 2x`}
                         src={`${artistTestimonies.img}`}

@@ -22,7 +22,7 @@ import { outlinedInputClasses } from '@mui/material/OutlinedInput';
 
 import style from '../pricingStyles.module.css';
 
-import signupImg from "./../../assets/images/signup.jpg";
+import signupImg from "./../../assets/images/signup.jpeg";
 import AuthHeaderComponent from '../../components/AuthHeader';
 
 
@@ -159,42 +159,43 @@ function Signup() {
 
 
     return (
-        <>
-            <Box sx={{bgcolor: "#000", color: "#fff", position: "relative", overflow: "hidden"}}>
-                <AuthHeaderComponent />
+        <Box sx={{bgcolor: "#000", color: "#fff", position: "relative", overflow: "hidden"}}>
+            <AuthHeaderComponent />
 
-                <>
-                    <Box sx={{display: { xs: 'none', md: 'block' }}}>
-                        <div className={style.topGradient}></div>
-                        <div className={style.leftGradient}></div>
-                        <div className={style.leftBottomGradient}></div>
-                        <div className={style.rightTopGradient}></div>
-                        <div className={style.rightBottom2Gradient}></div>
-                        <div className={style.btnCenteredGradient}></div>
-                        <div className={style.leftBottom2Gradient}></div>
-                    </Box>
+            <>
+                <Box sx={{display: { xs: 'none', md: 'block' }}}>
+                    <div className={style.topGradient}></div>
+                    <div className={style.leftGradient}></div>
+                    <div className={style.leftBottomGradient}></div>
+                    <div className={style.rightTopGradient}></div>
+                    <div className={style.rightBottom2Gradient}></div>
+                    <div className={style.btnCenteredGradient}></div>
+                    <div className={style.leftBottom2Gradient}></div>
+                </Box>
 
-                    <Box sx={{display: { xs: 'block', md: 'none' }}}>
-                        <div className={style.mobileLeftGradient}></div>
-                        <div className={style.mobileRightGradient}></div>
-                        <div className={style.mobileCenteredGradient}></div>
-                    </Box>
-                </>
-                
+                <Box sx={{display: { xs: 'block', md: 'none' }}}>
+                    <div className={style.mobileLeftGradient}></div>
+                    <div className={style.mobileRightGradient}></div>
+                    <div className={style.mobileCenteredGradient}></div>
+                </Box>
+            </>
+            
+            <Box sx={{ position: "relative", zIndex: 1 }}>
                 <Grid container >
                     <Grid item
                         xs={12} md={6}
                         sx={{ 
                             // alignSelf: "center",
-                            textAlign: {xs: "center", md: "left"},
-                            display: {xs: "none", md: "block"}
+                            // textAlign: {xs: "center", md: "left"},
+                            display: {xs: "none", md: "block"},
                         }}
                     >
                         <img 
                             src={signupImg}
                             style={{
                                 width: "100%",
-                                height: "100%"
+                                height: "100%",
+                                objectFit: "cover"
                             }}
                             alt='signup page image'
                         />
@@ -203,21 +204,21 @@ function Signup() {
                     <Grid item
                         xs={12} md={6}
                         sx={{ 
-                            alignSelf: "center",
+                            // alignSelf: "center",
                             textAlign: {xs: "center", md: "left"},
-                            py: {xs: 7, md: 2}
+                            // py: {xs: 7, md: 2}
                         }}
                     >
                         <Container>
                             <ThemeProvider theme={customTheme(outerTheme)}>
-                                <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-                                    <form noValidate onSubmit={ handleSubmit(onSubmit) } 
-                                        style={{
-                                            width: "100%",
-                                            maxWidth: "470px",
-                                            textAlign: "center"
-                                        }}
-                                    >
+                                <form noValidate onSubmit={ handleSubmit(onSubmit) } 
+                                    style={{ display: "flex", justifyContent: "center", alignItems: "center" }}
+                                >
+                                    <Box sx={{ 
+                                        width: "100%",
+                                        maxWidth: {xs: "470px", md: "100%"},
+                                        textAlign: "center"
+                                    }}>
 
                                         <Typography sx={{
                                             fontWeight: "900",
@@ -234,7 +235,7 @@ function Signup() {
                                             gap: 2,
                                             flexWrap: "nowrap",
                                             textAlign: "left",
-                                            py: 2
+                                            py: 1
                                         }}>
 
                                             <Box sx={{ flexGrow: 1 }}>
@@ -307,7 +308,7 @@ function Signup() {
                                         </Box>
 
 
-                                        <Box sx={{ py: 2 }}>
+                                        <Box sx={{ py: 1 }}>
                                             <Typography sx={{
                                                 fontWeight: "400",
                                                 fontSize: "15.38px",
@@ -342,7 +343,7 @@ function Signup() {
 
                                         </Box>
 
-                                        <Box sx={{ py: 2 }}>
+                                        <Box sx={{ py: 1 }}>
                                             <Typography sx={{
                                                 fontWeight: "400",
                                                 fontSize: "15.38px",
@@ -387,7 +388,7 @@ function Signup() {
                                         </Box>
 
 
-                                        <Box sx={{ py: 2 }}>
+                                        <Box sx={{ py: 1 }}>
                                             <Typography sx={{
                                                 fontWeight: "400",
                                                 fontSize: "15.38px",
@@ -457,6 +458,7 @@ function Signup() {
                                             />
                                         </FormGroup>
                                         
+
                                         <Button variant="contained" 
                                             fullWidth type="submit" 
                                             disabled={ !isValid || isSubmitting || !tnc } 
@@ -477,7 +479,7 @@ function Signup() {
                                                 },
                                                 color: "#000",
                                                 borderRadius: "12px",
-                                                my: 3, py: 1.5,
+                                                my: 2, py: 1,
                                                 fontSize: {md: "15.38px"},
                                                 fontWeight: "900",
                                                 letterSpacing: "-0.12px",
@@ -488,7 +490,8 @@ function Signup() {
                                             <CircularProgress size={25} sx={{ display: isSubmitting ? "initial" : "none", color: "#fff", fontWeight: "bold" }} />
                                         </Button>
 
-                                        <Box sx={{my: 2}}>
+
+                                        <Box sx={{position: "relative"}}>
                                             <Typography sx={{
                                                 fontSize: {xs: 14, md: "15.38px"},
                                                 fontWeight: "400",
@@ -496,15 +499,16 @@ function Signup() {
                                                 letterSpacing: "-0.12px"
                                             }}>
                                                 Already have an account? 
-                                                <Link to='/auth/login' style={{
+                                                <Link to='/auth/login' onClick={() => navigate("/auth/login") } style={{
                                                     fontWeight: "bold",
                                                     color: "#8638E5",
+                                                    cursor: "pointer"
                                                 }}> Login </Link>
                                             </Typography>
                                         </Box>
 
-                                    </form>
-                                </Box>
+                                    </Box>
+                                </form>
                             </ThemeProvider>
                         </Container>
                     </Grid>
@@ -513,7 +517,7 @@ function Signup() {
                     
                 </Grid>
             </Box>
-        </>
+        </Box>
     )
 }
 

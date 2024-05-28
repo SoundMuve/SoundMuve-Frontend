@@ -1,4 +1,4 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -40,7 +40,7 @@ function Signup2() {
                 </>
 
 
-                <Container sx={{pt: 7, pb: 10}}>
+                <Container sx={{pt: 7, pb: 10, position: "relative", zIndex: 1 }}>
                     <Box sx={{
                         textAlign: "center",
                         my: 5
@@ -156,21 +156,6 @@ function Signup2() {
                         </Box>
                     </Box>
                     
-                    <Box sx={{my: 7}}>
-                        <Typography sx={{
-                            fontSize: {xs: 14, md: "15.38px"},
-                            fontWeight: "400",
-                            lineHeight: "38.44px",
-                            letterSpacing: "-0.12px",
-                            textAlign: "center"
-                        }}>
-                            Already part of a team?
-                            <Link to='/auth/login' style={{
-                                fontWeight: "bold",
-                                color: "#8638E5",
-                            }}> Login </Link>
-                        </Typography>
-                    </Box>
                 </Container>
             </Box>
         </>

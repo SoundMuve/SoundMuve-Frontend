@@ -151,7 +151,7 @@ function Login() {
                     </Box>
                 </>
 
-                <Container>
+                <Container sx={{position: "relative", zIndex: 1}}>
                     <Box sx={{
                         py: {xs: 5, sm: 10, md: 10},
                         display: "flex",
@@ -176,7 +176,7 @@ function Login() {
                                     lineHeight: {xs: "49.28px", md: "82.28px"},
                                     letterSpacing: {xs: "-0.9px", md: "-1.5px"}
                                 }}>
-                                    login
+                                    Login
                                 </Typography>
 
                                 <Box sx={{ py: 2 }}>

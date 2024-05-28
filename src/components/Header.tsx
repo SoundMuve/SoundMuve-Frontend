@@ -69,7 +69,7 @@ export default function HeaderComponent() {
                 </Box>
 
                 <Typography variant="h6" sx={{ my: 2 }}>
-                    <img src={SoundMuve} alt="Logo" style={{width: 130}} />
+                    <img src={SoundMuve} alt="SoundMuve Logo" style={{width: 130, cursor: 'pointer' }} />
                 </Typography>
 
                 <Divider color='#c1c1c1' />
@@ -106,9 +106,9 @@ export default function HeaderComponent() {
     return (
         <Box sx={{ display: 'flex', background: "#000"}}>
             <CssBaseline />
-            <AppBar component="nav" color='transparent' position="static">
+            <AppBar component="nav" sx={{backgroundColor: "#000"}} position="fixed">
                 <Toolbar>
-                    <Box sx={{flexGrow: 1}} onClick={() => navigate("/") }>
+                    <Box sx={{flexGrow: 1, cursor: 'pointer' }} onClick={() => navigate("/") }>
                         <img src={SoundMuve} alt="SoundMuve logo" style={{width: 130}} />
                     </Box>
 

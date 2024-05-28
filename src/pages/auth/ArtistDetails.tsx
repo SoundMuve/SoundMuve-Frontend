@@ -147,7 +147,7 @@ function ArtistDetails() {
             <Box sx={{bgcolor: "#000", color: "#fff", minHeight: "100vh", position: "relative", overflow: "hidden"}}>
                 <AuthHeaderComponent />
 
-                <Box onClick={() => navigate("/auth/artistDetails")}
+                <Box
                     sx={{
                         width: '100%',
                         height: '221px',
@@ -160,7 +160,6 @@ function ArtistDetails() {
                         alignItems: 'center',
                         position: 'relative',
                         top: "-47px",
-                        cursor: 'pointer',
                         overflow: "hidden",
                         zIndex: 1
                     }}
@@ -177,8 +176,8 @@ function ArtistDetails() {
                     />
                     <Typography sx={{
                         fontWeight: "900",
-                        fontSize: "60px",
-                        lineHeight: "73.79px",
+                        fontSize: {xs: 45, md: 60},
+                        lineHeight: {xs: "53px", md: "73.79px"},
                         letterSpacing: "-1.34px",
                         position: "absolute",
                         mx: "auto",
@@ -208,15 +207,14 @@ function ArtistDetails() {
                 </>
 
 
-                <Container sx={{pt: 7, pb: 10}}>
+                <Container sx={{ position: "relative", top: -47 }}>
 
                     <ThemeProvider theme={customTheme(outerTheme)}>
                         <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
                             <form noValidate onSubmit={ handleSubmit(onSubmit) } 
                                 style={{
                                     width: "100%",
-                                    maxWidth: "470px",
-                                    // textAlign: "lef"
+                                    maxWidth: "734px",
                                 }}
                             >
 

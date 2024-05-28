@@ -118,8 +118,6 @@ function RecordLabelDetails() {
     useEffect(() => {
         getCountries().then((countryRes) => {
             setCountries(countryRes);
-            console.log(countryRes);
-            
     
             getUserLocation().then((res) => {
                 setUserCountry(res.country);
@@ -168,6 +166,10 @@ function RecordLabelDetails() {
     const onSubmit = (formData: typeof formSchema.__outputType) => {
         console.log(formData);
 
+        if (image) {
+            
+        }
+
 
         navigate("/auth/signup-type");
         
@@ -181,7 +183,7 @@ function RecordLabelDetails() {
             <Box sx={{bgcolor: "#000", color: "#fff", minHeight: "100vh", position: "relative", overflow: "hidden"}}>
                 <AuthHeaderComponent />
 
-                <Box onClick={() => navigate("/auth/artistDetails")}
+                <Box 
                     sx={{
                         width: '100%',
                         height: '221px',
@@ -194,7 +196,6 @@ function RecordLabelDetails() {
                         alignItems: 'center',
                         position: 'relative',
                         top: "-47px",
-                        cursor: 'pointer',
                         overflow: "hidden",
                         zIndex: 1
                     }}
@@ -242,7 +243,7 @@ function RecordLabelDetails() {
                 </>
 
 
-                <Container sx={{pt: {xs: 0, md: 7}, pb: 10}}>
+                <Container sx={{position: "relative", top: -47 }}>
 
                     <ThemeProvider theme={customTheme(outerTheme)}>
                         <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
@@ -338,7 +339,7 @@ function RecordLabelDetails() {
                                             id="country-select"
                                             label=""
                                             defaultValue=""
-                                            value={userCountry}
+                                            // value={userCountry}
 
                                             sx={{
                                                 color: "white",
@@ -388,20 +389,27 @@ function RecordLabelDetails() {
                                             borderRadius: "18px",
                                             display: "flex",
                                             alignItems: "center",
-                                            overflow: "hidden"
+                                            overflow: "hidden",
+                                            cursor: 'pointer',
                                         }}
                                         onClick={() => {
-                                            document.getElementById("imageUpload")?.click();
+                                            document.getElementById("recordLabellogoUpload")?.click();
                                         }}
                                     >
                                         { imagePreview ? (
                                             <Box>
-                                                <img src={imagePreview} alt='record label logo image preview' />
+                                                <img src={imagePreview} 
+                                                    alt='record label logo image preview'
+                                                    style={{
+                                                        objectFit: "contain",
+                                                        width: "100%",
+                                                    }}
+                                                />
                                             </Box>
                                         ) : (
                                             <Box sx={{
                                                 textAlign: "center",
-                                                m: "auto"
+                                                m: "auto",
                                             }}>
                                                 <Typography sx={{
                                                     fontWeight: "700",
@@ -421,7 +429,7 @@ function RecordLabelDetails() {
 
                                 <Button variant="contained" 
                                     fullWidth type="submit" 
-                                    disabled={ !isValid || isSubmitting } 
+                                    disabled={ !isValid || isSubmitting || !imagePreview } 
                                     sx={{ 
                                         bgcolor: "#fff",
                                         "&.Mui-disabled": {
@@ -458,8 +466,8 @@ function RecordLabelDetails() {
                 
                 <input 
                     type="file" 
-                    id='imageUpload' 
-                    name="imageUpload" 
+                    id='recordLabellogoUpload' 
+                    name="recordLabellogoUpload" 
                     accept='image/*' 
                     onChange={handleFileUpload}
                     style={{display: "none"}}

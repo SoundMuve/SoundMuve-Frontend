@@ -100,21 +100,23 @@ function Faq() {
             <HeaderComponent />
 
             <Box sx={{bgcolor: "#000", color: "#fff", py: 5, position: "relative", overflow: "hidden"}}>
-                <Box sx={{display: { xs: 'none', md: 'block' }}}>
-                    <div className={style.topGradient}></div>
-                    <div className={style.leftGradient}></div>
-                    <div className={style.rightTopGradient}></div>
-                    <div className={style.btnCenteredGradient}></div>
-                </Box>
+                <>
+                    <Box sx={{display: { xs: 'none', md: 'block' }}}>
+                        <div className={style.topGradient}></div>
+                        <div className={style.leftGradient}></div>
+                        <div className={style.rightTopGradient}></div>
+                        <div className={style.btnCenteredGradient}></div>
+                    </Box>
 
-                <Box sx={{display: { xs: 'block', md: 'none' }}}>
-                    <div className={style.mobileLeftGradient}></div>
-                    <div className={style.mobileRightGradient}></div>
-                    <div className={style.mobileCenteredGradient}></div>
-                </Box>
+                    <Box sx={{display: { xs: 'block', md: 'none' }}}>
+                        <div className={style.mobileLeftGradient}></div>
+                        <div className={style.mobileRightGradient}></div>
+                        <div className={style.mobileCenteredGradient}></div>
+                    </Box>
+                </>
 
 
-                <Container>
+                <Container sx={{position: "relative", zIndex: 10, mt: {xs: 5, md: 10} }}>
                     <Box>
                         <Typography 
                             variant="h4" component="h4"
