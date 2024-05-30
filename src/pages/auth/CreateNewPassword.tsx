@@ -1,4 +1,4 @@
-// import { useState } from 'react';
+import { useState } from 'react';
 // import { Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import * as yup from "yup";
@@ -7,13 +7,6 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import { outlinedInputClasses } from '@mui/material/OutlinedInput';
-// import Typography from '@mui/material/Typography';
-// import Button from '@mui/material/Button';
-// import CircularProgress from '@mui/material/CircularProgress';
-// import TextField from '@mui/material/TextField';
-// import IconButton from '@mui/material/IconButton';
-// import { Visibility, VisibilityOff } from '@mui/icons-material';
-
 
 import { createTheme, ThemeProvider, Theme, useTheme } from '@mui/material/styles';
 
@@ -24,8 +17,9 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 
-import resetPasswordImg from "./../../assets/images/resetPassword.png";
-import { useNavigate } from 'react-router-dom';
+import newPasswordImg from "./../../assets/images/newPassword.png";
+import IconButton from '@mui/material/IconButton';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 
 
 const formSchema = yup.object({
@@ -33,7 +27,22 @@ const formSchema = yup.object({
     .email("Please enter a valid email address.")
     .matches(/^([a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+(?:\.[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+)*|\"([^\\]\\\"]|\\.)*\")@(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}$/
     , "Please enter a valid email address.")
-    .trim().label("Email Address")
+    .trim().label("Email Address"),
+
+    password: yup.string().required()
+    .min(6, 'Password must be at least 6 characters')
+    .matches(
+      /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]+$/,
+      'Password must include uppercase, lowercase, digit, and special character'
+    ).trim().label("Password"),
+
+    confirmPassword: yup.string().required()
+    .min(6, 'Password must be at least 6 characters')
+    .matches(
+      /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]+$/,
+      'Password must include uppercase, lowercase, digit, and special character'
+    ).trim().label("Confirm Password"),
+    
 });
 
 const customTheme = (outerTheme: Theme) =>
@@ -108,20 +117,25 @@ const customTheme = (outerTheme: Theme) =>
         },
     });
   
-function ForgotPassword() {
+function CreateNewPassword() {
     const outerTheme = useTheme();
-    const navigate = useNavigate();
+
+    const [showPassword, setShowPassword] = useState(false);
+    const handleClickShowPassword = () => setShowPassword((show) => !show);
   
 
     const { 
-        handleSubmit, register, formState: { errors, isValid, isSubmitting } 
+        handleSubmit, register, setError, formState: { errors, isValid, isSubmitting } 
     } = useForm({ resolver: yupResolver(formSchema), mode: 'onBlur', reValidateMode: 'onBlur' });
 
         
     const onSubmit = (formData: typeof formSchema.__outputType) => {
         console.log(formData);
-
-        navigate("/auth/verify-email");
+        if (formData.password !== formData.confirmPassword) {
+            setError("password", {message: "Passwords do not match"});
+            setError("confirmPassword", {message: "Passwords do not match"});
+            return;
+        }
         
     }
 
@@ -176,64 +190,118 @@ function ForgotPassword() {
                                     mx: "auto"
                                 }}>
                                     <img 
-                                        src={resetPasswordImg} 
-                                        alt="reset password lock image" 
+                                        src={newPasswordImg} 
+                                        alt="create new password lock image" 
                                         style={{ width: "100%" }} 
                                     />
                                 </Box>
 
                                 <Typography sx={{
                                     fontWeight: "900",
-                                    fontSize: {xs: 35, md: 50},
+                                    fontSize: {xs: "35px", md: "50px"},
                                     lineHeight: {xs: "49.28px", md: "82.28px"},
                                     letterSpacing: {xs: "-0.9px", md: "-1.5px"}
                                 }}>
-                                    Reset Password
+                                    Create new password
                                 </Typography>
 
                                 <Typography sx={{
                                     fontWeight: "400",
-                                    fontSize: {xs: "10.69px", md: 24},
+                                    fontSize: {xs: "10.69px", md: "24px"},
                                     lineHeight: {xs: "26.72px", md: "44.6px"},
-                                    letterSpacing: {xs: "-0.9px", md: "-0.14px"}
+                                    letterSpacing: {xs: "-0.9px", md: "-0.14px"},
+                                    textAlign: "center"
                                 }}>
-                                    Please enter an email adddress to recieve verification code
+                                    Your new password must be <br />
+                                    different form the previous one
                                 </Typography>
 
 
                                 <Box sx={{ py: 2 }}>
                                     <Typography sx={{
-                                        textAlign: "left", 
-                                        fontSize: {xs: "13.5px", md: "17.84px"}, 
                                         fontWeight: "400",
-                                        letterSpacing: {xs: "-0.69px", md: "-0.14px"},
-                                        lineHeight: {xs: "30.69px", md: "44.6px" },
+                                        fontSize: "15.38px",
+                                        lineHeight: "38.44px",
+                                        letterSpacing: "-0.12px",
+                                        textAlign: "left"
                                     }}>
-                                        Email Address
+                                        Password
                                     </Typography>
 
                                     <TextField 
+                                        id='password'
+                                        type={showPassword ? "text" : 'password' }
+                                        label=''
+                                        inputMode='text'
                                         variant="outlined" 
                                         fullWidth 
-                                        id='email'
-                                        type='email'
-                                        label=''
-                                        autoFocus
-                                        inputMode='email'
                                         defaultValue=""
                                         InputLabelProps={{
                                             style: { color: '#c1c1c1', fontWeight: "400" },
                                         }}
                                         InputProps={{
+                                            endAdornment: 
+                                            <IconButton
+                                                aria-label="toggle password visibility"
+                                                onClick={handleClickShowPassword}
+                                                edge="end"
+                                                sx={{color: "#fff"}}
+                                            >
+                                                {showPassword ? <VisibilityOff /> : <Visibility />}
+                                            </IconButton>,
                                             sx: {
                                                 borderRadius: "16px",
                                             },
                                         }}
                                         
-                                        error={ errors.email ? true : false }
-                                        { ...register('email') }
+                                        error={ errors.password ? true : false }
+                                        { ...register('password') }
                                     />
-                                    { errors.email && <Box sx={{fontSize: 13, color: "red", textAlign: "left"}}>{ errors.email?.message }</Box> }
+                                    { errors.password && <Box sx={{fontSize: 13, color: "red", textAlign: "left"}}>{ errors.password?.message }</Box> }
+
+                                </Box>
+
+                                <Box sx={{ pb: 2 }}>
+                                    <Typography sx={{
+                                        fontWeight: "400",
+                                        fontSize: "15.38px",
+                                        lineHeight: "38.44px",
+                                        letterSpacing: "-0.12px",
+                                        textAlign: "left"
+                                    }}>
+                                        Confirm Password
+                                    </Typography>
+
+                                    <TextField 
+                                        id='confirmPassword'
+                                        type={showPassword ? "text" : 'password' }
+                                        label=''
+                                        inputMode='text'
+                                        variant="outlined" 
+                                        fullWidth 
+                                        defaultValue=""
+                                        InputLabelProps={{
+                                            style: { color: '#c1c1c1', fontWeight: "400" },
+                                        }}
+                                        InputProps={{
+                                            endAdornment: 
+                                            <IconButton
+                                                aria-label="toggle password visibility"
+                                                onClick={handleClickShowPassword}
+                                                edge="end"
+                                                sx={{color: "#fff"}}
+                                            >
+                                                {showPassword ? <VisibilityOff /> : <Visibility />}
+                                            </IconButton>,
+                                            sx: {
+                                                borderRadius: "16px",
+                                            },
+                                        }}
+                                        
+                                        error={ errors.confirmPassword ? true : false }
+                                        { ...register('confirmPassword') }
+                                    />
+                                    { errors.confirmPassword && <Box sx={{fontSize: 13, color: "red", textAlign: "left"}}>{ errors.confirmPassword?.message }</Box> }
 
                                 </Box>
 
@@ -259,10 +327,11 @@ function ForgotPassword() {
                                         color: "#000",
                                         borderRadius: "12px",
                                         my: 2, 
-                                        py: 1.5
+                                        py: 1.5,
+                                        textTransform: "unset"
                                     }}
                                 >
-                                    <span style={{ display: isSubmitting ? "none" : "initial" }}>Send</span>
+                                    <span style={{ display: isSubmitting ? "none" : "initial" }}>Save</span>
                                     <CircularProgress size={25} sx={{ display: isSubmitting ? "initial" : "none", color: "#fff", fontWeight: "bold" }} />
                                 </Button>
 
@@ -275,4 +344,4 @@ function ForgotPassword() {
     )
 }
 
-export default ForgotPassword;
+export default CreateNewPassword;

@@ -1,5 +1,6 @@
 // import { Pagination, Autoplay, Navigation, Scrollbar, A11y } from "swiper";
 import { Swiper, SwiperSlide } from "swiper/react";
+import { useNavigate } from "react-router-dom";
 
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
@@ -48,6 +49,7 @@ const musicDSPlogos = [
 ];
 
 function Pricing() {
+    const navigate = useNavigate();
     const isMediumScreen = useMediaQuery('(min-width: 960px)');
 
 
@@ -539,6 +541,7 @@ function Pricing() {
                                 borderRadius: "12px",
                                 my: 2
                             }}
+                            onClick={() => navigate("/auth/signup")}
                         >
                             Sign up
                         </Button>

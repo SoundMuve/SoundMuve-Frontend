@@ -163,7 +163,7 @@ function Login() {
                         <ThemeProvider theme={customTheme(outerTheme)}>
                             <form noValidate onSubmit={ handleSubmit(onSubmit) } 
                                 style={{
-                                    maxWidth: 643,
+                                    maxWidth: "653px",
                                     width: "100%",
                                     // height: 400,
                                     alignSelf: "center"

@@ -229,8 +229,8 @@ function Contact() {
 
                                     <Box>
                                         
-                                    <Button variant="outlined" 
-                                            fullWidth type="button" 
+                                        <Button variant="outlined" 
+                                            fullWidth type="submit" 
                                             disabled={ !isValid || isSubmitting } 
                                             sx={{ 
                                                 // bgcolor: "#fff",
@@ -259,7 +259,7 @@ function Contact() {
                                         </Button>
 
                                         <Button variant="contained" 
-                                            fullWidth type="submit" 
+                                            fullWidth type="button" 
                                             // disabled={ !isValid || isSubmitting } 
                                             sx={{ 
                                                 bgcolor: "#fff",

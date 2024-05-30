@@ -134,16 +134,18 @@ export default function Home() {
                                 }}>
                                     <Typography sx={{
                                         fontWeight: "900",
-                                        fontSize: {xs: "33px", md: "67px"},
-                                        lineHeight: 1, // "73.79px",
-                                        letterSpacing: "-1.34px"
+                                        fontSize: {xs: "36.33px", md: "67.08px"},
+                                        lineHeight: {xs: "39.96px", md: "73.79px"}, // "73.79px",
+                                        letterSpacing: {xs: "-0.73px", md: "-1.34px"}
                                     }}>
                                         Make the most of your music on Soundmuve
                                     </Typography>
 
                                     <Typography sx={{
                                         fontWeight: "400",
-                                        fontSize: {xs: 13, md: 17},
+                                        fontSize: {xs: 13, md: "17.27px"},
+                                        lineHeight: {xs: "", md: "39.24px"},
+                                        letterSpacing: {xs: "", md: "-0.89px"},
                                         textAlign: "justify",
                                         pt: 3
                                     }}>
@@ -169,8 +171,9 @@ export default function Home() {
                                                 color: "#F5F2F7",
                                                 outline: "none",
                                                 boxShadow: "none",
-                                                px: "10px",
-                                                py: "10px", // {xs: "10px", md: "5px"},
+                                                p: {xs: "15px", md: "10px"},
+                                                // px: "10px",
+                                                // py: "10px", // {xs: "10px", md: "5px"},
                                                 borderRadius: {xs: "8px", md: "10px"},
                                                 fontSize: {xs: "13.36px", md: "21.82px"},
                                                 lineHeight: {xs: "12.4px", md: "20.27px"},
@@ -199,8 +202,9 @@ export default function Home() {
                                                 color: "#fff",
                                                 outline: "none",
                                                 boxShadow: "none",
-                                                px: "10px",
-                                                py: "10px", // {xs: "10px", md: "5px"},
+                                                p: {xs: "15px", md: "10px"},
+                                                // px: "10px",
+                                                // py: "10px", // {xs: "10px", md: "5px"},
                                                 borderRadius: {xs: "8px", md: "10px"},
                                                 fontSize: {xs: "13.36px", md: "21.82px"},
                                                 lineHeight: {xs: "12.4px", md: "20.27px"},
@@ -405,11 +409,13 @@ export default function Home() {
                         <Typography 
                             variant="h4" my={2.5} component="h4"
                             sx={{
+                                fontWeight: "900",
                                 fontSize: {xs: 20, md: 35},
-                                fontWeight: "900"
+                                lineHeight: {xs: "50px", md: "50px"},
+                                letterSpacing: {xs: "-1.13px", md: "-1.13px"}
                             }}
                         >
-                            Don’t just take our words for it
+                            Don't just take our words for it
                         </Typography>
                         <Swiper
                             autoplay={{
@@ -475,8 +481,8 @@ export default function Home() {
                             borderBottom: {md: "none"},
                             borderLeft: {md: "none"},
                             borderRight: {md: "none"},
-                            borderRadius: {xs: "33px", md: "36px" },
-                            py: 5,
+                            borderRadius: {xs: "33px", md: "36px 36px 0 0" },
+                            py: {xs: 10, md: 7},
                             overflow: "hidden",
                             bgcolor: "#141414",
 
@@ -507,7 +513,9 @@ export default function Home() {
                                     <Box>
                                         <Typography sx={{
                                             fontWeight: "900",
-                                            fontSize: {xs: 30, md: 45},
+                                            fontSize: {xs: "36.36px", md: 45},
+                                            lineHeight: {xs: "40.41px", md: "50px"},
+                                            letterSpacing: {xs: "-0.91px", md: "-1.13px"},
                                             pt: {xs: 5, md: 1}
                                         }}>
                                             Maximize your revenue
@@ -515,7 +523,9 @@ export default function Home() {
 
                                         <Typography sx={{
                                             fontWeight: "400",
-                                            fontSize: {xs: 13, md: 16},
+                                            fontSize: {xs: "13.5px", md: 16},
+                                            lineHeight: {xs: "30.69px", md: "40px"},
+                                            letterSpacing: {xs: "-0.69px", md: "-0.13px"},
                                             textAlign: "justify"
                                         }}>
                                             Independent musicians can make money from their original songs through royalties. 
@@ -554,8 +564,8 @@ export default function Home() {
                             borderBottom: {md: "none"},
                             borderLeft: {md: "none"},
                             borderRight: {md: "none"},
-                            borderRadius: {xs: "43px", md: "36px" },
-                            py: 5,
+                            borderRadius: {xs: "43px", md: "36px 36px 0 0" },
+                            py: {xs: 10, md: 7},
                             overflow: "hidden",
                             bgcolor: "#141414",
                             px: {xs: 2, md: 5, lg: 12}
@@ -573,7 +583,9 @@ export default function Home() {
                                     <Box>
                                         <Typography sx={{
                                             fontWeight: "900",
-                                            fontSize: {xs: 30, md: 45},
+                                            fontSize: {xs: "36.36px", md: 45},
+                                            lineHeight: {xs: "46.44px", md: "50px"},
+                                            letterSpacing: {xs: "-1.05px", md: "-1.13px"},
                                             pt: {xs: 5, md: 1}
                                         }}>
                                             See how your music is doing
@@ -581,7 +593,9 @@ export default function Home() {
 
                                         <Typography sx={{
                                             fontWeight: "400",
-                                            fontSize: {xs: 13, md: 16},
+                                            fontSize: {xs: "13.5px", md: 16},
+                                            lineHeight: {xs: "30.69px", md: "40px"},
+                                            letterSpacing: {xs: "-0.69px", md: "-0.13px"},
                                             textAlign: "justify"
                                         }}>
                                             Grow your career while keeping your music at the center. 
@@ -612,16 +626,20 @@ export default function Home() {
 
                         <Box sx={{
                             border: "1px solid #fff", 
-                            borderBottom: "none", 
+                            borderBottom: {md: "none"},
                             borderLeft: {md: "none"},
                             borderRight: {md: "none"},
-                            // borderRadius: 5,
-                            borderTopRightRadius: {xs: "67px", md: "36px" },
-                            borderTopLeftRadius:  {xs: "67px", md: "36px" },
-                            py: 5,
+
+                            borderRadius: {xs: "67px", md: "36px 36px 0 0" },
+                            // borderTopRightRadius: {xs: "67px", md: "36px" },
+                            // borderTopLeftRadius:  {xs: "67px", md: "36px" },
+
+                            py: {xs: 10, md: 7},
                             bgcolor: "#141414",
 
-                            px: {xs: 2, md: 5, lg: 12}
+                            px: {xs: 2, md: 5, lg: 12},
+
+                            mb: {xs: 7, md: 0}
                         }}>
                             <Grid container spacing={2} position="unset" >
                                 <Grid item
@@ -644,14 +662,18 @@ export default function Home() {
                                     <Box>
                                         <Typography sx={{
                                             fontWeight: "900",
-                                            fontSize: {xs: 35, md: 45},
+                                            fontSize: {xs: "36.54px", md: 45},
+                                            lineHeight: {xs: "40.6px", md: "50px"},
+                                            letterSpacing: {xs: "-0.92px", md: "-1.13px"},
                                         }}>
                                             Expand your reach
                                         </Typography>
 
                                         <Typography sx={{
                                             fontWeight: "400",
-                                            fontSize: {xs: 13, md: 16},
+                                            fontSize: {xs: "13.5px", md: 16},
+                                            lineHeight: {xs: "30.69px", md: "40px"},
+                                            letterSpacing: {xs: "-0.69px", md: "-0.13px"},
                                             textAlign: "justify"
                                         }}>
                                             Grow your career while keeping your music at the center. 

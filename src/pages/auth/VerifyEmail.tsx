@@ -7,13 +7,6 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import { outlinedInputClasses } from '@mui/material/OutlinedInput';
-// import Typography from '@mui/material/Typography';
-// import Button from '@mui/material/Button';
-// import CircularProgress from '@mui/material/CircularProgress';
-// import TextField from '@mui/material/TextField';
-// import IconButton from '@mui/material/IconButton';
-// import { Visibility, VisibilityOff } from '@mui/icons-material';
-
 
 import { createTheme, ThemeProvider, Theme, useTheme } from '@mui/material/styles';
 
@@ -24,16 +17,15 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 
-import resetPasswordImg from "./../../assets/images/resetPassword.png";
+import VerifyEmailImg from "./../../assets/images/VerifyEmail.png";
 import { useNavigate } from 'react-router-dom';
 
 
 const formSchema = yup.object({
-    email: yup.string().required()
-    .email("Please enter a valid email address.")
-    .matches(/^([a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+(?:\.[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+)*|\"([^\\]\\\"]|\\.)*\")@(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}$/
-    , "Please enter a valid email address.")
-    .trim().label("Email Address")
+    code1: yup.string().required().min(1).max(1).label("Code"),
+    code2: yup.string().required().min(1).max(1).label("Code"),
+    code3: yup.string().required().min(1).max(1).label("Code"),
+    code4: yup.string().required().min(1).max(1).label("Code"),
 });
 
 const customTheme = (outerTheme: Theme) =>
@@ -108,10 +100,9 @@ const customTheme = (outerTheme: Theme) =>
         },
     });
   
-function ForgotPassword() {
+function VerifyEmail() {
     const outerTheme = useTheme();
     const navigate = useNavigate();
-  
 
     const { 
         handleSubmit, register, formState: { errors, isValid, isSubmitting } 
@@ -121,11 +112,10 @@ function ForgotPassword() {
     const onSubmit = (formData: typeof formSchema.__outputType) => {
         console.log(formData);
 
-        navigate("/auth/verify-email");
+        navigate("/auth/create-new-password");
         
     }
 
-    
 
     return (
         <>
@@ -173,69 +163,153 @@ function ForgotPassword() {
                                     maxWidth: "214px",
                                     width: {xs: `${214 * 0.3}px`, md: `${214 * 0.6}px`},
                                     textAlign: "center",
-                                    mx: "auto"
+                                    mx: "auto",
                                 }}>
                                     <img 
-                                        src={resetPasswordImg} 
-                                        alt="reset password lock image" 
-                                        style={{ width: "100%" }} 
+                                        src={VerifyEmailImg} 
+                                        alt="verify email lock image" 
+                                        style={{ width: "100%", objectFit: "contain" }} 
                                     />
                                 </Box>
 
                                 <Typography sx={{
                                     fontWeight: "900",
-                                    fontSize: {xs: 35, md: 50},
+                                    fontSize: {xs: "35px", md: "50px"},
                                     lineHeight: {xs: "49.28px", md: "82.28px"},
                                     letterSpacing: {xs: "-0.9px", md: "-1.5px"}
                                 }}>
-                                    Reset Password
+                                    Verify your email
                                 </Typography>
 
                                 <Typography sx={{
                                     fontWeight: "400",
-                                    fontSize: {xs: "10.69px", md: 24},
+                                    fontSize: {xs: "10.69px", md: "24px"},
                                     lineHeight: {xs: "26.72px", md: "44.6px"},
                                     letterSpacing: {xs: "-0.9px", md: "-0.14px"}
                                 }}>
-                                    Please enter an email adddress to recieve verification code
+                                    Please enter the 4 digit code sent to <br />
+                                    <span style={{fontWeight: "700"}}>
+                                        Design@techguard.ng 
+                                    </span>
                                 </Typography>
 
 
-                                <Box sx={{ py: 2 }}>
-                                    <Typography sx={{
-                                        textAlign: "left", 
-                                        fontSize: {xs: "13.5px", md: "17.84px"}, 
-                                        fontWeight: "400",
-                                        letterSpacing: {xs: "-0.69px", md: "-0.14px"},
-                                        lineHeight: {xs: "30.69px", md: "44.6px" },
+                                <Box sx={{ py: 2, }}>
+                                    <Box sx={{ 
+                                        display: "flex",
+                                        flexDirection: "row",
+                                        justifyContent: "center",
+                                        alignItems: "center",
+                                        gap: "15px"
                                     }}>
-                                        Email Address
-                                    </Typography>
 
-                                    <TextField 
-                                        variant="outlined" 
-                                        fullWidth 
-                                        id='email'
-                                        type='email'
-                                        label=''
-                                        autoFocus
-                                        inputMode='email'
-                                        defaultValue=""
-                                        InputLabelProps={{
-                                            style: { color: '#c1c1c1', fontWeight: "400" },
-                                        }}
-                                        InputProps={{
-                                            sx: {
-                                                borderRadius: "16px",
-                                            },
-                                        }}
-                                        
-                                        error={ errors.email ? true : false }
-                                        { ...register('email') }
-                                    />
-                                    { errors.email && <Box sx={{fontSize: 13, color: "red", textAlign: "left"}}>{ errors.email?.message }</Box> }
+                                        <TextField 
+                                            variant="outlined" 
+                                            fullWidth 
+                                            id='code1'
+                                            type='text'
+                                            label=''
+                                            autoFocus
+                                            inputMode='text'
+                                            defaultValue=""
+                                            InputLabelProps={{
+                                                style: { color: '#c1c1c1', fontWeight: "400" },
+                                            }}
+                                            InputProps={{
+                                                sx: {
+                                                    borderRadius: "16px",
+                                                },
+                                            }}
+                                            sx={{maxWidth: "121px", maxHeight: "100px"}}
+                                            
+                                            error={ errors.code1 ? true : false }
+                                            { ...register('code1') }
+                                        />
 
+                                        <TextField 
+                                            variant="outlined" 
+                                            fullWidth 
+                                            id='code2'
+                                            type='text'
+                                            label=''
+                                            autoFocus
+                                            inputMode='text'
+                                            defaultValue=""
+                                            InputLabelProps={{
+                                                style: { color: '#c1c1c1', fontWeight: "400" },
+                                            }}
+                                            InputProps={{
+                                                sx: {
+                                                    borderRadius: "16px",
+                                                },
+                                            }}
+                                            sx={{maxWidth: "121px", maxHeight: "100px"}}
+                                            
+                                            error={ errors.code2 ? true : false }
+                                            { ...register('code2') }
+                                        />
+
+                                        <TextField 
+                                            variant="outlined" 
+                                            fullWidth 
+                                            id='code3'
+                                            type='text'
+                                            label=''
+                                            autoFocus
+                                            inputMode='text'
+                                            defaultValue=""
+                                            InputLabelProps={{
+                                                style: { color: '#c1c1c1', fontWeight: "400" },
+                                            }}
+                                            InputProps={{
+                                                sx: {
+                                                    borderRadius: "16px",
+                                                },
+                                            }}
+                                            sx={{maxWidth: "121px", maxHeight: "100px"}}
+                                            
+                                            error={ errors.code3 ? true : false }
+                                            { ...register('code3') }
+                                        />
+
+                                        <TextField 
+                                            variant="outlined" 
+                                            fullWidth 
+                                            id='code4'
+                                            type='text'
+                                            label=''
+                                            autoFocus
+                                            inputMode='text'
+                                            defaultValue=""
+                                            InputLabelProps={{
+                                                style: { color: '#c1c1c1', fontWeight: "400" },
+                                            }}
+                                            InputProps={{
+                                                sx: {
+                                                    borderRadius: "16px",
+                                                },
+                                            }}
+                                            sx={{maxWidth: "121px", maxHeight: "100px"}}
+                                            
+                                            error={ errors.code4 ? true : false }
+                                            { ...register('code4') }
+                                        />
+                                    </Box>
+
+                                    { errors.code1 && <Box sx={{fontSize: 13, color: "red", textAlign: "center", mt: 2}}>{ errors.code1?.message }</Box> }
                                 </Box>
+
+
+
+                                <Typography sx={{
+                                    fontWeight: "400",
+                                    fontSize: {xs: "10.69px", md: "24px"},
+                                    lineHeight: {xs: "26.72px", md: "44.6px"},
+                                    letterSpacing: {xs: "-0.9px", md: "-0.14px"},
+                                    mb: 2
+                                }}>
+                                    Resend Code
+                                </Typography>
 
 
                                 <Button variant="contained" 
@@ -259,7 +333,8 @@ function ForgotPassword() {
                                         color: "#000",
                                         borderRadius: "12px",
                                         my: 2, 
-                                        py: 1.5
+                                        py: 1.5,
+                                        textTransform: "unset"
                                     }}
                                 >
                                     <span style={{ display: isSubmitting ? "none" : "initial" }}>Send</span>
@@ -275,4 +350,4 @@ function ForgotPassword() {
     )
 }
 
-export default ForgotPassword;
+export default VerifyEmail;

@@ -21,16 +21,44 @@ export default function FooterComponent() {
 
 
     return (
-        <Box bgcolor="#21262C" p={2}>
-            <Grid container spacing={2}>
-                <Grid item
-                    xs={6} sm={6} md={4} // lg={3}
-                    sx={{ display: "flex", justifyContent: "center" }}
-                >
-                    <div>
-                        <img src={SoundMuve} alt="SoundMuve logo" style={{width: 130, cursor: 'pointer'}} onClick={() => navigate("/") } />
+        <Box bgcolor="#21262C" sx={{px: 2, py: {xs: 5, md: 7}}}>
+            <Box sx={{display: {xs: "none", md: "block"}}}>
+                <Grid container spacing={2}>
+                    <Grid item
+                        xs={6} sm={3} md={2} // lg={3}
+                        sx={{ display: "flex", justifyContent: "left" }}
+                    >
+                        <div>
+                            <img 
+                                src={SoundMuve} 
+                                alt="SoundMuve logo" 
+                                style={{width: 130, cursor: 'pointer', display: "block"}} 
+                                onClick={() => navigate("/") } 
+                            />
 
-                        <Box my={2}>
+                            {/* <Box my={2}>
+                                <Typography className={style.text}>
+                                    © 2024 SoundMuve.
+                                </Typography>
+                                <Typography className={style.text}>
+                                    All rights reserved.
+                                </Typography>
+                            </Box> */}
+
+                            <Box sx={{display: "flex", gap: 1, mt: 2}}>
+                                <FacebookIcon className={style.icons} />
+                                <TwitterIcon className={style.icons} />
+                                <LinkedInIcon className={style.icons} />
+                                <InstagramIcon className={style.icons} />
+                            </Box>
+                        </div>
+                    </Grid>
+
+                    <Grid item
+                        xs={6} sm={3} md={2} // lg={3}
+                        sx={{ display: "flex", justifyContent: "center" }}
+                    >
+                        <Box my={0}>
                             <Typography className={style.text}>
                                 © 2024 SoundMuve.
                             </Typography>
@@ -38,114 +66,247 @@ export default function FooterComponent() {
                                 All rights reserved.
                             </Typography>
                         </Box>
+                    </Grid>
 
-                        <Box sx={{display: "flex", gap: 1}}>
-                            <FacebookIcon className={style.icons} />
-                            <TwitterIcon className={style.icons} />
-                            <LinkedInIcon className={style.icons} />
-                            <InstagramIcon className={style.icons} />
+                    <Grid item
+                        xs={6} sm={3} md={2} // lg={3}
+                        sx={{ display: "flex", justifyContent: "center" }}
+                    >
+                        <Box my={0}>
+                            <Link to="/pricing" className={style.link} title='Pricing'>
+                                Pricing
+                            </Link>
                         </Box>
-                    </div>
-                </Grid>
-                
-                {/* <Grid item
-                    xs={6} sm={6} md={4} lg={3}
-                    sx={{ display: "flex", justifyContent: "center" }}
-                >
-                    <div>
-                        <Typography className={style.title}>
-                            Get in Touch
-                        </Typography>
+                    </Grid>
 
-                        <Box my={2}>
-                            <Typography className={style.text}>
-                                Location 77 Eagles Hill Estate, Beside NNPC Mega Station, George-lyn Road Off Enugu – Onitsha Expressway Awka, Nigerian
-                            </Typography>
+                    <Grid item
+                        xs={6} sm={3} md={2}
+                        sx={{ display: "flex", justifyContent: "center" }}
+                    >
+                        <Box my={0}>
+                            <Link to="/terms-of-use" className={style.link} title='Terms of Use'>
+                                Terms of Use
+                            </Link>
                         </Box>
+                    </Grid>
 
+                    <Grid item
+                        xs={6} sm={3} md={2}
+                        sx={{ display: "flex", justifyContent: "center" }}
+                    >
+                        <Box my={0}>
+                            <Link to="/privacy-policy" className={style.link} title='Privacy Policy'>
+                                Privacy Policy
+                            </Link>
+                        </Box>
+                    </Grid>
+
+                    <Grid item
+                        xs={12} sm={3} md={2}
+                        sx={{ display: "flex", justifyContent: "center", overflow: "hidden" }}
+                    >
                         <Box>
-                            <Typography className={style.text}>
-                                admin@gsssecurity.ng
+                            <Typography className={style.title}>
+                                Our Newsletter
                             </Typography>
 
-                            <Typography className={style.text}>
-                                +234 906 003 5557
-                            </Typography>
-                        </Box>
-                    </div>
+                            <Box my={2}>
+                                <Typography className={style.text}>
+                                    Subscribe to our newsletter to get
+                                    our news delivered to you.
+                                </Typography>
+                            </Box>
 
-                </Grid> */}
-                
-                <Grid item
-                    xs={6} sm={6} md={4} // lg={3}
-                    sx={{ display: "flex", justifyContent: "center" }}
-                >
-                    <div>
-                        <Typography className={style.title}>
-                            Quick Links
-                        </Typography>
 
-                        <Box my={2}>
-                            <ul className={style.footerList}>
-                                <li className={style.text}>
-                                    <Link to="/about" className={style.link} title='About Us'>
-                                        About Us
-                                    </Link>
-                                </li>
-                                <li className={style.text}>
-                                    <Link to="/pricing" className={style.link} title='Pricing'>
-                                        Pricing
-                                    </Link>
-                                </li>
-                                <li className={style.text}>
-                                    <Link to="/faq" className={style.link} title='FAQs'>
-                                        FAQs
-                                    </Link>
-                                </li>
-                                <li className={style.text}>
-                                    <Link to="/terms-of-use" className={style.link} title='Terms of Use'>
-                                        Terms of Use
-                                    </Link>
-                                </li>
-                                <li className={style.text}>
-                                    <Link to="/privacy-policy" className={style.link} title='Privacy Policy'>
-                                        Privacy Policy
-                                    </Link>
-                                </li>
-                            </ul>
+                            <Box>
+                                <div style={{
+                                    display: "flex", whiteSpace: "nowrap",
+                                    flexDirection: "row", alignItems: "center"
+                                }}>
+                                    <input 
+                                        type="email" 
+                                        placeholder='Email Address' 
+                                        className={style.input}
+                                    />
+
+                                    <Box sx={{
+                                        border: "1.33px solid #644986",
+                                        borderRadius: "0px 5.33px 5.33px 0px",
+                                        bgcolor: "#644986",
+                                        px: 1.5,
+                                        height: "34.66px",
+                                        alignSelf: "center",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        cursor: "pointer"
+                                    }}>
+                                        <Typography sx={{
+                                            fontWeight: "700",
+                                            fontSize: "9.67px",
+                                            lineHeight: "17.67px",
+                                            textAlign: "center",
+                                            color: "#fff",
+                                        }}>
+                                            Join
+                                        </Typography>
+                                    </Box>
+
+                                </div>
+                            </Box>
+
                         </Box>
-                    </div>
+                    </Grid>
                 </Grid>
-                
-                <Grid item
-                    xs={12} sm={6} md={4} // lg={3}
-                    sx={{ display: "flex", justifyContent: "center", overflow: "hidden" }}
-                >
-                    <div>
-                        <Typography className={style.title}>
-                            Our Newsletter
-                        </Typography>
+            </Box>
 
-                        <Box my={2}>
-                            <Typography className={style.text}>
-                                Subscribe to our newsletter to get
-                                our news delivered to you.
-                            </Typography>
-                        </Box>
-
+            <Box sx={{display: {xs: "block", md: "none"}}}>
+                <Grid container spacing={2}>
+                    <Grid item
+                        xs={4} sm={4} md={4} // lg={3}
+                        sx={{ display: "flex", justifyContent: "center" }}
+                    >
                         <Box>
-                            <div style={{display: "inline-block", whiteSpace: "nowrap"}}>
-                                <input 
-                                    type="email" 
-                                    placeholder='Email Address' 
-                                    className={style.input}
-                                />
-                                <button className={style.btn}>Join</button>
-                            </div>
+                            <img 
+                                src={SoundMuve} 
+                                alt="SoundMuve logo" 
+                                style={{maxWidth: "53px", cursor: 'pointer', display: "block"}} 
+                                onClick={() => navigate("/") } 
+                            />
+
+                            <Box my={1} >
+                                <Typography className={style.text} sx={{
+                                    fontWeight: "500",
+                                    fontSize: "4.65px",
+                                    lineHeight: "8.22px"
+                                }}>
+                                    © 2024 SoundMuve.
+                                </Typography>
+                                <Typography className={style.text} sx={{
+                                    fontWeight: "500",
+                                    fontSize: "4.65px",
+                                    lineHeight: "8.22px"
+                                }}>
+                                    All rights reserved.
+                                </Typography>
+                            </Box>
+
+                            <Box sx={{display: "flex", gap: 1}}>
+                                <FacebookIcon className={style.icons} sx={{maxWidth: "5.69px", fontSize: 10}} />
+                                <TwitterIcon className={style.icons} sx={{maxWidth: "5.69px", fontSize: 10}} />
+                                <LinkedInIcon className={style.icons} sx={{maxWidth: "5.69px", fontSize: 10}} />
+                                <InstagramIcon className={style.icons} sx={{maxWidth: "5.69px", fontSize: 10}} />
+                            </Box>
                         </Box>
-                    </div>
+                    </Grid>
+                    
+                    
+                    <Grid item
+                        xs={4} sm={4} md={4} // lg={3}
+                        sx={{ display: "flex", justifyContent: "center" }}
+                    >
+                        <Box>
+                            {/* <Typography className={style.title}>
+                                Quick Links
+                            </Typography> */}
+
+                            <Box my={0}>
+                                <ul className={style.footerList}>
+                                    {/* <li className={style.text}>
+                                        <Link to="/about" className={style.link} title='About Us'>
+                                            About Us
+                                        </Link>
+                                    </li> */}
+                                    <li className={style.xsText}>
+                                        <Link to="/pricing" className={`${style.link} ${style.xsLink}`} title='Pricing'>
+                                            Pricing
+                                        </Link>
+                                    </li>
+                                    {/* <li className={style.text}>
+                                        <Link to="/faq" className={style.link} title='FAQs'>
+                                            FAQs
+                                        </Link>
+                                    </li> */}
+                                    <li className={style.xsText}>
+                                        <Link to="/terms-of-use" className={`${style.link} ${style.xsLink}`} title='Terms of Use'>
+                                            Terms of Use
+                                        </Link>
+                                    </li>
+                                    <li className={style.xsText}>
+                                        <Link to="/privacy-policy" className={`${style.link} ${style.xsLink}`} title='Privacy Policy'>
+                                            Privacy Policy
+                                        </Link>
+                                    </li>
+                                </ul>
+                            </Box>
+                        </Box>
+                    </Grid>
+                    
+                    <Grid item
+                        xs={4} sm={4} md={4} // lg={3}
+                        sx={{ display: "flex", justifyContent: "center", overflow: "hidden" }}
+                    >
+                        <div>
+                            <Typography className={style.title} sx={{
+                                fontWeight: "700",
+                                fontSize: "5.38px",
+                                lineHeight: "8.25px",
+                                letterSpacing: "-0.06px"
+                            }}>
+                                Our Newsletter
+                            </Typography>
+
+                            <Box my={1}>
+                                <Typography className={style.text} sx={{
+                                    fontWeight: "500",
+                                    fontSize: "4.72px",
+                                    lineHeight: "8.22px"
+                                }}>
+                                    Subscribe to our newsletter to get
+                                    our news delivered to you.
+                                </Typography>
+                            </Box>
+
+                            <Box>
+                                <div style={{
+                                    display: "flex", whiteSpace: "nowrap",
+                                    flexDirection: "row", alignItems: "center"
+                                }}>
+                                    <input 
+                                        type="email" 
+                                        placeholder='Email Address' 
+                                        className={style.xsInput}
+                                    />
+
+                                    <Box sx={{
+                                        border: "0.57px solid #644986",
+                                        borderRadius: "0px 2.28px 2.28px 0px",
+                                        bgcolor: "#644986",
+                                        px: 1,
+                                        height: "14.79px",
+                                        alignSelf: "center",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        cursor: "pointer"
+                                    }}>
+                                        <Typography sx={{
+                                            fontWeight: "700",
+                                            fontSize: "4.13px",
+                                            lineHeight: "7.54px",
+                                            textAlign: "center",
+                                            color: "#fff",
+                                        }}>
+                                            Join
+                                        </Typography>
+                                    </Box>
+
+                                </div>
+                            </Box>
+                        </div>
+                    </Grid>
                 </Grid>
-            </Grid>
+            </Box>
         </Box>
     )
 }

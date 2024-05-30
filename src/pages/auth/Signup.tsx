@@ -159,7 +159,7 @@ function Signup() {
 
 
     return (
-        <Box sx={{bgcolor: "#000", color: "#fff", position: "relative", overflow: "hidden"}}>
+        <Box sx={{bgcolor: "#000", color: "#fff", minHeight: "100vh",  position: "relative", overflow: "hidden"}}>
             <AuthHeaderComponent />
 
             <>
@@ -386,7 +386,6 @@ function Signup() {
                                             { errors.password && <Box sx={{fontSize: 13, color: "red", textAlign: "left"}}>{ errors.password?.message }</Box> }
 
                                         </Box>
-
 
                                         <Box sx={{ py: 1 }}>
                                             <Typography sx={{

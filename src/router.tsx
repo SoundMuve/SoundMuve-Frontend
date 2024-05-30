@@ -16,6 +16,8 @@ import Signup2 from "./pages/auth/Signup2.tsx";
 import ArtistDetails from "./pages/auth/ArtistDetails.tsx";
 import RecordLabelDetails from "./pages/auth/RecordLabelDetails.tsx";
 import ForgotPassword from "./pages/auth/ForgotPassword.tsx";
+import VerifyEmail from "./pages/auth/VerifyEmail.tsx";
+import CreateNewPassword from "./pages/auth/CreateNewPassword.tsx";
 
 
 export const router = createBrowserRouter([
@@ -62,6 +64,14 @@ export const router = createBrowserRouter([
         {
           path: "forgot-password",
           element: <ScrollToTop><ForgotPassword /></ScrollToTop>,
+        },
+        {
+          path: "verify-email",
+          element: <ScrollToTop><VerifyEmail /></ScrollToTop>,
+        },
+        {
+          path: "create-new-password",
+          element: <ScrollToTop><CreateNewPassword /></ScrollToTop>,
         },
         {
           path: "signup",
