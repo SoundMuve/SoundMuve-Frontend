@@ -1,13 +1,6 @@
-// import { MMKV } from 'react-native-mmkv';
-
-// export const storage = new MMKV({
-//   id: "TesaPayStore"
-// });
-
-
 export const customEncrypt = (value: string) => {
     let encryptedValue = btoa(value);
-    for (let i = 0; i < 11; i++) {
+    for (let i = 0; i < 4; i++) {
         encryptedValue = btoa(encryptedValue);
     }
 
@@ -16,7 +9,7 @@ export const customEncrypt = (value: string) => {
 
 export const customDecrypt = (encrypted: string) => {
     let decryptedValue = atob(encrypted);
-    for (let i = 0; i < 11; i++) {
+    for (let i = 0; i < 4; i++) {
         decryptedValue = atob(decryptedValue);
     }
 
@@ -24,27 +17,26 @@ export const customDecrypt = (encrypted: string) => {
 }
 
 
+// THE FOLLOWING FUNCTIONS ARE USED FOR LOCAL STORAGE
+export function setLocalStorage(storageKey: string, value: any) {
+    const lowLevelEncryption = btoa(JSON.stringify(value));
+    localStorage.setItem(storageKey, lowLevelEncryption);
+}
 
-// // THE FOLLOWING FUNCTIONS ARE USED FOR LOCAL STORAGE
-// export function setLocalStorage(storageKey: string, value: any) {
-//     const lowLevelEncryption = btoa(JSON.stringify(value));
-//     storage.set(storageKey, lowLevelEncryption);
-// }
-
-// export function getLocalStorage(storageKey: string) {
-//     const storedData = storage.getString(storageKey);
-//     const storedValue = storedData ? JSON.parse(atob(storedData)) : null;
+export function getLocalStorage(storageKey: string) {
+    const storedData = localStorage.getItem(storageKey);
+    const storedValue = storedData ? JSON.parse(atob(storedData)) : null;
   
-//     return storedValue;
-// }
+    return storedValue;
+}
 
-// export function removeLocalStorageItem(storageKey: string) {
-//     storage.delete(storageKey);
-// }
+export function removeLocalStorageItem(storageKey: string) {
+    localStorage.removeItem(storageKey);
+}
   
-// export function clearLocalStorage() {
-//     storage.clearAll()
-// }
+export function clearLocalStorage() {
+    localStorage.clear()
+}
   
 
 // THE FOLLOWING FUNCTIONS ARE USED FOR SESSION STORAGE

@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import axios from 'axios';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import * as yup from "yup";
@@ -15,6 +16,8 @@ import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import TextField from '@mui/material/TextField';
 import IconButton from '@mui/material/IconButton';
+import Stack from '@mui/material/Stack';
+import Alert from '@mui/material/Alert';
 
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { createTheme, ThemeProvider, Theme, useTheme } from '@mui/material/styles';
@@ -24,6 +27,10 @@ import style from '../pricingStyles.module.css';
 
 import signupImg from "./../../assets/images/signup.jpeg";
 import AuthHeaderComponent from '../../components/AuthHeader';
+import { apiEndpoint } from '../../util/resources';
+import { useUserStore } from '../../state/userStore';
+import { getUserIP } from '../../util/location';
+import SnackbarToast, { SnackbarToastInterface } from '../../components/ToastNotification';
 
 
 const formSchema = yup.object({
@@ -131,8 +138,28 @@ function Signup() {
     const [tnc, setTnc] = useState(true);
     const outerTheme = useTheme();
     const navigate = useNavigate();
+    const [apiResponse, setApiResponse] = useState({
+        display: false,
+        status: true,
+        message: ""
+    });
+    const [toastNotification, setToastNotification] = useState<SnackbarToastInterface>({
+        display: false,
+        status: "success",
+        message: ""
+    });
 
-
+    const _signUpUser = useUserStore((state) => state._signUpUser);
+    const [userIP, setUserIP] = useState("");
+  
+    useEffect(() => {
+        getUserIP().then((res: string) => {
+            if (res) {
+                setUserIP(res);
+            }
+        });
+    }, []);
+    
     const [showPassword, setShowPassword] = useState(false);
     const handleClickShowPassword = () => setShowPassword((show) => !show);
   
@@ -142,20 +169,48 @@ function Signup() {
 
 
         
-    const onSubmit = (formData: typeof formSchema.__outputType) => {
-        console.log(formData);
+    const onSubmit = async (formData: typeof formSchema.__outputType) => {
+        // console.log(formData);
         if (formData.password !== formData.confirmPassword) {
             setError("password", {message: "Passwords do not match"});
             setError("confirmPassword", {message: "Passwords do not match"});
             return;
         }
 
+        try {
+            const response = (await axios.post(`${apiEndpoint}/auth/sign-up`, { ...formData, ip: userIP })).data;
+            
+            if (response && response.savedUser) {
+                setApiResponse({
+                    display: true,
+                    status: true,
+                    message: response.message
+                });
 
-        navigate("/auth/signup-type");
-        
+                _signUpUser(response.savedUser);
+
+                navigate("/auth/signup-type");
+                return;
+            }
+
+            setApiResponse({
+                display: true,
+                status: false,
+                message: response.message || "Oooops, registration failed. please try again."
+            });
+        } catch (error: any) {
+            // console.log(error);
+            const err = error.response.data;
+
+            setApiResponse({
+                display: true,
+                status: false,
+                message: err.message || "Oooops, registration failed. please try again."
+            });
+        }
+
     }
 
-    
 
 
     return (
@@ -456,6 +511,14 @@ function Signup() {
                                                 }}>I agree with SoundMuv terms and conditions</Typography>}
                                             />
                                         </FormGroup>
+
+                                        {
+                                            apiResponse.display && (
+                                                <Stack sx={{ width: '100%', my: 2 }}>
+                                                    <Alert severity={apiResponse.status ? "success" : "error"}>{apiResponse.message}</Alert>
+                                                </Stack>
+                                            )
+                                        }
                                         
 
                                         <Button variant="contained" 
@@ -486,7 +549,7 @@ function Signup() {
                                             }}
                                         >
                                             <span style={{ display: isSubmitting ? "none" : "initial" }}>Sign up</span>
-                                            <CircularProgress size={25} sx={{ display: isSubmitting ? "initial" : "none", color: "#fff", fontWeight: "bold" }} />
+                                            <CircularProgress size={25} sx={{ display: isSubmitting ? "initial" : "none", color: "#8638E5", fontWeight: "bold" }} />
                                         </Button>
 
 
@@ -516,6 +579,14 @@ function Signup() {
                     
                 </Grid>
             </Box>
+
+
+            <SnackbarToast 
+                status={toastNotification.status} 
+                display={toastNotification.display} 
+                message={toastNotification.message} 
+                closeSnackbar={() => setToastNotification({ ...toastNotification, display: false})}
+            />
         </Box>
     )
 }

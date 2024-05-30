@@ -1,6 +1,6 @@
 
-export const backendUrl = "http://localhost:5000";
-export const apiEndpoint = `${backendUrl}/api/v1`;
+export const backendUrl = "https://soundmuve-backend-hqax.onrender.com";
+export const apiEndpoint = `${backendUrl}/api`;
 
 
 export function validateEmail(email: string) {

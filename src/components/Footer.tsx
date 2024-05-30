@@ -13,11 +13,64 @@ import style from "./footer.module.css";
 import { Link } from 'react-router-dom';
 
 import SoundMuve from "./../assets/images/SoundMuve.png";
+import { useState } from 'react';
+import SnackbarToast, { SnackbarToastInterface } from './ToastNotification';
+import axios from 'axios';
+import { apiEndpoint } from '../util/resources';
 
 
 export default function FooterComponent() {
     const navigate = useNavigate();
-    // const location = useLocation();
+    const [email, setEmail] = useState('')
+
+    const [toastNotification, setToastNotification] = useState<SnackbarToastInterface>({
+        display: false,
+        status: "success",
+        message: ""
+    });
+
+            
+    const onSubmit = async () => {
+        if (!email.match(/^([a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+(?:\.[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+)*|\"([^\\]\\\"]|\\.)*\")@(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}$/)) {
+            
+            setToastNotification({
+                display: true,
+                status: "error",
+                message: "Please enter a valid email address."
+            });
+            return;
+        }
+
+        try {
+            const response = (await axios.post(`${apiEndpoint}/newsLetter/subscribe-newsletter`, { email })).data;
+            
+            if (response && response.savedUser) {
+                setToastNotification({
+                    display: true,
+                    status: "success",
+                    message: response.message
+                });
+
+                return;
+            }
+
+            setToastNotification({
+                display: true,
+                status: "error",
+                message: response.message || "Oooops, registration failed. please try again."
+            });
+        } catch (error: any) {
+            // console.log(error);
+            const err = error.response.data;
+
+            setToastNotification({
+                display: true,
+                status: "error",
+                message: err.message || "Oooops, news letter subscription failed. please try again."
+            });
+        }
+
+    }
 
 
     return (
@@ -127,20 +180,26 @@ export default function FooterComponent() {
                                         type="email" 
                                         placeholder='Email Address' 
                                         className={style.input}
+                                        autoComplete="email" 
+                                        value={email}
+                                        required
+                                        onChange={e => setEmail(e.currentTarget.value)}
                                     />
 
-                                    <Box sx={{
-                                        border: "1.33px solid #644986",
-                                        borderRadius: "0px 5.33px 5.33px 0px",
-                                        bgcolor: "#644986",
-                                        px: 1.5,
-                                        height: "34.66px",
-                                        alignSelf: "center",
-                                        display: "flex",
-                                        alignItems: "center",
-                                        justifyContent: "center",
-                                        cursor: "pointer"
-                                    }}>
+                                    <Box onClick={() => onSubmit()}
+                                        sx={{
+                                            border: "1.33px solid #644986",
+                                            borderRadius: "0px 5.33px 5.33px 0px",
+                                            bgcolor: "#644986",
+                                            px: 1.5,
+                                            height: "34.66px",
+                                            alignSelf: "center",
+                                            display: "flex",
+                                            alignItems: "center",
+                                            justifyContent: "center",
+                                            cursor: "pointer"
+                                        }} 
+                                    >
                                         <Typography sx={{
                                             fontWeight: "700",
                                             fontSize: "9.67px",
@@ -276,20 +335,26 @@ export default function FooterComponent() {
                                         type="email" 
                                         placeholder='Email Address' 
                                         className={style.xsInput}
+                                        autoComplete="email" 
+                                        value={email}
+                                        required
+                                        onChange={e => setEmail(e.currentTarget.value)}
                                     />
 
-                                    <Box sx={{
-                                        border: "0.57px solid #644986",
-                                        borderRadius: "0px 2.28px 2.28px 0px",
-                                        bgcolor: "#644986",
-                                        px: 1,
-                                        height: "14.79px",
-                                        alignSelf: "center",
-                                        display: "flex",
-                                        alignItems: "center",
-                                        justifyContent: "center",
-                                        cursor: "pointer"
-                                    }}>
+                                    <Box onClick={() => onSubmit()} 
+                                        sx={{
+                                            border: "0.57px solid #644986",
+                                            borderRadius: "0px 2.28px 2.28px 0px",
+                                            bgcolor: "#644986",
+                                            px: 1,
+                                            height: "14.79px",
+                                            alignSelf: "center",
+                                            display: "flex",
+                                            alignItems: "center",
+                                            justifyContent: "center",
+                                            cursor: "pointer"
+                                        }}
+                                    >
                                         <Typography sx={{
                                             fontWeight: "700",
                                             fontSize: "4.13px",
@@ -307,6 +372,13 @@ export default function FooterComponent() {
                     </Grid>
                 </Grid>
             </Box>
+
+            <SnackbarToast 
+                status={toastNotification.status} 
+                display={toastNotification.display} 
+                message={toastNotification.message} 
+                closeSnackbar={() => setToastNotification({ ...toastNotification, display: false})}
+            />
         </Box>
     )
 }
