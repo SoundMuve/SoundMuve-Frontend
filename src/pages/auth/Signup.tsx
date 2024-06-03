@@ -170,7 +170,6 @@ function Signup() {
 
         
     const onSubmit = async (formData: typeof formSchema.__outputType) => {
-        // console.log(formData);
         if (formData.password !== formData.confirmPassword) {
             setError("password", {message: "Passwords do not match"});
             setError("confirmPassword", {message: "Passwords do not match"});
@@ -179,6 +178,8 @@ function Signup() {
 
         try {
             const response = (await axios.post(`${apiEndpoint}/auth/sign-up`, { ...formData, ip: userIP })).data;
+            // console.log(response);
+            
             
             if (response && response.savedUser) {
                 setApiResponse({

@@ -13,7 +13,7 @@ import TermsOfUse from './pages/TermsOfUse.tsx';
 import AuthLayout from "./pages/auth/AuthLayout.tsx";
 import Login from './pages/auth/Login.tsx';
 import Signup from './pages/auth/Signup.tsx';
-import Signup2 from "./pages/auth/Signup2.tsx";
+import SignupType from "./pages/auth/SignupType.tsx";
 import ArtistDetails from "./pages/auth/ArtistDetails.tsx";
 import RecordLabelDetails from "./pages/auth/RecordLabelDetails.tsx";
 import ForgotPassword from "./pages/auth/ForgotPassword.tsx";
@@ -94,7 +94,7 @@ export const router = createBrowserRouter([
             },
             {
               path: "signup-type",
-              element: <Signup2 />
+              element: <SignupType />
             },
             {
               path: "signup-artistDetails",

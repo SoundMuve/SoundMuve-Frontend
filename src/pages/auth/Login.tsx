@@ -116,7 +116,7 @@ const customTheme = (outerTheme: Theme) =>
 function Login() {
     const navigate = useNavigate();
     const outerTheme = useTheme();
-  const _loginUser = useUserStore((state) => state._loginUser);
+    const _loginUser = useUserStore((state) => state._loginUser);
 
     const [apiResponse, setApiResponse] = useState({
         display: false,
@@ -147,7 +147,7 @@ function Login() {
 
         try {
             const response = (await axios.post(`${apiEndpoint}/auth/sign-in`, formData )).data;
-            // console.log(response);
+            console.log(response);
             
             if (response && (response.user || response.token)) {
                 setApiResponse({
@@ -161,7 +161,6 @@ function Login() {
                     message: response.message
                 });
 
-
                 _loginUser(response.user, response.token);
 
                 navigate("/account/", {replace: true});
@@ -174,8 +173,8 @@ function Login() {
                 message: response.message || "Oooops, login failed. please try again."
             });
         } catch (error: any) {
-            // console.log(error);
             const err = error.response.data;
+            console.log(err);
 
             setApiResponse({
                 display: true,
@@ -184,7 +183,6 @@ function Login() {
             });
         }
         
-
     }
 
     

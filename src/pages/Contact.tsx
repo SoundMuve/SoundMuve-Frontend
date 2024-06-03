@@ -1,12 +1,16 @@
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as yup from "yup";
 import { yupResolver } from '@hookform/resolvers/yup';
+import axios from 'axios';
 
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
+import Stack from '@mui/material/Stack';
+import Alert from '@mui/material/Alert';
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 import { createTheme, ThemeProvider, Theme, useTheme } from '@mui/material/styles';
@@ -15,6 +19,8 @@ import { outlinedInputClasses } from '@mui/material/OutlinedInput';
 import HeaderComponent from '../components/Header';
 import FooterComponent from '../components/Footer';
 import style from './contactStyles.module.css';
+import SnackbarToast, { SnackbarToastInterface } from '../components/ToastNotification';
+import { apiEndpoint } from '../util/resources';
 
 
 const formSchema = yup.object({
@@ -115,16 +121,67 @@ const customTheme = (outerTheme: Theme) =>
 
 function Contact() {
     const outerTheme = useTheme();
+         
+    const [apiResponse, setApiResponse] = useState({
+        display: false,
+        status: true,
+        message: ""
+    });
+    const [toastNotification, setToastNotification] = useState<SnackbarToastInterface>({
+        display: false,
+        status: "success",
+        message: ""
+    });
 
     const { 
         handleSubmit, register, formState: { errors, isValid, isSubmitting } 
     } = useForm({ resolver: yupResolver(formSchema), mode: 'onChange', reValidateMode: 'onChange' });
 
         
-    const onSubmit = (formData: typeof formSchema.__outputType) => {
-        console.log(formData);
-        
+    const onSubmit = async (formData: typeof formSchema.__outputType) => {
+        setApiResponse({
+            display: false,
+            status: true,
+            message: ''
+        });
+        const data2db = {
+            subject: " ",
+            name: formData.name,
+            email: formData.email,
+            msg: formData.message
+        };
 
+        try {
+            const response = (await axios.post(`${apiEndpoint}/newsLetter/contact-us`, data2db )).data;
+            // console.log(response);
+            
+            setApiResponse({
+                display: true,
+                status: true,
+                message: response.message
+            });
+            setToastNotification({
+                display: true,
+                status: "success",
+                message: response.message
+            });
+
+        } catch (error: any) {
+            const err = error.response.data;
+            // console.log(err);
+
+            setApiResponse({
+                display: true,
+                status: false,
+                message: err.message || "Oooops, failed to send message. please try again."
+            });
+
+            setToastNotification({
+                display: true,
+                status: "error",
+                message: err.message || "Oooops, failed to send message. please try again."
+            });
+        }
     }
 
     
@@ -227,8 +284,15 @@ function Contact() {
                                         </Box>
                                     </ThemeProvider>
 
+                                    {
+                                        apiResponse.display && (
+                                            <Stack sx={{ width: '100%', mt: 5, mb: 2 }}>
+                                                <Alert severity={apiResponse.status ? "success" : "error"}>{apiResponse.message}</Alert>
+                                            </Stack>
+                                        )
+                                    }
+
                                     <Box>
-                                        
                                         <Button variant="outlined" 
                                             fullWidth type="submit" 
                                             disabled={ !isValid || isSubmitting } 
@@ -255,7 +319,7 @@ function Contact() {
                                             }}
                                         >
                                             <span style={{ display: isSubmitting ? "none" : "initial" }}>Send Message</span>
-                                            <CircularProgress size={25} sx={{ display: isSubmitting ? "initial" : "none", color: "#fff", fontWeight: "bold" }} />
+                                            <CircularProgress size={25} sx={{ display: isSubmitting ? "initial" : "none", color: "#8638E5", fontWeight: "bold" }} />
                                         </Button>
 
                                         <Button variant="contained" 
@@ -287,7 +351,6 @@ function Contact() {
                                         >
                                             Send a Mail
                                         </Button>
-
                                     </Box>
                                 </form>
                             </Grid>
@@ -302,6 +365,13 @@ function Contact() {
             </Box>
 
             <FooterComponent />
+
+            <SnackbarToast 
+                status={toastNotification.status} 
+                display={toastNotification.display} 
+                message={toastNotification.message} 
+                closeSnackbar={() => setToastNotification({ ...toastNotification, display: false})}
+            />
         </>
     )
 }
