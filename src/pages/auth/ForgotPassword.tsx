@@ -128,8 +128,6 @@ function ForgotPassword() {
 
         
     const onSubmit = async (formData: typeof formSchema.__outputType) => {
-        console.log(formData);
-
         setApiResponse({
             display: false,
             status: true,

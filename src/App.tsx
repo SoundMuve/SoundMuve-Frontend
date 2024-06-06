@@ -1,12 +1,22 @@
+import { useEffect } from "react";
 import { RouterProvider } from "react-router-dom";
 import { router } from './router';
+import { useUserStore } from "./state/userStore";
+import { useSettingStore } from "./state/settingStore";
 
 function App() {
-    // const { pathname } = useLocation();
+    const _handleRestoreUser = useUserStore((state) => state._handleRestoreUser);
+    const _restoreSettings = useSettingStore((state) => state._restoreSettings);
+        
+    const handleRefreshNredirect = () => {
+        // sessionStorage.setItem('lastPath', window.location.pathname);
+        _restoreSettings();
+        _handleRestoreUser();
+    }
 
-    // useEffect(() => {
-    //     window.scrollTo(0, 0);
-    // }, [pathname]);
+    useEffect(() => {
+        handleRefreshNredirect();
+    }, []);
 
     return (
         <>

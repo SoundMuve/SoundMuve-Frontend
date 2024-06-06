@@ -134,7 +134,7 @@ function Contact() {
     });
 
     const { 
-        handleSubmit, register, formState: { errors, isValid, isSubmitting } 
+        handleSubmit, register, reset, formState: { errors, isValid, isSubmitting } 
     } = useForm({ resolver: yupResolver(formSchema), mode: 'onChange', reValidateMode: 'onChange' });
 
         
@@ -166,6 +166,8 @@ function Contact() {
                 message: response.message
             });
 
+            reset();
+            
         } catch (error: any) {
             const err = error.response.data;
             // console.log(err);

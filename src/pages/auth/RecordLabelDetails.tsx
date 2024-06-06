@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import * as yup from "yup";
 import { yupResolver } from '@hookform/resolvers/yup';
+import axios from 'axios';
 
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
@@ -11,6 +12,8 @@ import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 import TextField from '@mui/material/TextField';
 import FormControl from '@mui/material/FormControl';
+import Alert from '@mui/material/Alert';
+import Stack from '@mui/material/Stack';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import { createTheme, ThemeProvider, Theme, useTheme } from '@mui/material/styles';
@@ -23,13 +26,17 @@ import recordLabelImage from "./../../assets/images/recordLabelSignup.jpg";
 import cloudUpload from "./../../assets/images/cloud_upload.png";
 
 import { getCountries, getUserLocation } from '../../util/location';
+import { restCountries } from '../../util/countries';
+import { apiEndpoint } from '../../util/resources';
+import { useUserStore } from '../../state/userStore';
+import { useSettingStore } from '../../state/settingStore';
 
 
 const formSchema = yup.object({
     recordLabelName: yup.string().required().min(2).trim().label("First Name"),
     phoneNumber: yup.string().required().min(7, "Incorrect phone number").max(15, "Incorrect phone number").trim().label("Last Name"),
     country: yup.string().required().min(2).trim().label("Country"),
-    gender: yup.string().required().min(2).trim().label("Gender"),
+    // logo: yup.string().required().min(2).trim().label("logo"),
 });
 
 const customTheme = (outerTheme: Theme) =>
@@ -108,14 +115,33 @@ const customTheme = (outerTheme: Theme) =>
 function RecordLabelDetails() {
     const navigate = useNavigate();
     const outerTheme = useTheme();
-    const [countries, setCountries] = useState([]);
+    const [countries, setCountries] = useState(restCountries);
     const [userCountry, setUserCountry] = useState("");
+    const [image, setImage] = useState();
+    const [imagePreview, setImagePreview] = useState();
+    const userData = useUserStore((state) => state.userData);
+    const _signUpUser = useUserStore((state) => state._signUpUser);
+             
+    const [apiResponse, setApiResponse] = useState({
+        display: false,
+        status: true,
+        message: ""
+    });
+    const _setToastNotification = useSettingStore((state) => state._setToastNotification);
+    
 
     const { 
         handleSubmit, register, setValue, formState: { errors, isValid, isSubmitting } 
     } = useForm({ resolver: yupResolver(formSchema), mode: 'onBlur', reValidateMode: 'onChange' });
 
     useEffect(() => {
+        const sortedCountries = countries.sort((a: any, b: any) => {
+            if (a.name.common < b.name.common) return -1;
+            if (a.name.common > b.name.common) return 1;
+            return 0;
+        });
+        setCountries(sortedCountries);
+
         getCountries().then((countryRes) => {
             setCountries(countryRes);
     
@@ -128,8 +154,6 @@ function RecordLabelDetails() {
 
     }, []);
     
-    const [image, setImage] = useState();
-    const [imagePreview, setImagePreview] = useState();
     const handleFileUpload = async (e: any) => {
         const file = e.target.files[0]; 
         setImage(file);
@@ -161,21 +185,82 @@ function RecordLabelDetails() {
             }
         });
     }
-
         
-    const onSubmit = (formData: typeof formSchema.__outputType) => {
-        console.log(formData);
+    const onSubmit = async (formData: typeof formSchema.__outputType) => {
+        setApiResponse({
+            display: false,
+            status: true,
+            message: ""
+        });
 
-        if (image) {
-            
+        if (!image) {
+            setApiResponse({
+                display: true,
+                status: false,
+                message: "Please upload a logo."
+            });
+
+            return;
         }
 
+        // const data2db = {
+        //     email: userData.email,
+        //     teamType: "Record Label",
+        //     ArtistName: formData.recordLabelName,
+        //     recordLabelName: formData.recordLabelName,
+        //     country: formData.country,
+        //     phoneNumber: formData.phoneNumber,
+        //     logo: image,
+        // };
+        // console.log(data2db);
 
-        navigate("/auth/signup-type");
-        
+        const data2db = new FormData();
+        data2db.append('email', userData.email);
+        data2db.append('teamType', "Record Label");
+        data2db.append('ArtistName', formData.recordLabelName);
+        data2db.append('recordLabelName', formData.recordLabelName);
+        data2db.append('country', formData.country);
+        data2db.append('phoneNumber', formData.phoneNumber);
+        data2db.append('logo', image);
+
+        try {
+            const response = (await axios.patch(
+                `${apiEndpoint}/auth/updateTeam-details`,
+                data2db,  
+                {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    },
+                }
+            )).data;
+            // console.log(response);
+
+            _signUpUser(response.user);
+            
+            setApiResponse({
+                display: true,
+                status: true,
+                message: response.message
+            });
+            _setToastNotification({
+                display: true,
+                status: "success",
+                message: response.message
+            });
+
+            navigate("/auth/login", {replace: true});
+        } catch (error: any) {
+            const err = error.response.data;
+            console.log(err);
+
+            setApiResponse({
+                display: true,
+                status: false,
+                message: err.message || "Oooops, failed to update details. please try again."
+            });
+        }
+
     }
-
-
 
 
     return (
@@ -244,7 +329,6 @@ function RecordLabelDetails() {
 
 
                 <Container sx={{position: "relative", top: -47 }}>
-
                     <ThemeProvider theme={customTheme(outerTheme)}>
                         <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
                             <form noValidate onSubmit={ handleSubmit(onSubmit) } 
@@ -427,6 +511,14 @@ function RecordLabelDetails() {
                                 </Box>
 
 
+                                {
+                                    apiResponse.display && (
+                                        <Stack sx={{ width: '100%', mt: 5, mb: 2 }}>
+                                            <Alert severity={apiResponse.status ? "success" : "error"}>{apiResponse.message}</Alert>
+                                        </Stack>
+                                    )
+                                }
+
                                 <Button variant="contained" 
                                     fullWidth type="submit" 
                                     disabled={ !isValid || isSubmitting || !imagePreview } 
@@ -455,12 +547,11 @@ function RecordLabelDetails() {
                                     }}
                                 >
                                     <span style={{ display: isSubmitting ? "none" : "initial" }}>Continue</span>
-                                    <CircularProgress size={25} sx={{ display: isSubmitting ? "initial" : "none", color: "#fff", fontWeight: "bold" }} />
+                                    <CircularProgress size={25} sx={{ display: isSubmitting ? "initial" : "none", color: "#8638E5", fontWeight: "bold" }} />
                                 </Button>
                             </form>
                         </Box>
                     </ThemeProvider>
-
                 </Container>
 
                 

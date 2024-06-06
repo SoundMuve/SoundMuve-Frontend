@@ -30,7 +30,6 @@ import AuthHeaderComponent from '../../components/AuthHeader';
 import { apiEndpoint } from '../../util/resources';
 import { useUserStore } from '../../state/userStore';
 import { getUserIP } from '../../util/location';
-import SnackbarToast, { SnackbarToastInterface } from '../../components/ToastNotification';
 
 
 const formSchema = yup.object({
@@ -143,12 +142,7 @@ function Signup() {
         status: true,
         message: ""
     });
-    const [toastNotification, setToastNotification] = useState<SnackbarToastInterface>({
-        display: false,
-        status: "success",
-        message: ""
-    });
-
+    
     const _signUpUser = useUserStore((state) => state._signUpUser);
     const [userIP, setUserIP] = useState("");
   
@@ -167,8 +161,6 @@ function Signup() {
         handleSubmit, register, setError, formState: { errors, isValid, isSubmitting } 
     } = useForm({ resolver: yupResolver(formSchema), mode: 'onBlur', reValidateMode: 'onChange' });
 
-
-        
     const onSubmit = async (formData: typeof formSchema.__outputType) => {
         if (formData.password !== formData.confirmPassword) {
             setError("password", {message: "Passwords do not match"});
@@ -179,7 +171,6 @@ function Signup() {
         try {
             const response = (await axios.post(`${apiEndpoint}/auth/sign-up`, { ...formData, ip: userIP })).data;
             // console.log(response);
-            
             
             if (response && response.savedUser) {
                 setApiResponse({
@@ -211,8 +202,6 @@ function Signup() {
         }
 
     }
-
-
 
     return (
         <Box sx={{bgcolor: "#000", color: "#fff", minHeight: "100vh",  position: "relative", overflow: "hidden"}}>
@@ -580,14 +569,6 @@ function Signup() {
                     
                 </Grid>
             </Box>
-
-
-            <SnackbarToast 
-                status={toastNotification.status} 
-                display={toastNotification.display} 
-                message={toastNotification.message} 
-                closeSnackbar={() => setToastNotification({ ...toastNotification, display: false})}
-            />
         </Box>
     )
 }

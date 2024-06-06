@@ -23,8 +23,8 @@ import { createTheme, ThemeProvider, Theme, useTheme } from '@mui/material/style
 import AuthHeaderComponent from '../../components/AuthHeader';
 import newPasswordImg from "./../../assets/images/newPassword.png";
 import { apiEndpoint } from '../../util/resources';
-import SnackbarToast, { SnackbarToastInterface } from '../../components/ToastNotification';
 import { useUserStore } from '../../state/userStore';
+import { useSettingStore } from '../../state/settingStore';
 
 
 const formSchema = yup.object({
@@ -129,11 +129,7 @@ function CreateNewPassword() {
         status: true,
         message: ""
     });
-    const [toastNotification, setToastNotification] = useState<SnackbarToastInterface>({
-        display: false,
-        status: "success",
-        message: ""
-    });
+    const _setToastNotification = useSettingStore((state) => state._setToastNotification);
 
     const { 
         handleSubmit, register, setError, formState: { errors, isValid, isSubmitting } 
@@ -141,6 +137,12 @@ function CreateNewPassword() {
 
         
     const onSubmit = async (formData: typeof formSchema.__outputType) => {
+        setApiResponse({
+            display: false,
+            status: true,
+            message: ""
+        });
+
         if (formData.password !== formData.confirmPassword) {
             setError("password", {message: "Passwords do not match"});
             setError("confirmPassword", {message: "Passwords do not match"});
@@ -161,7 +163,7 @@ function CreateNewPassword() {
                 status: true,
                 message: response.message
             });
-            setToastNotification({
+            _setToastNotification({
                 display: true,
                 status: "success",
                 message: response.message
@@ -388,13 +390,6 @@ function CreateNewPassword() {
                     </ThemeProvider>
                 </Box>
             </Container>
-
-            <SnackbarToast 
-                status={toastNotification.status} 
-                display={toastNotification.display} 
-                message={toastNotification.message} 
-                closeSnackbar={() => setToastNotification({ ...toastNotification, display: false})}
-            />
         </Box>
     )
 }

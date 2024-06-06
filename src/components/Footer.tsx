@@ -21,7 +21,7 @@ import { apiEndpoint } from '../util/resources';
 
 export default function FooterComponent() {
     const navigate = useNavigate();
-    const [email, setEmail] = useState('')
+    const [email, setEmail] = useState('');
 
     const [toastNotification, setToastNotification] = useState<SnackbarToastInterface>({
         display: false,
@@ -59,6 +59,8 @@ export default function FooterComponent() {
                 status: "error",
                 message: response.message || "Oooops, registration failed. please try again."
             });
+
+            setEmail("");
         } catch (error: any) {
             // console.log(error);
             const err = error.response.data;
@@ -74,7 +76,10 @@ export default function FooterComponent() {
 
 
     return (
-        <Box bgcolor="#21262C" sx={{px: 2, py: {xs: 5, md: 7}}}>
+        <Box bgcolor="#21262C" 
+            // sx={{px: 2, py: {xs: 5, md: 7}}}
+            sx={{ px: {xs: 2, md: 5, lg: 12}, py: {xs: 5, md: 7} }}
+        >
             <Box sx={{display: {xs: "none", md: "block"}}}>
                 <Grid container spacing={2}>
                     <Grid item

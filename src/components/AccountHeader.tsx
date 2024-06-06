@@ -15,23 +15,26 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 // import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
+
 import LanguageIcon from '@mui/icons-material/Language';
+import AccountCircleOutlined from '@mui/icons-material/AccountCircleOutlined';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import CloseIcon from '@mui/icons-material/Close';
+import LightbulbOutlinedIcon from '@mui/icons-material/LightbulbOutlined';
 
 import SoundMuve from "./../assets/images/SoundMuve.png";
-import { useUserStore } from '../state/userStore';
-import { AccountCircleOutlined } from '@mui/icons-material';
+import light_off from "./../assets/images/light_off.png";
+import { useSettingStore } from '../state/settingStore';
 
 const drawerWidth = 240;
 
-export default function HeaderComponent() {
+export default function AccountHeaderComponent() {
     const navigate = useNavigate();
     const location = useLocation();
     const pathname = location.pathname;
     const [mobileOpen, setMobileOpen] = React.useState(false);
-    const isLoggedIn = useUserStore((state) => state.isLoggedIn);
-
+    const darkTheme = useSettingStore((state) => state.darkTheme);
+    const _setTheme = useSettingStore((state) => state._setTheme);
 
 
     const handleDrawerToggle = () => {
@@ -39,16 +42,16 @@ export default function HeaderComponent() {
     };
 
     const menuItems = [
-        {
-            title: "Home",
-            link: "/",
-            active: pathname == '/' ? true : false,
-        },
-        {
-            title: "About",
-            link: "/about",
-            active: pathname.startsWith('/about'),
-        },
+        // {
+        //     title: "Home",
+        //     link: "/",
+        //     active: pathname == '/' ? true : false,
+        // },
+        // {
+        //     title: "About",
+        //     link: "/about",
+        //     active: pathname.startsWith('/about'),
+        // },
         {
             title: "Contact",
             link: "/contact",
@@ -60,7 +63,6 @@ export default function HeaderComponent() {
             active: pathname.startsWith('/faq'),
         }
     ];
-
 
     const drawer = (
         <Box 
@@ -79,6 +81,14 @@ export default function HeaderComponent() {
                 <Divider color='#c1c1c1' />
 
                 <List onClick={handleDrawerToggle}>
+                    <Link to="/account/artist">
+                        <ListItem disablePadding sx={{bgcolor: pathname.endsWith('/artist') ? "#141414" : ''}}>
+                            <ListItemButton>
+                                <ListItemText primary="Dashboard" />
+                            </ListItemButton>
+                        </ListItem>
+                    </Link>
+
                     {menuItems.map((item) => (
                         <Link key={item.title} to={item.link}>
                             <ListItem disablePadding sx={{bgcolor: item.active ? "#141414" : ''}}>
@@ -92,26 +102,54 @@ export default function HeaderComponent() {
             </Box>
 
             <Box sx={{mt: "auto"}}>
-                <Box onClick={handleDrawerToggle} sx={{
-                    display: "flex", flexDirection: "row", gap: 0, color: "#FFF", 
-                    border: "1px solid #fff",
-                    p: 1, width: "90px",
-                    borderRadius: 3,
-                }}>
-                    <LanguageIcon />
-                    <Typography sx={{color: "#FFF"}}>Eng</Typography>
-                    <ArrowDropDownIcon />
+
+                <Box sx={{display: "flex", flexDirection: "row", justifyContent: "space-between", gap: 10}}>
+                    <Box onClick={handleDrawerToggle} sx={{
+                        display: "flex", flexDirection: "row", gap: 0, color: "#FFF", 
+                        border: "1px solid #fff",
+                        p: 1, width: "90px",
+                        borderRadius: 3,
+                    }}>
+                        <LanguageIcon />
+                        <Typography sx={{color: "#FFF"}}>Eng</Typography>
+                        <ArrowDropDownIcon />
+                    </Box>
+
+
+                    <IconButton 
+                        onClick={() => _setTheme(!darkTheme)}
+                        sx={{color: "#fff"}}
+                    >
+                        { darkTheme ? 
+                            <LightbulbOutlinedIcon />
+                            :
+                            <img 
+                                src={light_off} alt='light off icon'
+                                style={{maxWidth: "24px"}}
+                            />
+                        }
+                    </IconButton>
                 </Box>
+
             </Box>
         </Box>
     );
 
 
     return (
-        <Box sx={{ display: 'flex', background: "#000"}}>
+        <Box 
+            sx={{ 
+                display: 'flex', 
+                // background: darkTheme ? "#000" : "#343434",
+            }}
+        >
             <CssBaseline />
-            <AppBar component="nav" sx={{backgroundColor: "#000"}} position="fixed">
-                <Toolbar>
+            <AppBar 
+                component="nav" 
+                position="fixed"
+                sx={{ backgroundColor: darkTheme ? "#000" : "#343434" }} 
+            >
+                <Toolbar sx={{ px: {xs: 2, md: 5, lg: 12} }}>
                     <Box sx={{flexGrow: 1, cursor: 'pointer' }} onClick={() => navigate("/") }>
                         <img src={SoundMuve} alt="SoundMuve logo" style={{width: 130}} />
                     </Box>
@@ -121,7 +159,6 @@ export default function HeaderComponent() {
                             {menuItems.map((item) => (
                                 <Link key={item.title} to={ item.link } style={{ 
                                     borderBottom: item.active ? "1px solid #fff" : "none",
-                                    // color: item.active ? "#644986" : "#fff",
                                     color: item.active ? "#fff" : "#c1c1c1",
                                 }}>
                                     <Typography>
@@ -135,6 +172,59 @@ export default function HeaderComponent() {
                     <Box sx={{flexGrow: 1, display: "flex", justifyContent: 'flex-end', alignItems: "center"}}>
                         <Stack spacing={2} direction="row" alignItems="center" >
                             <Box sx={{ display: { xs: 'none', sm: 'block' }, alignSelf: "center" }}>
+                                <IconButton 
+                                    onClick={() => _setTheme(!darkTheme)}
+                                    sx={{color: "#fff"}}
+                                >
+                                    { darkTheme ? 
+                                        <LightbulbOutlinedIcon />
+                                        :
+                                        <img 
+                                            src={light_off} alt='light off icon'
+                                            style={{maxWidth: "24px"}}
+                                        />
+                                    }
+
+                                </IconButton>
+                            </Box>
+                            
+
+                            <Link to="/account/artist" style={{
+                                textDecoration: "none",
+                                color: "#000000",
+                                background: "#fff",
+                                padding: "10px",
+                                border: "none",
+                                outline: "none",
+                                borderRadius: "8px",
+                                fontWeight: "bolder",
+                            }}>
+                                <Typography sx={{
+                                    fontWeight: '700',
+                                    fontSize: "12.92px",
+                                    lineHeight: "12px",
+                                    letterSpacing: "-0.26px",
+                                    textAlign: 'center',
+                                    color: "#000",
+                                    display: { xs: 'none', sm: 'block' }
+                                }}>
+                                    Add new release
+                                </Typography>
+
+                                <Typography sx={{
+                                    fontWeight: '700',
+                                    fontSize: "9.69px",
+                                    lineHeight: "9px",
+                                    letterSpacing: "-0.19px",
+                                    textAlign: 'center',
+                                    color: "#000",
+                                    display: { xs: 'block', sm: 'none' }
+                                }}>
+                                    Add new Song
+                                </Typography>
+                            </Link>
+
+                            <Box sx={{ display: { xs: 'none', sm: 'block' }, alignSelf: "center" }}>
                                 <Box sx={{display: "flex", flexDirection: "row", gap: 0, color: "#FFF"}}>
                                     <LanguageIcon />
                                     <Typography sx={{color: "#FFF"}}>Eng</Typography>
@@ -142,40 +232,13 @@ export default function HeaderComponent() {
                                 </Box>
                             </Box>
 
-                            { isLoggedIn ? (
-                                <IconButton 
-                                    onClick={() => navigate("/account/") }
-                                    sx={{color: "#fff"}}
-                                >
+                            <Box sx={{ display: { xs: 'none', sm: 'block' }, alignSelf: "center" }}>
+                                <IconButton sx={{color: "#fff"}}>
                                     <AccountCircleOutlined />
                                 </IconButton>
-                            ) : (
-                                <>
-                                    <Link to="/auth/signup" style={{
-                                        textDecoration: "none",
-                                        color: "#fff",
-                                        fontSize: "15px",
-                                        fontWeight: "bolder"
-                                    }}>
-                                        Sign Up
-                                    </Link>
-
-                                    <Link to="/auth/login" style={{
-                                        textDecoration: "none",
-                                        color: "#000000",
-                                        fontSize: "15px",
-                                        background: "#fff",
-                                        padding: "5px 7px",
-                                        border: "none",
-                                        outline: "none",
-                                        borderRadius: "7px",
-                                        fontWeight: "bolder"
-                                    }}>
-                                        Login
-                                    </Link>
-                                </>
-                            )}
+                            </Box>
                         </Stack>
+
 
                         <Box sx={{ ml: 2, display: { sm: 'none' } }}>
                             <IconButton
@@ -211,7 +274,6 @@ export default function HeaderComponent() {
                 </Drawer>
             </nav>
 
-            {/* <Toolbar /> */}
         </Box>
     );
 }

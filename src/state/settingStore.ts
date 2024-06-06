@@ -1,15 +1,7 @@
-// import { LoadingModalProps } from "@/components/LoadingModal";
-// import Colors from "@/constants/Colors";
-// import { getLocalStorage, setLocalStorage } from "@/util/storage";
-// import { create } from "zustand";
+import { create } from "zustand";
+import { getLocalStorage, setLocalStorage } from "../util/storage";
+import { SnackbarToastInterface } from "../components/ToastNotification";
 
-
-// interface settingsInterface {
-//     theme: "dark" | "light";
-//     pinState: boolean;
-//     appLoading: LoadingModalProps;
-//     displayPinModal: boolean;
-// }
 
 // const defaultLoading: LoadingModalProps = {
 //     display: false,
@@ -19,110 +11,124 @@
 
 // const defaultSettings: settingsInterface = {
 //     theme: "light",
-//     pinState: false,
 //     appLoading: defaultLoading,
 //     displayPinModal: false
 // }
 
-// type _typeInterface_ = {
-//     // appLoading: LoadingModalProps;
-//     settings: typeof defaultSettings;
+const defaulToastNotification: SnackbarToastInterface = {
+    status: "info",
+    display: false,
+    // position: {
+    //     vertical: "top",
+    //     horizontal: "right",
+    // },
+    // duration: 3000,
+    message: '',
+    // closeSnackbar: () => void
+}
 
-//     _setTheme: (theme: "light" | "dark") => void;
-//     _setAppLoading: (theme: LoadingModalProps) => void;
-//     _restoreSettings: () => void;
-//     _setSettings: (settings: typeof defaultSettings) => void;
-//     _displayPinModal: (display: boolean) => void;
-//     _setPinState: (status: boolean) => void;
 
-//     // updatePlayerAsync: () => Promise<void>;
-// };
 
-// export const useSettingStore = create<_typeInterface_>((set) => ({
-//     // theme: defaultTheme,
-//     // appLoading: defaultLoading,
-//     settings: defaultSettings,
+type _typeInterface_ = {
+    darkTheme: boolean;
+    // appLoading: LoadingModalProps;
+    // settings: typeof defaultSettings;
+    toastNotification: SnackbarToastInterface;
 
-//     _setTheme: (theme) => {
-//         set((state) => {
-//             const newSettings = {
-//                 ...state.settings,
-//                 theme,
-//             };
+    _setTheme: (theme: boolean) => void;
+    _setToastNotification: (toast: SnackbarToastInterface) => void;
 
-//             setLocalStorage("settings", newSettings);
-//             return { settings: newSettings };
-//         });
-//     },
+    // _setAppLoading: (theme: LoadingModalProps) => void;
+    _restoreSettings: () => void;
+    // _setSettings: (settings: typeof defaultSettings) => void;
+    // _displayPinModal: (display: boolean) => void;
+    // _setPinState: (status: boolean) => void;
 
-//     _setAppLoading: (loading) => {
-//         set((state) => {
-//             const newSettings = {
-//                 ...state.settings,
-//                 appLoading: loading
-//             };
+    // updatePlayerAsync: () => Promise<void>;
+};
 
-//             setLocalStorage("settings", newSettings);
-//             return { settings: newSettings };
-//         });
-//     },
+export const useSettingStore = create<_typeInterface_>((set) => ({
+    darkTheme: true,
+    // appLoading: defaultLoading,
+    // settings: defaultSettings,
+    toastNotification: defaulToastNotification,
 
-//     _setSettings: (settings) => {
-//         setLocalStorage("settings", settings);
-//         // set({settings});
+    _setToastNotification: (toast) => {
+        set((_state) => {
+            return { toastNotification: toast };
+        });
+    },
 
-//         set((state) => {
-//             const newSettings = {
-//                 ...state.settings,
-//                 ...settings,
-//                 pinState: false
-//             };
+    _setTheme: (theme) => {
+        setLocalStorage("settings", {darkTheme: theme});
+        set((_state) => {
+            return { darkTheme: theme };
+        });
+    },
 
-//             setLocalStorage("settings", newSettings);
-//             return { settings: newSettings };
-//         });
-//     },
+    // _setAppLoading: (loading) => {
+    //     set((state) => {
+    //         const newSettings = {
+    //             ...state.settings,
+    //             appLoading: loading
+    //         };
 
-//     _restoreSettings: () => {
-//         const settings = getLocalStorage("settings");
-//         // set({settings: getLocalStorage("settings")});
+    //         setLocalStorage("settings", newSettings);
+    //         return { settings: newSettings };
+    //     });
+    // },
+
+    // _setSettings: (settings) => {
+    //     setLocalStorage("settings", settings);
+    //     // set({settings});
+
+    //     set((state) => {
+    //         const newSettings = {
+    //             ...state.settings,
+    //             ...settings,
+    //             pinState: false
+    //         };
+
+    //         setLocalStorage("settings", newSettings);
+    //         return { settings: newSettings };
+    //     });
+    // },
+
+    _restoreSettings: () => {
+        const settings = getLocalStorage("settings");
         
-//         set((state) => {
-//             const newSettings = {
-//                 ...state.settings,
-//                 ...settings,
-//                 pinState: false
-//             };
-//             // setLocalStorage("settings", newSettings);
-//             return { settings: newSettings };
-//         });
-//     },
+        set((state) => {
+            return { 
+                darkTheme: settings?.darkTheme || state.darkTheme,
+            };
+        });
+    },
 
-//     _displayPinModal: (displayPin) => {
-//         set((state) => {
-//             const newSettings = { 
-//                 ...state.settings, 
-//                 displayPinModal: displayPin,
-//                 // pinState: displayPin ? false : state.settings.pinState
-//             };
-//             setLocalStorage("settings", newSettings);
+    // _displayPinModal: (displayPin) => {
+    //     set((state) => {
+    //         const newSettings = { 
+    //             ...state.settings, 
+    //             displayPinModal: displayPin,
+    //             // pinState: displayPin ? false : state.settings.pinState
+    //         };
+    //         setLocalStorage("settings", newSettings);
 
-//             return { settings: newSettings };
-//         });
-//     },
+    //         return { settings: newSettings };
+    //     });
+    // },
   
-//     _setPinState: (pinStatus) => {
-//         set((state) => {
-//             const newSettings = { 
-//                 ...state.settings, 
-//                 pinState: pinStatus,
-//                 displayPinModal: pinStatus ? false : state.settings.displayPinModal
-//             };
+    // _setPinState: (pinStatus) => {
+    //     set((state) => {
+    //         const newSettings = { 
+    //             ...state.settings, 
+    //             pinState: pinStatus,
+    //             displayPinModal: pinStatus ? false : state.settings.displayPinModal
+    //         };
 
-//             // setLocalStorage("settings", newSettings);
+    //         // setLocalStorage("settings", newSettings);
 
-//             return { settings: newSettings };
-//         });
-//     },
+    //         return { settings: newSettings };
+    //     });
+    // },
   
-// }));
+}));

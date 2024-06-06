@@ -18,8 +18,8 @@ import VerifyEmailImg from "./../../assets/images/VerifyEmail.png";
 import AuthHeaderComponent from '../../components/AuthHeader';
 import style from '../pricingStyles.module.css';
 import { apiEndpoint } from '../../util/resources';
-import SnackbarToast, { SnackbarToastInterface } from '../../components/ToastNotification';
 import { useUserStore } from '../../state/userStore';
+import { useSettingStore } from '../../state/settingStore';
 
 
 const customTheme = (outerTheme: Theme) =>
@@ -107,11 +107,7 @@ function VerifyEmail() {
         status: true,
         message: ""
     });
-    const [toastNotification, setToastNotification] = useState<SnackbarToastInterface>({
-        display: false,
-        status: "success",
-        message: ""
-    });
+    const _setToastNotification = useSettingStore((state) => state._setToastNotification);
     
 
     const handleChange = (e: any, index: any) => {
@@ -182,23 +178,28 @@ function VerifyEmail() {
         
     const onSubmit = async () => {
         setIsSubmitting(true);
+           
+        setApiResponse({
+            display: false,
+            status: true,
+            message: ''
+        });
 
         const data2db = {
             email: userData.email,
             otp: code.join('')
         };
-        console.log(data2db);
         
         try {
             const response = (await axios.post(`${apiEndpoint}/auth/verifyotp-email`, data2db )).data;
-            console.log(response);
+            // console.log(response);
             
             setApiResponse({
                 display: true,
                 status: true,
                 message: response.message
             });
-            setToastNotification({
+            _setToastNotification({
                 display: true,
                 status: "success",
                 message: response.message
@@ -218,6 +219,29 @@ function VerifyEmail() {
                 message: err.message || "Oooops, failed to send email otp. please try again."
             });
             setIsSubmitting(false);
+        }
+    }
+           
+    const handleResendOtp = async () => {
+        try {
+            const response = (await axios.post(`${apiEndpoint}/auth/sendotp-email`, { email: userData.email } )).data;
+            // console.log(response);
+  
+            _setToastNotification({
+                display: true,
+                status: "success",
+                message: response.message
+            });
+
+        } catch (error: any) {
+            // console.log(error);
+            const err = error.response.data;
+
+            setApiResponse({
+                display: true,
+                status: false,
+                message: err.message || "Oooops, failed to send email otp. please try again."
+            });
         }
     }
 
@@ -352,13 +376,17 @@ function VerifyEmail() {
                                 </Box>
                             </Box>
 
-                            <Typography sx={{
-                                fontWeight: "400",
-                                fontSize: {xs: "10.69px", md: "24px"},
-                                lineHeight: {xs: "26.72px", md: "44.6px"},
-                                letterSpacing: {xs: "-0.9px", md: "-0.14px"},
-                                mb: 2
-                            }}>
+                            <Typography 
+                                onClick={() => handleResendOtp()}
+                                sx={{
+                                    fontWeight: "400",
+                                    fontSize: {xs: "10.69px", md: "24px"},
+                                    lineHeight: {xs: "26.72px", md: "44.6px"},
+                                    letterSpacing: {xs: "-0.9px", md: "-0.14px"},
+                                    mb: 2,
+                                    cursor: "pointer"
+                                }}
+                            >
                                 Resend Code
                             </Typography>
 
@@ -405,13 +433,6 @@ function VerifyEmail() {
                     </ThemeProvider>
                 </Box>
             </Container>
-
-            <SnackbarToast 
-                status={toastNotification.status} 
-                display={toastNotification.display} 
-                message={toastNotification.message} 
-                closeSnackbar={() => setToastNotification({ ...toastNotification, display: false})}
-            />
         </Box>
     )
 }

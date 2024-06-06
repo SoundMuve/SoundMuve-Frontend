@@ -1,8 +1,42 @@
+import { useSettingStore } from '../state/settingStore';
+import SoundMuve from "./../assets/images/SoundMuve.png";
+import bgStyles from './../util/bgStyles.module.css';
+
 export default function LoadingComponent() {
+    const darkTheme = useSettingStore((state) => state.darkTheme);
+
     return (
-        <main>
+        <main 
+            style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                minHeight: "100vh",
+                background: darkTheme ? "#000" : "#ffff"
+            }}
+        >
+            { darkTheme && 
+                <>
+                    <section className={`${bgStyles.defaultDisplay} ${bgStyles.mdzz}`}>
+                        <div className={bgStyles.topGradient}></div>
+                        <div className={bgStyles.leftGradient}></div>
+                        <div className={bgStyles.leftBottomGradient}></div>
+                        <div className={bgStyles.rightTopGradient}></div>
+                        <div className={bgStyles.rightBottom2Gradient}></div>
+                        <div className={bgStyles.btnCenteredGradient}></div>
+                        <div className={bgStyles.leftBottom2Gradient}></div>
+                    </section>
+
+                    <section className={`${bgStyles.defaultDisplay} ${bgStyles.xszz}`}>
+                        <div className={bgStyles.mobileLeftGradient}></div>
+                        <div className={bgStyles.mobileRightGradient}></div>
+                        <div className={bgStyles.mobileCenteredGradient}></div>
+                    </section>
+                </>
+            }
+
             <div className="breathing-image">
-                <img src="/src/assets/images/icon.png" alt="loading icon" style={{width: 130}} />
+                <img src={SoundMuve} alt="soundmuve icon" style={{width: 130}} />
                 <style>
                     {`
                         .breathing-image {

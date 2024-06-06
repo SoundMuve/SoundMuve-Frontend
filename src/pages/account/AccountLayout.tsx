@@ -4,10 +4,7 @@ import { useUserStore } from '../../state/userStore';
 const AccountLayout = () => {
     const isLoggedIn = useUserStore((state) => state.isLoggedIn);
 
-    if (!isLoggedIn) {
-        // redirect("/auth/login");
-        return <Navigate replace to={"/auth/login"} />;
-    } 
+    if (!isLoggedIn) return <Navigate replace to={"/auth/login"} />;
 
 
     return (

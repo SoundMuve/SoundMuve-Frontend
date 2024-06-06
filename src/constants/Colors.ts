@@ -1,12 +1,10 @@
-const colors = {
-  // primary: "#3F9FFF",
-  textColor: "#293754",
-  // bg: "#D3DDE8",
-  secondary: "#FFB840",
+const themeColors = {
+  primary: "#8638E5",
 
-  primary: "#F6A344",
-  primaryDark: "#ac8130",
-  bg: "#ffefd1",
+  // textColor: "#293754",
+  // secondary: "#FFB840",
+  // primaryDark: "#ac8130",
+  // bg: "#ffefd1",
 };
 
-export default colors;
+export default themeColors;

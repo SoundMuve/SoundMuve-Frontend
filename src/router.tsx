@@ -22,7 +22,9 @@ import CreateNewPassword from "./pages/auth/CreateNewPassword.tsx";
 
 import AccountLayout from "./pages/account/AccountLayout.tsx";
 import DashboardHome from "./pages/account/DashboardHome.tsx";
-import DashboardArtist from "./pages/account/DashboardArtist.tsx";
+
+import DashboardArtist from "./pages/account/artist/DashboardArtist.tsx";
+import CreateSingle from "./pages/account/artist/CreateSingle.tsx";
 import DashboardRecordLabel from "./pages/account/DashboardRecordLabel.tsx";
 
 
@@ -118,6 +120,10 @@ export const router = createBrowserRouter([
             {
               path: "artist",
               element: <DashboardArtist />
+            },
+            {
+              path: "create-single",
+              element: <CreateSingle />
             },
             {
               path: "record-label",

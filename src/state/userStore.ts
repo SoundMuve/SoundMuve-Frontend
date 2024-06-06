@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { userInterface } from "../constants/typesInterface";
-import { removeLocalStorageItem, setLocalStorage } from "../util/storage";
+import { getLocalStorage, removeLocalStorageItem, setLocalStorage } from "../util/storage";
 
 
 const userEmptyData: userInterface = {
@@ -17,12 +17,14 @@ const userEmptyData: userInterface = {
 
 type _typeInterface_ = {
     accessToken: string;
+    refreshToken: string;
     userData: userInterface;
     isLoggedIn: boolean;
-    _loginUser: (user: userInterface, token: string) => void;
+    _loginUser: (user: userInterface, token: string, refreshToken: string) => void;
     _autoLogin: (user: userInterface) => void;
     _logOutUser: () => void;
-    _handleRefresh: (user?: userInterface, token?: string) => void;
+    _handleRestoreUser: () => void;
+    // _handleRefresh: (user?: userInterface, token?: string) => void;
     _signUpUser: (user: userInterface) => void;
     _verifyUser: (user: userInterface) => void;
     _updateUser: (user: userInterface) => void;
@@ -33,16 +35,19 @@ type _typeInterface_ = {
 
 export const useUserStore = create<_typeInterface_>((set) => ({
     accessToken: "",
+    refreshToken: "",
     userData: userEmptyData,
     isLoggedIn: false,
-    _loginUser: (user, token) => {
+    _loginUser: (user, token, refreshToken) => {
+        setLocalStorage("refreshToken", refreshToken);
         setLocalStorage("access_token", token);
         setLocalStorage("user", user);
     
         set((_state) => {
             return {
-                accessToken: token,
                 userData: user,
+                accessToken: token,
+                refreshToken: refreshToken,
                 isLoggedIn: true,
             };
         });
@@ -70,44 +75,38 @@ export const useUserStore = create<_typeInterface_>((set) => ({
     _logOutUser: () => {
         removeLocalStorageItem("user");
         removeLocalStorageItem("access_token");
+        removeLocalStorageItem("refreshToken");
     
         set((_state) => {
             return {
                 userData: userEmptyData,
                 isLoggedIn: false,
-                accessToken: ""
+                accessToken: "",
+                refreshToken: "",
             };
         });
     },
   
-    _handleRefresh: (user, accessToken) => {
+    _handleRestoreUser: () => {
+        const user = getLocalStorage("user");
+        const accessToken = getLocalStorage("access_token");
+        const refreshToken = getLocalStorage("refreshToken");
+        
         set((state) => {
-            if (user && accessToken) {
-                return {
-                    userData: user,
-                    accessToken: accessToken,
-                };
-            } else if (user) {
-                return {
-                    userData: user,
-                };
-            } else if (accessToken) {
-                return {
-                    accessToken: accessToken,
-                };
-            } else {
-                return {
-                    userData: state.userData,
-                    accessToken: state.accessToken,
-                };
+            return {
+                userData: user || state.userData,
+                accessToken: accessToken || state.accessToken,
+                refreshToken: refreshToken || state.refreshToken
             }
         });
     },
   
     _signUpUser: (user) => {
+        setLocalStorage("user", user);
+
         set((_state) => {
             return {
-                userData: { ...user },
+                userData: user,
             };
         });
     },

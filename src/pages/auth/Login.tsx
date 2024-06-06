@@ -20,10 +20,10 @@ import AuthHeaderComponent from '../../components/AuthHeader';
 import style from '../pricingStyles.module.css';
 import axios from 'axios';
 import { apiEndpoint } from '../../util/resources';
-import SnackbarToast, { SnackbarToastInterface } from '../../components/ToastNotification';
 import Stack from '@mui/material/Stack';
 import Alert from '@mui/material/Alert';
 import { useUserStore } from '../../state/userStore';
+import { useSettingStore } from '../../state/settingStore';
 
 
 const formSchema = yup.object({
@@ -117,17 +117,14 @@ function Login() {
     const navigate = useNavigate();
     const outerTheme = useTheme();
     const _loginUser = useUserStore((state) => state._loginUser);
+    const _signUpUser = useUserStore((state) => state._signUpUser);
 
     const [apiResponse, setApiResponse] = useState({
         display: false,
         status: true,
         message: ""
     });
-    const [toastNotification, setToastNotification] = useState<SnackbarToastInterface>({
-        display: false,
-        status: "success",
-        message: ""
-    });
+    const _setToastNotification = useSettingStore((state) => state._setToastNotification);
     
     const [showPassword, setShowPassword] = useState(false);
     const handleClickShowPassword = () => setShowPassword((show) => !show);
@@ -147,21 +144,40 @@ function Login() {
 
         try {
             const response = (await axios.post(`${apiEndpoint}/auth/sign-in`, formData )).data;
-            console.log(response);
-            
+            // console.log(response);
+
+            // const checkSignupCompletionRes = (await axios.get(
+            //     `${apiEndpoint}/auth/checkProfileInformation/${response.user.email}`, 
+            //     {
+            //         headers: {
+            //             Authorization: `Bearer ${response.token}`
+            //         }
+            //     }
+            // )).data;
+            // console.log(checkSignupCompletionRes);
+
+
             if (response && (response.user || response.token)) {
                 setApiResponse({
                     display: true,
                     status: true,
                     message: response.message
                 });
-                setToastNotification({
+                _setToastNotification({
                     display: true,
                     status: "success",
                     message: response.message
                 });
 
-                _loginUser(response.user, response.token);
+
+                if (!response.user.teamType) {
+                    _signUpUser(response.user);
+                    
+                    navigate("/auth/signup-type");
+                    return;
+                }
+
+                _loginUser(response.user, response.token, response.refreshToken);
 
                 navigate("/account/", {replace: true});
                 return;
@@ -387,13 +403,6 @@ function Login() {
                     </ThemeProvider>
                 </Box>
             </Container>
-
-            <SnackbarToast 
-                status={toastNotification.status} 
-                display={toastNotification.display} 
-                message={toastNotification.message} 
-                closeSnackbar={() => setToastNotification({ ...toastNotification, display: false})}
-            />
         </Box>
     )
 }

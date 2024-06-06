@@ -1,5 +1,6 @@
 
-export const backendUrl = "https://soundmuve-backend-hqax.onrender.com";
+// export const backendUrl = "https://soundmuve-backend-hqax.onrender.com";
+export const backendUrl = "https://soundmuve-backend-zrap.onrender.com";
 export const apiEndpoint = `${backendUrl}/api`;
 
 
