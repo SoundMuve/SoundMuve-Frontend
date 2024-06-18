@@ -6,18 +6,59 @@ import Typography from '@mui/material/Typography';
 
 import AddIcon from '@mui/icons-material/Add';
 
-// import bgStyles from '../../util/bgStyles.module.css';
-import albumImage from './../../../assets/images/album.png';
-import dashHappyGuyImage from './../../../assets/images/dashHappyGuy.png';
-import AccountWrapper from '../../../components/AccountWrapper';
-import { useSettingStore } from '../../../state/settingStore';
-import { useUserStore } from '../../../state/userStore';
+import albumImage from '@/assets/images/album.png';
+import dashHappyGuyImage from '@/assets/images/dashHappyGuy.png';
+import albumSampleArt from "@/assets/images/albumSampleArt.png";
+
+import AccountWrapper from '@/components/AccountWrapper';
+import { useSettingStore } from '@/state/settingStore';
+import { useUserStore } from '@/state/userStore';
+import AlbumSongItem from '@/components/account/AlbumSongItem';
+import NewReleaseModalComponent from '@/components/account/NewReleaseModal';
+import PayoutModalComponent from '@/components/account/PayoutModal';
+import PayoutFlutterwaveModalComponent from '@/components/account/PayoutFlutterwaveModal';
+import PayoutBankModalComponent from '@/components/account/PayoutBankModal';
+
+
+const albumSongs = [
+    {
+        artworkImage: albumSampleArt,
+        songTitle: "Good God",
+        artistName: "Joseph solomon",
+        distributedDSP: ["Apple", "Spotify"]
+    },
+    {
+        artworkImage: albumSampleArt,
+        songTitle: "Good God",
+        artistName: "Joseph solomon",
+        distributedDSP: ["Apple", "Spotify"]
+    },
+    {
+        artworkImage: albumSampleArt,
+        songTitle: "Good God",
+        artistName: "Joseph solomon",
+        distributedDSP: ["Apple", "Spotify"]
+    }
+]
 
 
 function DashboardArtist() {
     const [albumType, setAlbumType] = useState<"Single" | "Album">("Single");
     const darkTheme = useSettingStore((state) => state.darkTheme);
-    const userData = useUserStore((state) => state.userData);
+    const userData = useUserStore((state) => state.userData); 
+
+    const [openReleaseModal, setOpenReleaseModal] = useState(false);
+    const closeReleaseModal = () => { setOpenReleaseModal(false) };
+
+    const [openPayoutModal, setOpenPayoutModal] = useState(false);
+    const closePayoutModal = () => { setOpenPayoutModal(false) };
+
+    const [openPayoutBankModal, setOpenPayoutBankModal] = useState(false);
+    const closePayoutBankModal = () => { setOpenPayoutBankModal(false) };
+
+    const [openPayoutFlutterwaveModal, setOpenPayoutFlutterwaveModal] = useState(false);
+    const closePayoutFlutterwaveModal = () => { setOpenPayoutFlutterwaveModal(false) };
+
 
 
     return (
@@ -93,7 +134,7 @@ function DashboardArtist() {
                                     }}
                                 >$0.00</Typography>
 
-                                <Link to="/account/artist" 
+                                <Link to="/account/artist/balance-history" 
                                     style={{
                                         textDecoration: "none",
                                         color: "#000000",
@@ -160,27 +201,25 @@ function DashboardArtist() {
                                     mx: "auto"
                                 }}
                             >
-                                <Link to="/account/create-single" style={{
-                                    textDecoration: "none",
-                                    color: "#000000",
-                                    border: "none",
-                                    outline: "none",
-                                }}>
-                                    <Box sx={{
+                                <Box 
+                                    onClick={() => setOpenReleaseModal(true) }
+                                    sx={{
                                         p: "10px 29px 10px 29px",
                                         borderRadius: "12px",
                                         background: "#fff",
-                                    }}>
-                                        <Typography sx={{
-                                            fontWeight: '900',
-                                            fontSize: "15px",
-                                            lineHeight: "13px",
-                                            letterSpacing: "-0.13px",
-                                            textAlign: 'center',
-                                            // color: "#000",
-                                        }}> Get Started </Typography>
-                                    </Box>
-                                </Link>
+                                        cursor: "pointer",
+                                        color: "#000"
+                                    }}
+                                >
+                                    <Typography sx={{
+                                        fontWeight: '900',
+                                        fontSize: "15px",
+                                        lineHeight: "13px",
+                                        letterSpacing: "-0.13px",
+                                        textAlign: 'center',
+                                        // color: "#000",
+                                    }}> Get Started </Typography>
+                                </Box>
                             </Box>
                         </Box>
 
@@ -500,11 +539,14 @@ function DashboardArtist() {
                         border: "none",
                         outline: "none",
                     }}>
-                        <Box sx={{
-                            p: {xs: "7.47px 21.65px 7.47px 21.65px", md: "10px 29px 10px 29px"},
-                            borderRadius: {xs: "8.96px", md: "12px"},
-                            background: "#fff",
-                        }}>
+                        <Box 
+                            sx={{
+                                p: {xs: "7.47px 21.65px 7.47px 21.65px", md: "10px 29px 10px 29px"},
+                                borderRadius: {xs: "8.96px", md: "12px"},
+                                background: "#fff",
+                            }}
+                            onClick={() => setOpenPayoutModal(true) }
+                        >
                             <Typography 
                                 noWrap
                                 sx={{
@@ -570,33 +612,27 @@ function DashboardArtist() {
                             }}
                         > Ready to distribute your first release? </Typography>
 
-                        <Link to="/account/create-single" 
-                            style={{
-                                textDecoration: "none",
-                                color: "#000000",
-                                border: "none",
-                                outline: "none",
+                        <Box 
+                            onClick={() => setOpenReleaseModal(true) }
+                            sx={{
+                                p: {xs: "7.55px 21.91px 7.55px 21.91px", md: "10px 29px 10px 29px"},
+                                borderRadius: {xs: "9.06px", md: "12px"},
+                                background: "#fff",
+                                color: "#000",
+                                cursor: "pointer"
                             }}
                         >
-                            <Box 
+                            <Typography 
                                 sx={{
-                                    p: {xs: "7.55px 21.91px 7.55px 21.91px", md: "10px 29px 10px 29px"},
-                                    borderRadius: {xs: "9.06px", md: "12px"},
-                                    background: "#fff",
+                                    fontWeight: '900',
+                                    fontSize: {xs: "11.33px", md: "15px"},
+                                    lineHeight: {xs: "9.82px", md: "13px"},
+                                    letterSpacing: {xs: "-0.1px", md: "-0.13px"},
+                                    textAlign: 'center',
+                                    color: "#000",
                                 }}
-                            >
-                                <Typography 
-                                    sx={{
-                                        fontWeight: '900',
-                                        fontSize: {xs: "11.33px", md: "15px"},
-                                        lineHeight: {xs: "9.82px", md: "13px"},
-                                        letterSpacing: {xs: "-0.1px", md: "-0.13px"},
-                                        textAlign: 'center',
-                                        color: "#000",
-                                    }}
-                                > Get Started </Typography>
-                            </Box>
-                        </Link>
+                            > Get Started </Typography>
+                        </Box>
                     </Box>
                 </Box>
 
@@ -649,6 +685,7 @@ function DashboardArtist() {
 
                                 display: "flex",
                                 alignItems: "center",
+                                cursor: "pointer"
                             }}
                         >
                             <Typography
@@ -671,6 +708,7 @@ function DashboardArtist() {
 
                                 display: "flex",
                                 alignItems: "center",
+                                cursor: "pointer"
                             } : {
                                 width: "100%",
                                 maxWidth: {xs: "200.03px", md: "257.78px"},
@@ -700,13 +738,18 @@ function DashboardArtist() {
                 <Grid container spacing="20px">
                     <Grid item
                         xs={6} md={4}
-                        sx={{ alignSelf: "center" }}
                     >
-                        <Box>
+                        <Box 
+                            sx={{ 
+                                width: "100%",
+                                maxWidth: {xs: "196.38px", md: "345px"},
+                                mx: "auto"
+                            }}
+                        >
                             <Box
                                 sx={{
-                                    width: "100%",
-                                    maxWidth: {xs: "196.38px", md: "345px"},
+                                    // width: "100%",
+                                    // maxWidth: {xs: "196.38px", md: "345px"},
                                     height: {xs: "152.99px", md: "268px"},
                                     borderRadius: {xs: "6.85px", md: "12px"},
                                     bgcolor: "#343434",
@@ -743,6 +786,18 @@ function DashboardArtist() {
                                 }}
                             > Good God </Typography>
 
+                            <Typography
+                                sx={{
+                                    display: albumType == "Album" ? "block" : "none",
+                                    fontWeight: "400",
+                                    fontSize: {xs: "8.02px", md: "15px"},
+                                    lineHeight: {xs: "12.83px", md: "24px"},
+                                    // letterSpacing: {xs: "-0.77px", md: "-1.34px"},
+                                    color: "#979797",
+                                    mb: {md: 1}
+                                }}
+                            > Album </Typography>
+
                             <Box
                                 sx={{
                                     bgcolor: "#B4D28A",
@@ -765,13 +820,16 @@ function DashboardArtist() {
 
                     <Grid item
                         xs={6} md={4}
-                        sx={{ alignSelf: "center" }}
                     >
-                        <Box>
+                        <Box 
+                            sx={{
+                                width: "100%",
+                                maxWidth: {xs: "196.38px", md: "345px"},
+                                mx: "auto"
+                            }}
+                        >
                             <Box
                                 sx={{
-                                    width: "100%",
-                                    maxWidth: {xs: "196.38px", md: "345px"},
                                     height: {xs: "152.99px", md: "268px"},
                                     borderRadius: {xs: "6.85px", md: "12px"},
                                     bgcolor: "#343434",
@@ -808,6 +866,18 @@ function DashboardArtist() {
                                 }}
                             > Good God </Typography>
 
+                            <Typography
+                                sx={{
+                                    display: albumType == "Album" ? "block" : "none",
+                                    fontWeight: "400",
+                                    fontSize: {xs: "8.02px", md: "15px"},
+                                    lineHeight: {xs: "12.83px", md: "24px"},
+                                    // letterSpacing: {xs: "-0.77px", md: "-1.34px"},
+                                    color: "#979797",
+                                    mb: {md: 1}
+                                }}
+                            > Album </Typography>
+
                             <Box
                                 sx={{
                                     bgcolor: "#B4D28A",
@@ -830,13 +900,17 @@ function DashboardArtist() {
 
                     <Grid item
                         xs={6} md={4}
-                        sx={{ alignSelf: "center" }}
                     >
-                        <Box>
+                        <Box
+                            sx={{
+                                width: "100%",
+                                maxWidth: {xs: "196.38px", md: "345px"},
+                                mx: "auto"
+                            }}
+                        >
                             <Box
+                                onClick={() => setOpenReleaseModal(true) }
                                 sx={{
-                                    width: "100%",
-                                    maxWidth: {xs: "196.38px", md: "345px"},
                                     height: {xs: "152.99px", md: "268px"},
                                     borderRadius: {xs: "6.85px", md: "12px"},
                                     // bgcolor: "#343434",
@@ -845,7 +919,8 @@ function DashboardArtist() {
                                     justifyContent: "center",
                                     alignItems: "center",
 
-                                    border: "4px dashed #644986"
+                                    border: "4px dashed #644986",
+                                    cursor: "pointer"
                                 }}
                             >
                                 <Box
@@ -905,11 +980,15 @@ function DashboardArtist() {
                         xs={6} md={4}
                         sx={{ alignSelf: "center", display: {xs: "block", md: "none"} }}
                     >
-                        <Box>
+                        <Box
+                            sx={{
+                                width: "100%",
+                                maxWidth: {xs: "196.38px", md: "345px"},
+                                mx: "auto"
+                            }}
+                        >
                             <Box
                                 sx={{
-                                    width: "100%",
-                                    maxWidth: {xs: "196.38px", md: "345px"},
                                     height: {xs: "152.99px", md: "268px"},
                                     borderRadius: {xs: "6.85px", md: "12px"},
                                     // bgcolor: "#343434",
@@ -954,7 +1033,103 @@ function DashboardArtist() {
                     </Grid>
 
                 </Grid>
+
+                { albumType == "Album" && (
+                    <Box sx={{my: 4}}>
+                        <Grid container spacing="20px">
+                            <Grid item
+                                xs={12} md={6}
+                            >
+                                <Typography
+                                    sx={{
+                                        fontWeight: "900",
+                                        fontSize: {xs: "19px"},
+                                        lineHeight: {xs: "24px"},
+                                        letterSpacing: {xs: "-1.34px"},
+                                        color: "#666666",
+                                        mb: 3
+                                    }}
+                                >
+                                    Songs from Good God Album
+                                </Typography>
+
+                                <Box>
+                                    {albumSongs.map((item, index) => (
+                                        <AlbumSongItem 
+                                            key={index}
+
+                                            artistName={item.artistName}
+                                            artworkImage={item.artworkImage}
+                                            songTitle={item.songTitle}
+                                            distributedDSP={item.distributedDSP} 
+                                        />
+                                    ))}
+                                </Box>
+
+                            </Grid>
+
+                            <Grid item
+                                xs={12} md={6}
+                                sx={{
+                                    display: {xs: "none", md: "initial"}
+                                }}
+                            >
+                                <Typography
+                                    sx={{
+                                        fontWeight: "900",
+                                        fontSize: {xs: "19px"},
+                                        lineHeight: {xs: "24px"},
+                                        letterSpacing: {xs: "-1.34px"},
+                                        color: "#666666",
+                                        mb: 3
+                                    }}
+                                >
+                                    Songs from Good God Album
+                                </Typography>
+
+                                <Box>
+                                    {albumSongs.map((item, index) => (
+                                        <AlbumSongItem 
+                                            key={index}
+
+                                            artistName={item.artistName}
+                                            artworkImage={item.artworkImage}
+                                            songTitle={item.songTitle}
+                                            distributedDSP={item.distributedDSP} 
+                                        />
+                                    ))}
+                                </Box>
+
+                            </Grid>
+                        </Grid>
+                    </Box>
+                )}
+
             </Box>
+
+
+            <NewReleaseModalComponent 
+                openReleaseModal={openReleaseModal}
+                closeReleaseModal={closeReleaseModal}
+            />
+
+            <PayoutModalComponent 
+                openModal={openPayoutModal}
+                closeModal={closePayoutModal}
+                
+                openBankPayoutModal={() => setOpenPayoutBankModal(true)}
+                openFlutterwavePayoutModal={() => setOpenPayoutFlutterwaveModal(true)}
+            />
+
+            <PayoutBankModalComponent 
+                openModal={openPayoutBankModal}
+                closeModal={closePayoutBankModal}
+            />
+
+            <PayoutFlutterwaveModalComponent 
+                openModal={openPayoutFlutterwaveModal}
+                closeModal={closePayoutFlutterwaveModal}
+            />
         </AccountWrapper>
     )
 }

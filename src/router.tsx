@@ -24,8 +24,13 @@ import AccountLayout from "./pages/account/AccountLayout.tsx";
 import DashboardHome from "./pages/account/DashboardHome.tsx";
 
 import DashboardArtist from "./pages/account/artist/DashboardArtist.tsx";
-import CreateSingle from "./pages/account/artist/CreateSingle.tsx";
+import CreateSingle from "./pages/account/artist/CreateSingleRelease.tsx";
 import DashboardRecordLabel from "./pages/account/DashboardRecordLabel.tsx";
+import CreateSingleRelease2 from "./pages/account/artist/CreateSingleRelease2.tsx";
+import BalanceHistory from "./pages/account/artist/BalanceHistory.tsx";
+import SalesReport from "./pages/account/artist/SalesReport.tsx";
+import AnalyticsReach from "./pages/account/artist/AnalyticsReach.tsx";
+import SongDetails from "./pages/account/artist/SongDetails.tsx";
 
 
 export const router = createBrowserRouter([
@@ -119,11 +124,37 @@ export const router = createBrowserRouter([
             },
             {
               path: "artist",
-              element: <DashboardArtist />
-            },
-            {
-              path: "create-single",
-              element: <CreateSingle />
+              // element: <DashboardArtist />,
+              children: [
+                {
+                  path: "",
+                  element: <DashboardArtist />,
+                },
+                {
+                  path: "create-single-release",
+                  element: <CreateSingle />
+                },
+                {
+                  path: "create-single-release-continue",
+                  element: <CreateSingleRelease2 />
+                },
+                {
+                  path: "balance-history",
+                  element: <BalanceHistory />
+                },
+                {
+                  path: "sales-report",
+                  element: <SalesReport />
+                },
+                {
+                  path: "analytics-reach",
+                  element: <AnalyticsReach />
+                },
+                {
+                  path: "song-details",
+                  element: <SongDetails />
+                },
+              ]
             },
             {
               path: "record-label",

@@ -34,6 +34,7 @@ const ScrollToTop = () => {
         const refresh_token = getLocalStorage("refreshToken") || refreshToken;
         const user_data = getLocalStorage("user") || userData;
 
+        setIsLoading(false);
         if (!access_token || !refresh_token || !user_data ) {
             setIsLoading(false);
             return;

@@ -18,13 +18,7 @@ import { SnackbarToastInterface } from "../components/ToastNotification";
 const defaulToastNotification: SnackbarToastInterface = {
     status: "info",
     display: false,
-    // position: {
-    //     vertical: "top",
-    //     horizontal: "right",
-    // },
-    // duration: 3000,
     message: '',
-    // closeSnackbar: () => void
 }
 
 

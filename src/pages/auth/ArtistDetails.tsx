@@ -33,7 +33,7 @@ import { useSettingStore } from '../../state/settingStore';
 
 const formSchema = yup.object({
     artistName: yup.string().required().min(2).trim().label("First Name"),
-    phoneNumber: yup.string().required().min(7, "Incorrect phone number").max(15, "Incorrect phone number").trim().label("Last Name"),
+    phoneNumber: yup.string().required().min(7, "Incorrect phone number").max(15, "Incorrect phone number").trim().label("Phone Number"),
     country: yup.string().required().min(2).trim().label("Country"),
     gender: yup.string().required().min(2).trim().label("Gender"),
 });

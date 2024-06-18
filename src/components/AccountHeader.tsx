@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -25,6 +25,7 @@ import LightbulbOutlinedIcon from '@mui/icons-material/LightbulbOutlined';
 import SoundMuve from "./../assets/images/SoundMuve.png";
 import light_off from "./../assets/images/light_off.png";
 import { useSettingStore } from '../state/settingStore';
+import NewReleaseModalComponent from './account/NewReleaseModal';
 
 const drawerWidth = 240;
 
@@ -32,9 +33,12 @@ export default function AccountHeaderComponent() {
     const navigate = useNavigate();
     const location = useLocation();
     const pathname = location.pathname;
-    const [mobileOpen, setMobileOpen] = React.useState(false);
+    const [mobileOpen, setMobileOpen] = useState(false);
     const darkTheme = useSettingStore((state) => state.darkTheme);
     const _setTheme = useSettingStore((state) => state._setTheme);
+
+    const [openReleaseModal, setOpenReleaseModal] = useState(false);
+    const closeReleaseModal = () => { setOpenReleaseModal(false) }
 
 
     const handleDrawerToggle = () => {
@@ -121,12 +125,12 @@ export default function AccountHeaderComponent() {
                         sx={{color: "#fff"}}
                     >
                         { darkTheme ? 
-                            <LightbulbOutlinedIcon />
-                            :
                             <img 
                                 src={light_off} alt='light off icon'
                                 style={{maxWidth: "24px"}}
                             />
+                            :
+                            <LightbulbOutlinedIcon />
                         }
                     </IconButton>
                 </Box>
@@ -177,28 +181,29 @@ export default function AccountHeaderComponent() {
                                     sx={{color: "#fff"}}
                                 >
                                     { darkTheme ? 
-                                        <LightbulbOutlinedIcon />
-                                        :
                                         <img 
                                             src={light_off} alt='light off icon'
                                             style={{maxWidth: "24px"}}
                                         />
+                                        :
+                                        <LightbulbOutlinedIcon />
                                     }
-
                                 </IconButton>
                             </Box>
                             
 
-                            <Link to="/account/artist" style={{
-                                textDecoration: "none",
-                                color: "#000000",
-                                background: "#fff",
-                                padding: "10px",
-                                border: "none",
-                                outline: "none",
-                                borderRadius: "8px",
-                                fontWeight: "bolder",
-                            }}>
+                            <Box
+                                onClick={() => setOpenReleaseModal(true)}
+                                sx={{
+                                    color: "#000000",
+                                    background: "#fff",
+                                    padding: "10px",
+                                    border: "none",
+                                    borderRadius: "8px",
+                                    fontWeight: "bolder",
+                                    cursor: "pointer"
+                                }}
+                            >
                                 <Typography sx={{
                                     fontWeight: '700',
                                     fontSize: "12.92px",
@@ -222,7 +227,7 @@ export default function AccountHeaderComponent() {
                                 }}>
                                     Add new Song
                                 </Typography>
-                            </Link>
+                            </Box>
 
                             <Box sx={{ display: { xs: 'none', sm: 'block' }, alignSelf: "center" }}>
                                 <Box sx={{display: "flex", flexDirection: "row", gap: 0, color: "#FFF"}}>
@@ -274,6 +279,11 @@ export default function AccountHeaderComponent() {
                 </Drawer>
             </nav>
 
+
+            <NewReleaseModalComponent 
+                openReleaseModal={openReleaseModal}
+                closeReleaseModal={closeReleaseModal}
+            />
         </Box>
     );
 }
