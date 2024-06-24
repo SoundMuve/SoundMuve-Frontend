@@ -167,8 +167,6 @@ const WithdrawMoneyConfirmationModalComponent: React.FC<_Props> = ({
                                     }}
                                 >Bank account</Typography>
                             </Box>
-
-
                         </Stack>
 
                         <Stack direction={"row"} spacing={"20px"} alignItems={"center"} justifyContent={"center"}>

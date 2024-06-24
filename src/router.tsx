@@ -31,6 +31,8 @@ import BalanceHistory from "./pages/account/artist/BalanceHistory.tsx";
 import SalesReport from "./pages/account/artist/SalesReport.tsx";
 import AnalyticsReach from "./pages/account/artist/AnalyticsReach.tsx";
 import SongDetails from "./pages/account/artist/SongDetails.tsx";
+import AllMusic from "./pages/account/artist/AllMusic.tsx";
+import AlbumDetails from "./pages/account/artist/AlbumDetails.tsx";
 
 
 export const router = createBrowserRouter([
@@ -154,6 +156,14 @@ export const router = createBrowserRouter([
                   path: "song-details",
                   element: <SongDetails />
                 },
+                {
+                  path: "album-details",
+                  element: <AlbumDetails />
+                },
+                {
+                  path: "all-music",
+                  element: <AllMusic />
+                },
               ]
             },
             {
@@ -177,86 +187,3 @@ export const router = createBrowserRouter([
       element: <NotFoundPage />
     }
 ]);
-
-// export const router = createBrowserRouter([
-//     {
-//       path: "/",
-//       element: <ScrollToTop><HomePage /></ScrollToTop>,
-  
-//     },
-//     {
-//       path: "/contact",
-//       element: <ScrollToTop><Contact /></ScrollToTop>,
-//     },
-//     {
-//       path: "/faq",
-//       element: <ScrollToTop><Faq /></ScrollToTop>,
-//     },
-//     {
-//       path: "/about",
-//       element: <ScrollToTop><About /></ScrollToTop>,
-//     },
-//     {
-//       path: "/pricing",
-//       element: <ScrollToTop><Pricing /></ScrollToTop>,
-//     },
-//     {
-//       path: "/privacy-policy",
-//       element: <ScrollToTop><PrivacyPolicy /></ScrollToTop>,
-//     },
-//     {
-//       path: "/terms-of-use",
-//       element: <ScrollToTop><TermsOfUse /></ScrollToTop>,
-//     },
-//     {
-//       path: "/auth",
-//       children: [
-//         {
-//           path: "",
-//           element: <ScrollToTop><Login /></ScrollToTop>,
-//         },
-//         {
-//           path: "login",
-//           element: <ScrollToTop><Login /></ScrollToTop>,
-//         },
-//         {
-//           path: "forgot-password",
-//           element: <ScrollToTop><ForgotPassword /></ScrollToTop>,
-//         },
-//         {
-//           path: "verify-email",
-//           element: <ScrollToTop><VerifyEmail /></ScrollToTop>,
-//         },
-//         {
-//           path: "create-new-password",
-//           element: <ScrollToTop><CreateNewPassword /></ScrollToTop>,
-//         },
-//         {
-//           path: "signup",
-//           element: <ScrollToTop><Signup /></ScrollToTop>,
-//         },
-//         {
-//           path: "signup-type",
-//           element: <ScrollToTop><Signup2 /></ScrollToTop>,
-//         },
-//         {
-//           path: "signup-artistDetails",
-//           element: <ScrollToTop><ArtistDetails /></ScrollToTop>,
-//         },
-//         {
-//           path: "signup-recordLabelDetails",
-//           element: <ScrollToTop><RecordLabelDetails /></ScrollToTop>,
-//         },
-//       ]
-//     },
-//     {
-//       path: "/account",
-//       element: <ScrollToTop><Dashboard /></ScrollToTop>,
-//     },
-    
-//     {
-//       path: "*",
-//       element: <ScrollToTop><NotFoundPage /></ScrollToTop>
-//     }
-// ]);
-

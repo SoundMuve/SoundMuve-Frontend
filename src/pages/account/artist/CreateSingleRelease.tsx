@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
@@ -15,7 +16,6 @@ import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
 import { createTheme, ThemeProvider, Theme, useTheme } from '@mui/material/styles';
 import { outlinedInputClasses } from '@mui/material/OutlinedInput';
-
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
@@ -24,35 +24,40 @@ import dayjs from 'dayjs';
 
 import IconButton from '@mui/material/IconButton';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import CheckIcon from '@mui/icons-material/Check';
 // import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-
-import AccountWrapper from '@/components/AccountWrapper';
-import albumSampleArt from "@/assets/images/albumSampleArt.png"
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
+
+import { useUserStore } from '@/state/userStore';
 import { useSettingStore } from '@/state/settingStore';
+import { createReleaseStore } from '@/state/createReleaseStore';
+import { languages } from '@/util/languages';
+import { apiEndpoint } from '@/util/resources';
+
+import AccountWrapper from '@/components/AccountWrapper';
+import albumSampleArt from "@/assets/images/albumSampleArt.png"
+import SearchArtistModalComponent from '@/components/account/SearchArtistModal';
+import AppleSportifyCheckmark from '@/components/AppleSportifyCheckmark';
 
 const formSchema = yup.object({
     songTitle: yup.string().required().trim().label("Song Title"),
-    artistName: yup.string().required().trim().label("Artist Name"),
-    songLyrics: yup.string().trim(),
+    artistName: yup.string().trim().label("Artist Name"),
+    explicitSongLyrics: yup.string().trim(),
     language: yup.string().required().trim().label("Language"),
     primaryGenre: yup.string().required().trim().label("Primary Genre"),
     secondaryGenre: yup.string().required().trim().label("Secondary Genre"),
-    releaseDate: yup.string().required().trim().label("Release Date"),
-    releaseTime: yup.string().required().trim().label("Release Time"),
+    releaseDate: yup.string().trim().label("Release Date"),
     
-    releaseTimeHours: yup.string().required().trim().label("Hours"),
-    releaseTimeMinutes: yup.string().required().trim().label("Minutes"),
-    releaseTimeHourFormat: yup.string().required().trim().label("Time Format"),
+    releaseTimeHours: yup.string().trim().label("Hours"),
+    releaseTimeMinutes: yup.string().trim().label("Minutes"),
+    releaseTimeHourFormat: yup.string().trim().label("Time Format"),
     
-    listenerTimezone: yup.string().trim().label("Listener's Timezone"),
-    generalTimezone: yup.string().trim().label("General Timezone"),
+    listenerTimezone: yup.boolean().label("Listener's Timezone"),
+    generalTimezone: yup.boolean().label("General Timezone"),
 
     labelName: yup.string().trim().label("Label Name"),
     recordingLocation: yup.string().trim().label("Recording Location"),
@@ -136,42 +141,212 @@ const customTheme = (outerTheme: Theme, darkTheme: boolean) =>
 const hours = [...Array(13).keys()].map((num) => num.toString().padStart(2, '0'));
 const minutes = [...Array(60).keys()].map((num) => num.toString().padStart(2, '0'));
 
+const primaryGenre = [
+    'African', 'Alternative', 'Ambient', 'Americana', 'Big Band', 'Blues', 'Brazilian', "Children's Music",
+    'Christian/Gospel', 'Classical Crossover', 'Comedy', 'Country', 'Dance', 'Electronic', 'Fitness & Workout',
+    'Folk', 'French Pop', 'German Folk', 'German Pop', 'Heavy Metal', 'Indian', 'Instrumental',
+    'J Pop', 'Jazz', 'K Pop', 'Karaoke', 'Latin', 'New Age', 'Pop', "R&B/Soul", 'Reggae',
+    'Hip Hop/Rap', 'Holiday', 'Rock', 'Singer/Songwriter', 'Soundtrack', 'Spoken Word', 'Vocal', 'World'
+];
+
+const secondaryGenre = [
+    'African', 'Afro house', 'Afro-fusion', 'Afro-soul', 'Afrobeats', 'Afropop', 'Amapiano', 'Bongo Flava',
+    'Highlife', 'Maskandi', 'Alternative', 'Ambient', 'Americana', 'Big Band', 'Blues', 'Brazilian', "Children's Music",
+    'Christian/Gospel', 'Classical Crossover', 'Comedy', 'Country', 'Dance', 'Electronic', 'Fitness & Workout', 'Folk',
+    'French Pop', 'German Folk', 'German Pop', 'Heavy Metal', 'Hip Hop/Rap', 'Holiday', 'Indian', 'Instrumental', 'J Pop',
+    'Jazz', 'K Pop', 'Karaoke', 'Latin', 'New Age', 'Pop', 'R&B/Soul', 'Reggae', 'Rock', "Singer/Songwriter", 'Soundtrack',
+    'Spoken Word', 'Vocal', 'World', 'Axé', 'Baile Funk', 'Bossa Nova', 'Chorinho', 'Forró', 'v Frevo', 'MPB', 'Pagode',
+    'Samba', 'Sertanejo'
+];
+
+
 function CreateSingleRelease() {
     const navigate = useNavigate();
     const outerTheme = useTheme();
     const darkTheme = useSettingStore((state) => state.darkTheme);
-    const [songLyrics, setSongLyrics] = useState("No");
+    const [explicitLyrics, setExplicitLyrics] = useState("No");
     const [soldWorldwide, setSoldWorldwide] = useState("Yes");
-    
+    const userData = useUserStore((state) => state.userData);
+    const accessToken = useUserStore((state) => state.accessToken);
+    const _setSingleRelease1 = createReleaseStore((state) => state._setSingleRelease1);
+    const _setToastNotification = useSettingStore((state) => state._setToastNotification);
+
     const [apiResponse, setApiResponse] = useState({
         display: false,
         status: true,
         message: ""
     });
 
-    const languages = [
-        "English", "French", "Japaneese", "Arabic"
-    ];
+    const [openSearchArtistModal, setOpenSearchArtistModal] = useState(false);
+    const [selectArtistName, setSelectArtistName] = useState<any>();
+
+
     const { 
-        handleSubmit, register, setValue, getValues, formState: { errors, isValid, isSubmitting } 
+        handleSubmit, register, setValue, getValues, setError, formState: { errors, isValid, isSubmitting } 
     } = useForm({ 
         resolver: yupResolver(formSchema),
-        mode: 'onBlur', reValidateMode: 'onChange', 
+        mode: 'onBlur',
         defaultValues: { 
             soldWorldwide: soldWorldwide,
-            songLyrics: songLyrics,
+            explicitSongLyrics: explicitLyrics,
+            // releaseTimeHours: "00",
+            releaseTimeMinutes: "00",
+            releaseTimeHourFormat: "AM",
+            // language: "English",
+            listenerTimezone: true,
+            generalTimezone: true,
         } 
     });
 
+    const handleSetArtistName = (details: any) => {
+        // console.log(details);
+        setSelectArtistName(details);
+        setValue("artistName", details.spotify.name || details.apple.name );
+    }
+
             
     const onSubmit = async (formData: typeof formSchema.__outputType) => {
-        console.log(formData);
+        // console.log(formData);
 
         setApiResponse({
             display: false,
             status: true,
             message: ""
         });
+
+
+        // if (!formData.artistName) {
+        //     _setToastNotification({
+        //         display: true,
+        //         status: "error",
+        //         message: "Please choose if this song has explicit lyrics."
+        //     })
+
+        //     setError("explicitSongLyrics", {message: "Please choose if this song has explicit lyrics."})
+        //     return;
+        // }
+
+        if (!explicitLyrics) {
+            _setToastNotification({
+                display: true,
+                status: "error",
+                message: "Please choose if this song has explicit lyrics."
+            })
+
+            setError("explicitSongLyrics", {message: "Please choose if this song has explicit lyrics."})
+            return;
+        }
+
+        if (formData.language == "Select Language") {
+            _setToastNotification({
+                display: true,
+                status: "error",
+                message: "Please select a language."
+            })
+
+            setError("language", {message: "Please select a language."}, {shouldFocus: true});
+            return;
+        }
+
+        if (formData.primaryGenre == "Select Primary Genre") {
+            _setToastNotification({
+                display: true,
+                status: "error",
+                message: "Please select primary genre."
+            })
+
+            setError("primaryGenre", {message: "Please select primary genre."}, {shouldFocus: true});
+            return;
+        }
+
+        if (formData.secondaryGenre == "Select Secondary Genre") {
+            _setToastNotification({
+                display: true,
+                status: "error",
+                message: "Please select secondary genre."
+            })
+
+            setError("secondaryGenre", {message: "Please select secondary genre."}, {shouldFocus: true});
+            return;
+        }
+
+        if (!formData.releaseDate) {
+            _setToastNotification({
+                display: true,
+                status: "error",
+                message: "Please select a release date."
+            })
+
+            setError("releaseDate", { message: "Please select a release date." }, {shouldFocus: true});
+
+            // document.getElementById("releaseDate")?.focus();
+            return;
+        }
+
+        const data2db = {
+            email: userData.email,
+            release_type: "Single",
+        
+            song_title: formData.songTitle,
+            artist_name: formData.artistName || '',
+        
+            explicitLyrics: explicitLyrics,
+        
+            language: formData.language,
+            primary_genre: formData.primaryGenre,
+            secondary_genre: formData.secondaryGenre,
+        
+            releaseDate: formData.releaseDate,
+            release_time: `${ formData.releaseTimeHours } : ${ formData.releaseTimeMinutes } ${ formData.releaseTimeHourFormat }`,
+
+            listenerTimezone: formData.listenerTimezone || true,
+            generalTimezone: formData.generalTimezone || true,
+        
+            label_name: formData.labelName || '',
+            recording_location: formData.recordingLocation || '',
+            soldWorldwide: formData.soldWorldwide || '',
+            upc_ean: formData.UPC_EANcode || '',
+        };
+
+        console.log(data2db);
+
+        try {
+            const response = (await axios.post(
+                `${apiEndpoint}/Release/create-release`,
+                data2db,  
+                {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`
+                    },
+                }
+            )).data;
+            console.log(response);
+
+            _setSingleRelease1(data2db);
+
+            setApiResponse({
+                display: true,
+                status: true,
+                message: response.message
+            });
+
+            _setToastNotification({
+                display: true,
+                status: "success",
+                message: response.message
+            });
+
+            navigate("/account/artist/create-single-release-continue");
+        } catch (error: any) {
+            const err = error.response.data;
+            console.log(err);
+
+            setApiResponse({
+                display: true,
+                status: false,
+                message: err.message || "Oooops, failed to update details. please try again."
+            });
+        }
 
     }
 
@@ -212,8 +387,7 @@ function CreateSingleRelease() {
                         >
                             
                             <Grid container spacing="20px" sx={{my: "31px"}}>
-                                <Grid item
-                                    xs={12} md={4}
+                                <Grid item xs={12} md={4}
                                     sx={{ alignSelf: "center"}}
                                 >
                                     <Typography sx={{
@@ -226,8 +400,7 @@ function CreateSingleRelease() {
                                     </Typography>
                                 </Grid>
 
-                                <Grid item
-                                    xs={12} md={8}
+                                <Grid item xs={12} md={8}
                                     sx={{ alignSelf: "center" }}
                                 >
                                     <TextField 
@@ -277,6 +450,7 @@ function CreateSingleRelease() {
                                                 cursor: "pointer",
                                                 display: "inline-block"
                                             }}
+                                            onClick={() => setOpenSearchArtistModal(true) }
                                         >
                                             <Typography 
                                                 sx={{
@@ -290,161 +464,78 @@ function CreateSingleRelease() {
                                             > Add&nbsp;Artist </Typography>
                                         </Box>
 
-                                        <Box
-                                            sx={{
-                                                height: {xs: "82px", md: "82.92px"}, 
-                                                borderRadius: "8.65px",
-                                                // border: "0.07px solid #FFFFFF",
-
-                                                bgcolor: "#6449868F",
-                                                py: {xs: "6.02px",md: "6.5px"},
-                                                px: "7.2px",
-                                                maxWidth: {xs: "337px", md: "100%"},
-
-                                                display: "flex",
-                                                flexDirection: "row",
-                                                alignItems: "center",
-                                                gap: "8.65px",
-                                                my: 2
-                                            }}
-                                        >
-                                            <Box
-                                                sx={{
-                                                    width: "70.67px",
-                                                    height: "69.94px",
-                                                    borderRadius: "5.77px",
-                                                    overflow: "hidden"
-                                                }}
-                                            >
-                                                <img 
-                                                    src={albumSampleArt} alt="album Art"
-                                                    style={{ width: "100%", objectFit: "contain" }}
-                                                />
-                                            </Box>
-
-                                            <Box>
-                                                <Box 
-                                                    sx={{
-                                                        display: "flex",
-                                                        flexDirection: "row",
-                                                        gap: "5px",
-                                                        alignItems: "center"
-                                                    }}
-                                                >
-                                                    <Typography
-                                                        sx={{
-                                                            fontWeight: "700",
-                                                            fontSize: "25px",
-                                                            lineHeight: "20px",
-                                                            letterSpacing: "-0.13px",
-                                                            color: "#fff"
-                                                        }}
-                                                    >Joseph Solomon</Typography>
-                                                </Box>
-
+                                        {
+                                            selectArtistName ? (
                                                 <Box
                                                     sx={{
+                                                        height: {xs: "82px", md: "82.92px"}, 
+                                                        borderRadius: "8.65px",
+                                                        // border: "0.07px solid #FFFFFF",
+
+                                                        bgcolor: "#6449868F",
+                                                        py: {xs: "6.02px",md: "6.5px"},
+                                                        px: "7.2px",
+                                                        maxWidth: {xs: "337px", md: "100%"},
+
                                                         display: "flex",
                                                         flexDirection: "row",
                                                         alignItems: "center",
-                                                        gap: "10px",
-                                                        mt:  "7.2px",
+                                                        gap: "8.65px",
+                                                        my: 2
                                                     }}
                                                 >
                                                     <Box
                                                         sx={{
-                                                            width: "82.2px",
-                                                            height: "25.24px",
-                                                            borderRadius: "8.65px",
-                                                            bgcolor: "#D9D9D9",
-                                                            py: "5.1px",
-                                                            px: "8.65px",
-                                                            display: "flex",
-                                                            flexDirection: "row",
-                                                            alignItems: "center",
-                                                            gap: "10px"
+                                                            width: "70.67px",
+                                                            height: "69.94px",
+                                                            borderRadius: "5.77px",
+                                                            overflow: "hidden"
                                                         }}
                                                     >
-                                                        <Typography
-                                                            sx={{
-                                                                fontWeight: "700",
-                                                                fontSize: "10.82px",
-                                                                lineHeight: "14.42px",
-                                                                letterSpacing: "-0.09px",
-                                                                color: "#581D3A"
-                                                            }}
-                                                        > Apple </Typography>
-
-                                                        <Box
-                                                            sx={{
-                                                                bgcolor: "#fff",
-                                                                width: "15px",
-                                                                height: "15px",
-                                                                borderRadius: "50%",
-                                                                display: "flex",
-                                                                justifyContent: "center",
-                                                                alignItems: "center"
-                                                            }}
-                                                        >
-                                                            <CheckIcon 
-                                                                sx={{ 
-                                                                    color: "#000",
-                                                                    fontSize: "12.82px",
-                                                                    lineHeight: "14.42px",
-                                                                    letterSpacing: "-0.09px",
-                                                                }} 
-                                                            />
-                                                        </Box>
+                                                        <img 
+                                                            src={albumSampleArt} alt="album Art"
+                                                            style={{ width: "100%", objectFit: "contain" }}
+                                                        />
                                                     </Box>
 
-                                                    <Box
-                                                        sx={{
-                                                            width: "82.2px",
-                                                            height: "25.24px",
-                                                            borderRadius: "8.65px",
-                                                            bgcolor: "#D9D9D9",
-                                                            py: "5.1px",
-                                                            px: "8.65px",
-                                                            display: "flex",
-                                                            flexDirection: "row",
-                                                            alignItems: "center",
-                                                            gap: "10px"
-                                                        }}
-                                                    >
-                                                        <Typography
+                                                    <Box>
+                                                        <Box 
                                                             sx={{
-                                                                fontWeight: "700",
-                                                                fontSize: "10.82px",
-                                                                lineHeight: "14.42px",
-                                                                letterSpacing: "-0.09px",
-                                                                color: "#581D3A"
-                                                            }}
-                                                        > Apple </Typography>
-
-                                                        <Box
-                                                            sx={{
-                                                                bgcolor: "#fff",
-                                                                width: "15px",
-                                                                height: "15px",
-                                                                borderRadius: "50%",
                                                                 display: "flex",
-                                                                justifyContent: "center",
+                                                                flexDirection: "row",
+                                                                gap: "5px",
                                                                 alignItems: "center"
                                                             }}
                                                         >
-                                                            <CheckIcon 
-                                                                sx={{ 
-                                                                    color: "#000",
-                                                                    fontSize: "12.82px",
-                                                                    lineHeight: "14.42px",
-                                                                    letterSpacing: "-0.09px",
-                                                                }} 
-                                                            />
+                                                            <Typography
+                                                                sx={{
+                                                                    fontWeight: "700",
+                                                                    fontSize: "25px",
+                                                                    lineHeight: "20px",
+                                                                    letterSpacing: "-0.13px",
+                                                                    color: "#fff"
+                                                                }}
+                                                            > 
+                                                                { selectArtistName.apple ? selectArtistName.apple.name : selectArtistName.spotify ? selectArtistName.spotify.name : '' } 
+                                                            </Typography>
+                                                        </Box>
+
+                                                        <Box
+                                                            sx={{
+                                                                display: "flex",
+                                                                flexDirection: "row",
+                                                                alignItems: "center",
+                                                                gap: "10px",
+                                                                mt:  "7.2px",
+                                                            }}
+                                                        >
+                                                            { selectArtistName.apple ? <AppleSportifyCheckmark dspName="Apple" bgColor='#D9D9D9' /> : <></> }
+                                                            { selectArtistName.spotify ? <AppleSportifyCheckmark dspName="Spotify" bgColor='#D9D9D9' /> : <></> }
                                                         </Box>
                                                     </Box>
                                                 </Box>
-                                            </Box>
-                                        </Box>
+                                            ) : <></>
+                                        }
 
                                         <Typography
                                             sx={{
@@ -479,14 +570,14 @@ function CreateSingleRelease() {
                                                 sx={{
                                                     p: {xs: "10.18px 19.68px 10.18px 19.68px", md: "15px 29px 15px 29px"},
                                                     borderRadius: {xs: "8.14px", md: "12px"},
-                                                    background: getValues("songLyrics") == "Yes" ? "#644986" : darkTheme ? "#fff" : "#272727",
-                                                    color: getValues("songLyrics") == "Yes" ? "#fff" : darkTheme ? "#000" : "#fff",
+                                                    background: getValues("explicitSongLyrics") == "Yes" ? "#644986" : darkTheme ? "#fff" : "#272727",
+                                                    color: getValues("explicitSongLyrics") == "Yes" ? "#fff" : darkTheme ? "#000" : "#fff",
                                                     cursor: "pointer",
                                                     display: "inline-block"
                                                 }}
                                                 onClick={() => {
-                                                    setValue("songLyrics", "Yes");
-                                                    setSongLyrics("Yes");
+                                                    setValue("explicitSongLyrics", "Yes");
+                                                    setExplicitLyrics("Yes");
                                                 }}
                                             >
                                                 <Typography 
@@ -504,14 +595,14 @@ function CreateSingleRelease() {
                                                 sx={{
                                                     p: {xs: "10.18px 19.68px 10.18px 19.68px", md: "15px 29px 15px 29px"},
                                                     borderRadius: {xs: "8.14px", md: "12px"},
-                                                    background: getValues("songLyrics") == "No" ? "#644986" : darkTheme ? "#fff" : "#272727",
-                                                    color: getValues("songLyrics") == "No" ? "#fff" : darkTheme ? "#000" : "#fff",
+                                                    background: getValues("explicitSongLyrics") == "No" ? "#644986" : darkTheme ? "#fff" : "#272727",
+                                                    color: getValues("explicitSongLyrics") == "No" ? "#fff" : darkTheme ? "#000" : "#fff",
                                                     cursor: "pointer",
                                                     display: "inline-block"
                                                 }}
                                                 onClick={() => {
-                                                    setValue("songLyrics", "No");
-                                                    setSongLyrics("No");
+                                                    setValue("explicitSongLyrics", "No");
+                                                    setExplicitLyrics("No");
                                                 }}
                                             >
                                                 <Typography 
@@ -541,8 +632,7 @@ function CreateSingleRelease() {
                                     </Typography>
                                 </Grid>
 
-                                <Grid item
-                                    xs={12} md={8}
+                                <Grid item xs={12} md={8}
                                     sx={{maxWidth: {xs: "320px", md: "284px"}}}
                                 >
                                     <Box>
@@ -579,12 +669,14 @@ function CreateSingleRelease() {
                                                     Select Language
                                                 </MenuItem>
                                                 { languages.map((langItem: any, index) => (
-                                                    <MenuItem key={index} value={langItem}>
-                                                        {langItem}
+                                                    <MenuItem key={index} value={langItem.englishName}>
+                                                        {langItem.englishName}
                                                     </MenuItem>
                                                 )) }
                                             </Select>
                                         </FormControl>
+
+                                        { errors.language && <Box sx={{fontSize: 13, color: "red", textAlign: "left"}}>{ errors.language?.message }</Box> }
                                     </Box>
                                 </Grid>
                             </Grid>
@@ -601,8 +693,7 @@ function CreateSingleRelease() {
                                     </Typography>
                                 </Grid>
 
-                                <Grid item
-                                    xs={12} md={8}
+                                <Grid item xs={12} md={8}
                                     sx={{maxWidth: {xs: "320px", md: "284px"}}}
                                 >
                                     <Box>
@@ -639,13 +730,15 @@ function CreateSingleRelease() {
                                                 <MenuItem value="Select Primary Genre" disabled selected>
                                                     Select Primary Genre
                                                 </MenuItem>
-                                                { languages.map((langItem: any, index) => (
-                                                    <MenuItem key={index} value={langItem}>
-                                                        {langItem}
+                                                { primaryGenre.map((item: any, index) => (
+                                                    <MenuItem key={index} value={item}>
+                                                        {item}
                                                     </MenuItem>
                                                 )) }
                                             </Select>
                                         </FormControl>
+
+                                        { errors.primaryGenre && <Box sx={{fontSize: 13, color: "red", textAlign: "left"}}>{ errors.primaryGenre?.message }</Box> }
                                     </Box>
                                 </Grid>
                             </Grid>
@@ -662,8 +755,7 @@ function CreateSingleRelease() {
                                     </Typography>
                                 </Grid>
 
-                                <Grid item
-                                    xs={12} md={8}
+                                <Grid item xs={12} md={8}
                                     sx={{maxWidth: {xs: "320px", md: "284px"}}}
                                 >
                                     <Box>
@@ -700,13 +792,15 @@ function CreateSingleRelease() {
                                                 <MenuItem value="Select Secondary Genre" disabled selected>
                                                     Select Secondary Genre
                                                 </MenuItem>
-                                                { languages.map((langItem: any, index) => (
-                                                    <MenuItem key={index} value={langItem}>
-                                                        {langItem}
+                                                { secondaryGenre.map((item: any, index) => (
+                                                    <MenuItem key={index} value={item}>
+                                                        {item}
                                                     </MenuItem>
                                                 )) }
                                             </Select>
                                         </FormControl>
+
+                                        { errors.secondaryGenre && <Box sx={{fontSize: 13, color: "red", textAlign: "left"}}>{ errors.secondaryGenre?.message }</Box> }
                                     </Box>
                                 </Grid>
                             </Grid>
@@ -726,7 +820,7 @@ function CreateSingleRelease() {
                                 <Grid item xs={12} md={8}
                                     sx={{maxWidth: {xs: "320px", md: "284px"}}}
                                 >
-                                    <Box>
+                                    <Box id='releaseDate'>
                                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                                             <DemoContainer 
                                                 components={['DatePicker', 'DatePicker']}
@@ -734,6 +828,8 @@ function CreateSingleRelease() {
                                                 <DatePicker 
                                                     label="" 
                                                     // defaultValue={dayjs('2022-04-17')} 
+                                                    name='releaseDate'
+                                                    
                                                     sx={{
                                                         width: "100%",
                                                         // bgcolor: "yellow",
@@ -774,11 +870,13 @@ function CreateSingleRelease() {
                                                     format='DD/MM/YYYY'
                                                     onChange={(newValue) => {
                                                         const value = dayjs(newValue).format('DD/MM/YYYY');
-                                                        setValue("releaseDate", value);
+                                                        setValue("releaseDate", value, {shouldDirty: true, shouldTouch: true, shouldValidate: true});
                                                     }}
                                                 />
                                             </DemoContainer>
                                         </LocalizationProvider>
+
+                                        { errors.releaseDate && <Box sx={{fontSize: 13, color: "red", textAlign: "left"}}>{ errors.releaseDate?.message }</Box> }
                                     </Box>
                                 </Grid>
                             </Grid>
@@ -990,7 +1088,7 @@ function CreateSingleRelease() {
                                                 onChange={(event) => {
                                                     const eValue: any = event.target;
                                                     // console.log(eValue.checked);
-                                                    setValue("listenerTimezone", eValue.checked);
+                                                    setValue("listenerTimezone", eValue.checked, {shouldDirty: true, shouldTouch: true, shouldValidate: true});
                                                 }}
                                             />
 
@@ -1020,7 +1118,7 @@ function CreateSingleRelease() {
                                                 onChange={(event) => {
                                                     const eValue: any = event.target;
                                                     // console.log(eValue.checked);
-                                                    setValue("generalTimezone", eValue.checked);
+                                                    setValue("generalTimezone", eValue.checked, {shouldDirty: true, shouldTouch: true, shouldValidate: true} );
                                                 }}
                                             />
                                         </FormGroup>
@@ -1321,7 +1419,6 @@ function CreateSingleRelease() {
                                     justifyContent: "center",
                                     alignItems: "center"
                                 }}
-                                onClick={() => navigate("/account/artist/create-single-release-continue") }
                             >
                                 <Button variant="contained" 
                                     fullWidth type="submit" 
@@ -1360,6 +1457,14 @@ function CreateSingleRelease() {
                     </ThemeProvider>
                 </Box>
             </Box>
+
+
+            <SearchArtistModalComponent 
+                openSearchArtistModal={openSearchArtistModal}
+                closeSearchArtistModal={() => setOpenSearchArtistModal(false) }
+                onSaveSelection={handleSetArtistName}
+            />
+
         </AccountWrapper>
     )
 }

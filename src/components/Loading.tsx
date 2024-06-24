@@ -11,7 +11,7 @@ export default function LoadingComponent() {
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
-                minHeight: "100vh",
+                height: "100vh",
                 background: darkTheme ? "#000" : "#ffff"
             }}
         >

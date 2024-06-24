@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
@@ -43,6 +44,7 @@ const albumSongs = [
 
 
 function DashboardArtist() {
+    const navigate = useNavigate();
     const [albumType, setAlbumType] = useState<"Single" | "Album">("Single");
     const darkTheme = useSettingStore((state) => state.darkTheme);
     const userData = useUserStore((state) => state.userData); 
@@ -259,7 +261,7 @@ function DashboardArtist() {
                                 mt: "auto",
                                 mx: "auto"
                             }}>
-                                <Link to="/account/artist" style={{
+                                <Link to="/account/artist/analytics-reach" style={{
                                     textDecoration: "none",
                                     color: "#000000",
                                     border: "none",
@@ -466,7 +468,7 @@ function DashboardArtist() {
                                     mx: "auto"
                                 }}
                             >
-                                <Link to="/account/artist" style={{
+                                <Link to="/account/artist/analytics-reach" style={{
                                     textDecoration: "none",
                                     color: "#000000",
                                     border: "none",
@@ -736,15 +738,14 @@ function DashboardArtist() {
                 </Box>
 
                 <Grid container spacing="20px">
-                    <Grid item
-                        xs={6} md={4}
-                    >
+                    <Grid item xs={6} md={4}>
                         <Box 
                             sx={{ 
                                 width: "100%",
                                 maxWidth: {xs: "196.38px", md: "345px"},
                                 mx: "auto"
                             }}
+                            onClick={() => navigate(`/account/artist/${albumType == "Album" ? "album-details" : "song-details"}`) }
                         >
                             <Box
                                 sx={{
@@ -818,15 +819,14 @@ function DashboardArtist() {
                         </Box>
                     </Grid>
 
-                    <Grid item
-                        xs={6} md={4}
-                    >
+                    <Grid item xs={6} md={4}>
                         <Box 
                             sx={{
                                 width: "100%",
                                 maxWidth: {xs: "196.38px", md: "345px"},
                                 mx: "auto"
                             }}
+                            onClick={() => navigate(`/account/artist/${albumType == "Album" ? "album-details" : "song-details"}`) }
                         >
                             <Box
                                 sx={{
@@ -898,6 +898,7 @@ function DashboardArtist() {
                         </Box>
                     </Grid>
 
+
                     <Grid item
                         xs={6} md={4}
                     >
@@ -944,7 +945,7 @@ function DashboardArtist() {
                             </Box>
 
                             <Box sx={{display: {xs: "none", md: "block"}}}>
-                                <Link to="/account/artist" style={{
+                                <Link to="/account/artist/all-music" style={{
                                     textDecoration: "none",
                                     color: "#000000",
                                     border: "none",
@@ -998,7 +999,7 @@ function DashboardArtist() {
                                     alignItems: "center",
                                 }}
                             >
-                                <Link to="/account/artist" 
+                                <Link to="/account/artist/all-music" 
                                     style={{
                                         textDecoration: "none",
                                         color: "#000000",
@@ -1037,9 +1038,7 @@ function DashboardArtist() {
                 { albumType == "Album" && (
                     <Box sx={{my: 4}}>
                         <Grid container spacing="20px">
-                            <Grid item
-                                xs={12} md={6}
-                            >
+                            <Grid item xs={12} md={6}>
                                 <Typography
                                     sx={{
                                         fontWeight: "900",
@@ -1055,14 +1054,14 @@ function DashboardArtist() {
 
                                 <Box>
                                     {albumSongs.map((item, index) => (
-                                        <AlbumSongItem 
-                                            key={index}
-
-                                            artistName={item.artistName}
-                                            artworkImage={item.artworkImage}
-                                            songTitle={item.songTitle}
-                                            distributedDSP={item.distributedDSP} 
-                                        />
+                                        <Box key={index} onClick={() => navigate("/account/artist/song-details")}>
+                                            <AlbumSongItem 
+                                                artistName={item.artistName}
+                                                artworkImage={item.artworkImage}
+                                                songTitle={item.songTitle}
+                                                distributedDSP={item.distributedDSP} 
+                                            />
+                                        </Box>
                                     ))}
                                 </Box>
 
@@ -1089,14 +1088,14 @@ function DashboardArtist() {
 
                                 <Box>
                                     {albumSongs.map((item, index) => (
-                                        <AlbumSongItem 
-                                            key={index}
-
-                                            artistName={item.artistName}
-                                            artworkImage={item.artworkImage}
-                                            songTitle={item.songTitle}
-                                            distributedDSP={item.distributedDSP} 
-                                        />
+                                        <Box key={index} onClick={() => navigate("/account/artist/song-details")}>
+                                            <AlbumSongItem 
+                                                artistName={item.artistName}
+                                                artworkImage={item.artworkImage}
+                                                songTitle={item.songTitle}
+                                                distributedDSP={item.distributedDSP} 
+                                            />
+                                        </Box>
                                     ))}
                                 </Box>
 
