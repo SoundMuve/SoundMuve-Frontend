@@ -1,10 +1,9 @@
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import * as yup from "yup";
 import { yupResolver } from '@hookform/resolvers/yup';
-// import axios from 'axios';
-import WaveSurfer from 'wavesurfer.js'
+import axios from 'axios';
 
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
@@ -16,24 +15,25 @@ import TextField from '@mui/material/TextField';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
-
 import IconButton from '@mui/material/IconButton';
+
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import CloudUploadOutlinedIcon from '@mui/icons-material/CloudUploadOutlined';
 import AddIcon from '@mui/icons-material/Add';
 import CancelIcon from '@mui/icons-material/Cancel';
-import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
-import PlayArrowIcon from '@mui/icons-material/PlayArrow';
-import StopCircleOutlinedIcon from '@mui/icons-material/StopCircleOutlined';
 
 import AccountWrapper from '@/components/AccountWrapper';
+import SongPreviewComponent from '@/components/account/SongPreview';
+
 import { useSettingStore } from '@/state/settingStore';
 import { useUserStore } from '@/state/userStore';
+import { createReleaseStore } from '@/state/createReleaseStore';
+
+import { apiEndpoint, minutes, musicStores, seconds, socialPlatformStores, songArtistsCreativesRoles } from '@/util/resources';
+import { languages } from '@/util/languages';
 
 import cloudUploadIconImg from "@/assets/images/cloudUploadIcon.png";
-import axios from 'axios';
-import { apiEndpoint } from '@/util/resources';
-import { languages } from '@/util/languages';
+import SuccessModalComponent from '@/components/account/SuccessModal';
 
 
 const formSchema = yup.object({
@@ -54,44 +54,28 @@ const formSchema = yup.object({
 });
 
 
-const minutes = [...Array(60).keys()].map((num) => num.toString().padStart(2, '0'));
-const seconds = [...Array(60).keys()].map((num) => num.toString().padStart(2, '0'));
-
-const songArtistsCreativesRoles = [
-    "Main artist", 'Featured', 'Producer',' 12 string guitar', 'acoustic guitar', 'actor', 'alto saxophone', 'alto solo', 'arranger', 
-    'background vocals', 'banjo', 'baritone saxophone', 'baritone solo', 'bass clarinet', 'bass guitar', 'bass trombone', 
-    'bassoon', 'bongos', 'cajon', 'cello', 'chair', 'choir master', 'chorus', 'clarinet', 'classical guitar', 'clavier', 
-    'composer', 'conductor', 'congas', 'cornet', 'piano', 'vocal engineer', 'vocal solo', 'mixing engineer',  'music director', 
-    'lead guitar'
-];
-
-const socialPlatformStores = [
-    "All", "TikTok", "Instagram", "Youtube", "Facebook"
-];
-
-const musicStores = [
-    "All", "Apple Music", "Spotify", "SoundCloud", "AudioMack",
-];
-
 interface creativeType {
     creativeName: string,
     creativeRole: string,
 }
 
-let wavesurferInstance: WaveSurfer;
 
 function CreateSingleRelease2() {
     const navigate = useNavigate();
     const darkTheme = useSettingStore((state) => state.darkTheme);
     const userData = useUserStore((state) => state.userData);
     const accessToken = useUserStore((state) => state.accessToken);
+    const singleRelease1 = createReleaseStore((state) => state.singleRelease1);
+    // const _setSingleRelease2 = createReleaseStore((state) => state._setSingleRelease2);
+
+    const [openSuccessModal, setOpenSuccessModal] = useState(false);
+
     const _setToastNotification = useSettingStore((state) => state._setToastNotification);
     const [apiResponse, setApiResponse] = useState({
         display: false,
         status: true,
         message: ""
     });
-    const waveformRef = useRef();
     
     const [copyrightOwnership, setCopyrightOwnership] = useState('');
     const [copyrightOwnershipPermission, setCopyrightOwnershipPermission] = useState('');
@@ -101,30 +85,6 @@ function CreateSingleRelease2() {
     const [imagePreview, setImagePreview] = useState();
     const [songAudio, setSongAudio] = useState();
     const [songAudioPreview, setSongAudioPreview] = useState<any>();
-    const [isAudioPlaying, setIsAudioPlaying] = useState<boolean>(false);
-
-    useEffect(() => {
-        if(waveformRef.current && songAudioPreview) {
-            wavesurferInstance = WaveSurfer.create({
-                container: waveformRef.current,
-                waveColor: '#666666',
-                progressColor: '#644986',
-                normalize: true,
-                cursorColor: "#fff",
-                url: `${songAudioPreview}`,
-                height: 80,
-                barWidth: 10,
-                // barGap: 5
-            });
-        }
-
-        return () => {
-            if(songAudioPreview) {
-                wavesurferInstance.destroy();
-            }
-        }
-    }, [songAudioPreview]);
-
 
     const { 
         handleSubmit, register, getValues, setError, setValue, resetField, formState: { errors, isValid, isSubmitting } 
@@ -132,15 +92,14 @@ function CreateSingleRelease2() {
         resolver: yupResolver(formSchema),
         mode: 'onBlur', reValidateMode: 'onChange', 
         defaultValues: { 
-            store: "All",
-            socialPlatform: "All",
+            // store: "All",
+            // socialPlatform: "All",
             lyricsLanguage: "English",
             tikTokClipStartTime_Minutes: "00",
             tikTokClipStartTime_Seconds: "00",
         } 
     });
 
-            
         
     const handleAudioFileUpload = async (e: any) => {
         const file = e.target.files[0]; 
@@ -165,6 +124,7 @@ function CreateSingleRelease2() {
         e.target.value = "";
     }
 
+
     const convertToBase64 = (file: any) => {
         return new Promise((resolve, reject) => {
             const fileReader = new FileReader();
@@ -188,8 +148,6 @@ function CreateSingleRelease2() {
     }
 
     const onSubmit = async (formData: typeof formSchema.__outputType) => {
-        console.log(formData);
-
         setApiResponse({
             display: false,
             status: true,
@@ -197,10 +155,70 @@ function CreateSingleRelease2() {
         });
 
 
+        if (formData.store && formData.store == "Select" ) {
+            _setToastNotification({
+                display: true,
+                status: "error",
+                message: "Select stores to distribute your music to."
+            })
+
+            setError(
+                "store", 
+                {message: "Select stores to distribute your music to."},
+                { shouldFocus: true }
+            );
+            return;
+        }
+
+        if (formData.socialPlatform && formData.socialPlatform == "Select" ) {
+            _setToastNotification({
+                display: true,
+                status: "error",
+                message: "Select social platforms to distribute your music to."
+            })
+
+            setError(
+                "socialPlatform", 
+                { message: "Select social platforms to distribute your music to." },
+                { shouldFocus: true }
+            );
+            return;
+        }
+
         if (formData.songWriter) {
             const newWritter = [ ...songWriters, formData.songWriter ];
             setSongWriters(newWritter);
             resetField("songWriter");
+            
+            if (!newWritter.length) {
+                _setToastNotification({
+                    display: true,
+                    status: "error",
+                    message: "Please add a song writer."
+                })
+    
+                setError(
+                    "songWriter", 
+                    { message: "Please add a song writer." },
+                    { shouldFocus: true }
+                );
+                return;
+            }
+        } else {
+            if (!songWriters.length) {
+                _setToastNotification({
+                    display: true,
+                    status: "error",
+                    message: "Please add a song writer."
+                })
+    
+                setError(
+                    "songWriter", 
+                    { message: "Please add a song writer." },
+                    { shouldFocus: true }
+                )
+                return;
+            }
         }
 
         if (formData.artistCreativeName) {
@@ -213,30 +231,69 @@ function CreateSingleRelease2() {
             setSongArtists_Creatives(newCreatives);
             resetField("artistCreativeName");
             resetField("songArtistsCreativeRole");
+            
+            if (!newCreatives.length) {
+                _setToastNotification({
+                    display: true,
+                    status: "error",
+                    message: "Please add artists & creatives that worked on this song."
+                })
+    
+                setError(
+                    "artistCreativeName", 
+                    { message: "Please add artists & creatives that worked on this song." },
+                    { shouldFocus: true }
+                )
+                return;
+            }
+        } else {
+            if (!songArtists_Creatives.length) {
+                _setToastNotification({
+                    display: true,
+                    status: "error",
+                    message: "Please add artists & creatives that worked on this song."
+                })
+    
+                setError(
+                    "artistCreativeName", 
+                    { message: "Please add artists & creatives that worked on this song." },
+                    { shouldFocus: true }
+                )
+                return;
+            }
         }
+
 
         if (!copyrightOwnership) {
             _setToastNotification({
                 display: true,
                 status: "error",
                 message: "Copyright Ownership::: Select if this song is a cover version of another song?"
-            })
+            });
 
-            setError("copyrightOwnership", {message: "Select if this song is a cover version of another song?"})
+            setError(
+                "copyrightOwnership", 
+                { message: "Select if this song is a cover version of another song?"},
+                { shouldFocus: true }
+            );
             return;
         }
 
-        if (copyrightOwnership == "Yes" && !copyrightOwnershipPermission) {
+        if (copyrightOwnership == "Yes" && copyrightOwnershipPermission != "Yes") {
             _setToastNotification({
                 display: true,
                 status: "error",
-                message: "Copyright Ownership Permission::: Select if this song is a cover version of another song?"
+                // message: "Copyright Ownership Permission::: Select if this song is a cover version of another song?"
+                message: "Copyright Ownership Permission is required."
             })
 
-            setError("copyrightOwnershipPermission", {message: "Please confirm if you've the permission to distribute a cover song"});
+            setError(
+                "copyrightOwnershipPermission", 
+                { message: "Copyright Ownership Permission is required." },
+                { shouldFocus: true }
+            );
             return;
         }
-
 
         if (!songAudio) {
             setApiResponse({
@@ -253,7 +310,6 @@ function CreateSingleRelease2() {
 
             return;
         }
-
 
         if (!image) {
             setApiResponse({
@@ -293,14 +349,12 @@ function CreateSingleRelease2() {
         //     cover_photo: image
         // }
 
-
-
         const data2db = new FormData();
         data2db.append('email', userData.email);
         data2db.append('release_type', "Single");
-        data2db.append('store', 'All');
-        data2db.append('social_platform', 'All');
-        data2db.append('song', '');
+        data2db.append('store', formData.store || 'All');
+        data2db.append('social_platform', formData.socialPlatform || 'All');
+        data2db.append('song', singleRelease1.song_title);
         data2db.append('mp3_file', songAudio);
         data2db.append('song_writer', songWriters.toString());
         data2db.append('songArtistsCreativeRole', songArtists_Creatives.toString());
@@ -313,6 +367,7 @@ function CreateSingleRelease2() {
         data2db.append('cover_photo', image);
 
         console.log(data2db);
+        // _setSingleRelease2(data2db);
 
         try {
             const response = (await axios.patch(
@@ -326,7 +381,6 @@ function CreateSingleRelease2() {
                 }
             )).data;
             console.log(response);
-
             
             setApiResponse({
                 display: true,
@@ -340,6 +394,12 @@ function CreateSingleRelease2() {
             });
 
             // navigate("/auth/login", {replace: true});
+            setOpenSuccessModal(true);
+
+            setTimeout(() => {
+                navigate("/account/artist");
+                setOpenSuccessModal(false);
+            }, 500);
         } catch (error: any) {
             const err = error.response.data;
             console.log(err);
@@ -413,12 +473,13 @@ function CreateSingleRelease2() {
                                     }}
                                 >Details</Typography>
 
-                                <Typography
+                                <Typography onClick={() => navigate("/account/artist/create-single-release")}
                                     sx={{
                                         fontWeight: "400",
                                         fontSize: {xs: "15px", md: "20px"},
                                         lineHeight: {xs: "20px", md: "40px"},
-                                        letterSpacing: {xs: "-0.06px", md: "-0.13px"}
+                                        letterSpacing: {xs: "-0.06px", md: "-0.13px"},
+                                        cursor: "pointer"
                                     }}
                                 >Edit</Typography>
                             </Box>
@@ -437,7 +498,7 @@ function CreateSingleRelease2() {
                                         lineHeight: {xs: "10.84px", md: "24px"},
                                         letterSpacing: {xs: "-0.61px", md: "-1.34px"},
                                     }}
-                                >Good God: Joseph solomon</Typography>
+                                > { singleRelease1.song_title } : { singleRelease1.artist_name } </Typography>
 
                                 <Box sx={{ mt: {xs: "15px", md: "30px"} }}>
                                     <Stack direction="row" spacing={"auto"} justifyContent="space-between" alignItems="center">
@@ -457,7 +518,7 @@ function CreateSingleRelease2() {
                                                 lineHeight: {xs: "25px", md: "40px"},
                                                 letterSpacing: "-0.13px"
                                             }}
-                                        >20-May-2024</Typography>
+                                        > { singleRelease1.releaseDate } </Typography>
                                     </Stack>
                                     
                                     <Stack direction="row" spacing={"auto"} justifyContent="space-between" alignItems="center">
@@ -477,7 +538,7 @@ function CreateSingleRelease2() {
                                                 lineHeight: {xs: "25px", md: "40px"},
                                                 letterSpacing: "-0.13px"
                                             }}
-                                        >Joseph solomon</Typography>
+                                        > { singleRelease1.label_name } </Typography>
                                     </Stack>
 
                                     <Stack direction="row" spacing={"auto"} justifyContent="space-between" alignItems="center">
@@ -497,7 +558,7 @@ function CreateSingleRelease2() {
                                                 lineHeight: {xs: "25px", md: "40px"},
                                                 letterSpacing: "-0.13px"
                                             }}
-                                        >TCAIH2403832</Typography>
+                                        >  </Typography>
                                     </Stack>
 
                                     <Stack direction="row" spacing={"auto"} justifyContent="space-between" alignItems="center">
@@ -517,7 +578,7 @@ function CreateSingleRelease2() {
                                                 lineHeight: {xs: "25px", md: "40px"},
                                                 letterSpacing: "-0.13px"
                                             }}
-                                        >859788645275</Typography>
+                                        > { singleRelease1.upc_ean } </Typography>
                                     </Stack>
 
                                     <Stack direction="row" spacing={"auto"} justifyContent="space-between" alignItems="center">
@@ -537,7 +598,7 @@ function CreateSingleRelease2() {
                                                 lineHeight: {xs: "25px", md: "40px"},
                                                 letterSpacing: "-0.13px"
                                             }}
-                                        >Alternative</Typography>
+                                        > { singleRelease1.primary_genre } </Typography>
                                     </Stack>
 
                                     <Stack direction="row" spacing={"auto"} justifyContent="space-between" alignItems="center">
@@ -557,7 +618,7 @@ function CreateSingleRelease2() {
                                                 lineHeight: {xs: "25px", md: "40px"},
                                                 letterSpacing: "-0.13px"
                                             }}
-                                        >Alternative</Typography>
+                                        > { singleRelease1.secondary_genre } </Typography>
                                     </Stack>
 
                                     <Stack direction="row" spacing={"auto"} justifyContent="space-between" alignItems="center">
@@ -577,7 +638,7 @@ function CreateSingleRelease2() {
                                                 lineHeight: {xs: "25px", md: "40px"},
                                                 letterSpacing: "-0.13px"
                                             }}
-                                        >English</Typography>
+                                        > { singleRelease1.language } </Typography>
                                     </Stack>
                                 </Box>
                             </Box>
@@ -612,7 +673,7 @@ function CreateSingleRelease2() {
                                         lineHeight: {xs: "20px", md: "40px"},
                                         letterSpacing: {xs: "-0.06px", md: "-0.13px"}
                                     }}
-                                >Select Store</Typography>
+                                >Select Stores</Typography>
                                 
                                 <Box></Box>
                             </Box>
@@ -668,9 +729,9 @@ function CreateSingleRelease2() {
                                             </MenuItem>
                                         )) }
                                     </Select>
-                                </FormControl>
 
-                                { errors.store && <Box sx={{fontSize: 13, color: "red", textAlign: "left"}}>{ errors.store?.message }</Box> }
+                                    { errors.store && <Box sx={{fontSize: 13, color: "red", textAlign: "left"}}>{ errors.store?.message }</Box> }
+                                </FormControl>
                             </Box>
                         </Box>
 
@@ -774,9 +835,9 @@ function CreateSingleRelease2() {
                                             </MenuItem>
                                         )) }
                                     </Select>
+                                
+                                    { errors.socialPlatform && <Box sx={{fontSize: 13, color: "red", textAlign: "left"}}>{ errors.socialPlatform?.message }</Box> }
                                 </FormControl>
-
-                                { errors.socialPlatform && <Box sx={{fontSize: 13, color: "red", textAlign: "left"}}>{ errors.socialPlatform?.message }</Box> }
                             </Box>
                         </Box>
 
@@ -824,7 +885,6 @@ function CreateSingleRelease2() {
                                     alignItems: "center"
                                 }}
                             >
-
                                 <Typography
                                     sx={{
                                         fontWeight: "400",
@@ -837,7 +897,6 @@ function CreateSingleRelease2() {
                                     Stereo wav files in 24 bit (sample size) with 192 kHz (sample rate) are recommended, 
                                     but 16 bit (sample size) with 44.1 kHz (sample rate) files are also accepted.
                                 </Typography>
-
 
                                 <Stack direction="row" justifyContent="space-between" alignItems="center"
                                     sx={{
@@ -869,63 +928,16 @@ function CreateSingleRelease2() {
 
                                 {
                                     songAudioPreview && (
-                                        <Box
-                                            sx={{
-                                                height: "185px",
-                                                borderRadius: "11px",
-                                                bgcolor: "#272727",
-                                                width: "100%",
-                                                my: 3
+
+                                        <SongPreviewComponent
+                                            songTitle='Audio'
+                                            songAudio={songAudioPreview}
+                                            deleteSong={() => {
+                                                setSongAudio(undefined);
+                                                setSongAudioPreview(undefined);
                                             }}
-                                        >
-                                            <Stack 
-                                                direction="row" alignItems="center" justifyContent="space-between"
-                                                p="15px" bgcolor="#666666" borderRadius="11px"
-                                            >
-                                                <Typography
-                                                    sx={{
-                                                        fontWeight: "900",
-                                                        fontSize: "24px",
-                                                        lineHeight: "40px",
-                                                        letterSpacing: "-0.13px"
-                                                    }}
-                                                >Audio</Typography>
-
-                                                <DeleteForeverOutlinedIcon sx={{ color: "#313131", ":hover": { color: "#de2341" } }}
-                                                    onClick={() => {
-                                                        setSongAudio(undefined);
-                                                        setSongAudioPreview(undefined);
-                                                        wavesurferInstance.destroy();
-                                                    }} 
-                                                />
-                                            </Stack>
-
-
-                                            <Stack 
-                                                direction="row" alignItems="center" justifyContent="space-between" 
-                                                spacing="15px" p="15px" 
-                                            >
-                                                <Box height="90px" width="100%" overflow="hidden">
-                                                    <Box ref={waveformRef}></Box>
-                                                </Box>
-
-                                                <Box px={4}>
-                                                    {
-                                                        isAudioPlaying ? (
-                                                            <StopCircleOutlinedIcon sx={{ color: "#fff", fontSize: "40px" }}  
-                                                                onClick={() => {wavesurferInstance.stop(); setIsAudioPlaying(false) }}
-                                                            />
-                                                        ) : (
-                                                            <PlayArrowIcon sx={{ color: "#fff", fontSize: "40px" }}  
-                                                                onClick={() => {wavesurferInstance.play(); setIsAudioPlaying(true); }}
-                                                            />
-                                                        )
-                                                    }
-                                                </Box>
-
-                                            </Stack>
-
-                                        </Box>
+                                        />
+                                        
                                     )
                                 }
 
@@ -1053,6 +1065,8 @@ function CreateSingleRelease2() {
                                                     }
                                                 }}
                                             />
+
+                                            { errors.songWriter && <Box sx={{fontSize: 13, color: "red", textAlign: "left"}}>{ errors.songWriter?.message }</Box> }
                                         </Box>
 
                                         <Box 
@@ -1217,6 +1231,8 @@ function CreateSingleRelease2() {
                                                 error={ errors.artistCreativeName ? true : false }
                                                 { ...register('artistCreativeName') }
                                             />
+
+                                            { errors.artistCreativeName && <Box sx={{fontSize: 13, color: "red", textAlign: "left"}}>{ errors.artistCreativeName?.message }</Box> }
                                         </Box>
 
                                         <Box sx={{my: "20px"}}>
@@ -1930,6 +1946,11 @@ function CreateSingleRelease2() {
                 accept='image/*' 
                 onChange={handleFileUpload}
                 style={{display: "none"}}
+            />
+
+            <SuccessModalComponent 
+                openModal={openSuccessModal}
+                closeModal={() => setOpenSuccessModal(false)}
             />
         </AccountWrapper>
     )

@@ -1,10 +1,9 @@
-import axios from 'axios';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import * as yup from "yup";
 import { yupResolver } from '@hookform/resolvers/yup';
-// import axios from 'axios';
+import axios from 'axios';
 
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
@@ -14,8 +13,13 @@ import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
-import { createTheme, ThemeProvider, Theme, useTheme } from '@mui/material/styles';
-import { outlinedInputClasses } from '@mui/material/OutlinedInput';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import FormGroup from '@mui/material/FormGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Checkbox from '@mui/material/Checkbox';
+import { ThemeProvider, useTheme } from '@mui/material/styles';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
@@ -25,23 +29,21 @@ import dayjs from 'dayjs';
 import IconButton from '@mui/material/IconButton';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 // import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem';
-import FormGroup from '@mui/material/FormGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
 
 import { useUserStore } from '@/state/userStore';
 import { useSettingStore } from '@/state/settingStore';
 import { createReleaseStore } from '@/state/createReleaseStore';
+
 import { languages } from '@/util/languages';
-import { apiEndpoint } from '@/util/resources';
+import { apiEndpoint, hours, minReleaseDate, minutes, primaryGenre, secondaryGenre } from '@/util/resources';
+import { customTextFieldTheme } from '@/util/mui';
 
 import AccountWrapper from '@/components/AccountWrapper';
-import albumSampleArt from "@/assets/images/albumSampleArt.png"
 import SearchArtistModalComponent from '@/components/account/SearchArtistModal';
 import AppleSportifyCheckmark from '@/components/AppleSportifyCheckmark';
+
+import albumSampleArt from "@/assets/images/albumSampleArt.png"
+
 
 const formSchema = yup.object({
     songTitle: yup.string().required().trim().label("Song Title"),
@@ -64,100 +66,6 @@ const formSchema = yup.object({
     soldWorldwide: yup.string().trim(),
     UPC_EANcode: yup.string().trim().label("UPC/EAN Code"),
 });
-
-const customTheme = (outerTheme: Theme, darkTheme: boolean) =>
-    createTheme({
-        palette: {
-            mode: outerTheme.palette.mode,
-        },
-        components: {
-            MuiTextField: {
-                styleOverrides: {
-                    root: {
-                        '--TextField-brandBorderColor': darkTheme ? '#fff' : '#000',
-                        '--TextField-brandBorderHoverColor': '#B2BAC2',
-                        '--TextField-brandBorderFocusedColor': '#6F7E8C',
-                        '& label.Mui-focused': {
-                            color: 'var(--TextField-brandBorderFocusedColor)',
-                        },
-                        '& .MuiInputBase-input': { // Target input text
-                            color: darkTheme ? '#fff' : '#000', // Change to your desired text color
-                        },
-                        '& .MuiInputBase-placeholder': { // Target placeholder text
-                            color: 'gray', // Change to your desired placeholder color
-                        },
-                    },
-                },
-            },
-            MuiOutlinedInput: {
-                styleOverrides: {
-                    notchedOutline: {
-                        borderColor: 'var(--TextField-brandBorderColor)',
-                    },
-                    root: {
-                        [`&:hover .${outlinedInputClasses.notchedOutline}`]: {
-                            borderColor: 'var(--TextField-brandBorderHoverColor)',
-                        },
-                        [`&.Mui-focused .${outlinedInputClasses.notchedOutline}`]: {
-                            borderColor: 'var(--TextField-brandBorderFocusedColor)',
-                        },
-                    },
-                },
-            },
-            MuiFilledInput: {
-                styleOverrides: {
-                    root: {
-                        '&::before, &::after': {
-                            borderBottom: '2px solid var(--TextField-brandBorderColor)',
-                        },
-                        '&:hover:not(.Mui-disabled, .Mui-error):before': {
-                            borderBottom: '2px solid var(--TextField-brandBorderHoverColor)',
-                        },
-                        '&.Mui-focused:after': {
-                            borderBottom: '2px solid var(--TextField-brandBorderFocusedColor)',
-                        },
-                    },
-                },
-            },
-            MuiInput: {
-                styleOverrides: {
-                    root: {
-                        '&::before': {
-                            borderBottom: '2px solid var(--TextField-brandBorderColor)',
-                        },
-                        '&:hover:not(.Mui-disabled, .Mui-error):before': {
-                            borderBottom: '2px solid var(--TextField-brandBorderHoverColor)',
-                        },
-                        '&.Mui-focused:after': {
-                            borderBottom: '2px solid var(--TextField-brandBorderFocusedColor)',
-                        },
-                    },
-                },
-            },
-        },
-    });
-  
-
-const hours = [...Array(13).keys()].map((num) => num.toString().padStart(2, '0'));
-const minutes = [...Array(60).keys()].map((num) => num.toString().padStart(2, '0'));
-
-const primaryGenre = [
-    'African', 'Alternative', 'Ambient', 'Americana', 'Big Band', 'Blues', 'Brazilian', "Children's Music",
-    'Christian/Gospel', 'Classical Crossover', 'Comedy', 'Country', 'Dance', 'Electronic', 'Fitness & Workout',
-    'Folk', 'French Pop', 'German Folk', 'German Pop', 'Heavy Metal', 'Indian', 'Instrumental',
-    'J Pop', 'Jazz', 'K Pop', 'Karaoke', 'Latin', 'New Age', 'Pop', "R&B/Soul", 'Reggae',
-    'Hip Hop/Rap', 'Holiday', 'Rock', 'Singer/Songwriter', 'Soundtrack', 'Spoken Word', 'Vocal', 'World'
-];
-
-const secondaryGenre = [
-    'African', 'Afro house', 'Afro-fusion', 'Afro-soul', 'Afrobeats', 'Afropop', 'Amapiano', 'Bongo Flava',
-    'Highlife', 'Maskandi', 'Alternative', 'Ambient', 'Americana', 'Big Band', 'Blues', 'Brazilian', "Children's Music",
-    'Christian/Gospel', 'Classical Crossover', 'Comedy', 'Country', 'Dance', 'Electronic', 'Fitness & Workout', 'Folk',
-    'French Pop', 'German Folk', 'German Pop', 'Heavy Metal', 'Hip Hop/Rap', 'Holiday', 'Indian', 'Instrumental', 'J Pop',
-    'Jazz', 'K Pop', 'Karaoke', 'Latin', 'New Age', 'Pop', 'R&B/Soul', 'Reggae', 'Rock', "Singer/Songwriter", 'Soundtrack',
-    'Spoken Word', 'Vocal', 'World', 'Axé', 'Baile Funk', 'Bossa Nova', 'Chorinho', 'Forró', 'v Frevo', 'MPB', 'Pagode',
-    'Samba', 'Sertanejo'
-];
 
 
 function CreateSingleRelease() {
@@ -201,7 +109,11 @@ function CreateSingleRelease() {
     const handleSetArtistName = (details: any) => {
         // console.log(details);
         setSelectArtistName(details);
-        setValue("artistName", details.spotify.name || details.apple.name );
+        setValue(
+            "artistName", 
+            details.spotify.name || details.apple.name, 
+            {shouldDirty: true, shouldTouch: true, shouldValidate: true} 
+        );
     }
 
             
@@ -215,16 +127,16 @@ function CreateSingleRelease() {
         });
 
 
-        // if (!formData.artistName) {
-        //     _setToastNotification({
-        //         display: true,
-        //         status: "error",
-        //         message: "Please choose if this song has explicit lyrics."
-        //     })
+        if (!formData.artistName) {
+            _setToastNotification({
+                display: true,
+                status: "error",
+                message: "Please add an artist."
+            })
 
-        //     setError("explicitSongLyrics", {message: "Please choose if this song has explicit lyrics."})
-        //     return;
-        // }
+            setError("artistName", {message: "Please add an artist."})
+            return;
+        }
 
         if (!explicitLyrics) {
             _setToastNotification({
@@ -287,28 +199,27 @@ function CreateSingleRelease() {
             email: userData.email,
             release_type: "Single",
         
-            song_title: formData.songTitle,
-            artist_name: formData.artistName || '',
+            song_title: formData.songTitle, // missing
+            artist_name: formData.artistName,
         
-            explicitLyrics: explicitLyrics,
+            explicitLyrics: explicitLyrics, // missing
         
             language: formData.language,
             primary_genre: formData.primaryGenre,
             secondary_genre: formData.secondaryGenre,
         
-            releaseDate: formData.releaseDate,
+            releaseDate: formData.releaseDate, // missing
             release_time: `${ formData.releaseTimeHours } : ${ formData.releaseTimeMinutes } ${ formData.releaseTimeHourFormat }`,
 
-            listenerTimezone: formData.listenerTimezone || true,
-            generalTimezone: formData.generalTimezone || true,
+            listenerTimeZone: formData.listenerTimezone || true,
+            generalTimeZone: formData.generalTimezone || true,
         
             label_name: formData.labelName || '',
             recording_location: formData.recordingLocation || '',
             soldWorldwide: formData.soldWorldwide || '',
             upc_ean: formData.UPC_EANcode || '',
         };
-
-        console.log(data2db);
+        // console.log(data2db);
 
         try {
             const response = (await axios.post(
@@ -320,15 +231,15 @@ function CreateSingleRelease() {
                     },
                 }
             )).data;
-            console.log(response);
+            // console.log(response);
 
             _setSingleRelease1(data2db);
 
-            setApiResponse({
-                display: true,
-                status: true,
-                message: response.message
-            });
+            // setApiResponse({
+            //     display: true,
+            //     status: true,
+            //     message: response.message
+            // });
 
             _setToastNotification({
                 display: true,
@@ -377,13 +288,9 @@ function CreateSingleRelease() {
                 </Typography>
 
                 <Box sx={{my: 3}}>
-                    <ThemeProvider theme={customTheme(outerTheme, darkTheme)}>
+                    <ThemeProvider theme={customTextFieldTheme(outerTheme, darkTheme)}>
                         <form noValidate onSubmit={ handleSubmit(onSubmit) } 
-                            style={{
-                                width: "100%",
-                                maxWidth: "916px",
-                                // textAlign: "lef"
-                            }}
+                            style={{ width: "100%", maxWidth: "916px" }}
                         >
                             
                             <Grid container spacing="20px" sx={{my: "31px"}}>
@@ -463,6 +370,7 @@ function CreateSingleRelease() {
                                                 }}
                                             > Add&nbsp;Artist </Typography>
                                         </Box>
+                                        { errors.artistName && <Box sx={{fontSize: 13, color: "red", textAlign: "left"}}>{ errors.artistName?.message }</Box> }
 
                                         {
                                             selectArtistName ? (
@@ -828,6 +736,7 @@ function CreateSingleRelease() {
                                                 <DatePicker 
                                                     label="" 
                                                     // defaultValue={dayjs('2022-04-17')} 
+                                                    minDate={dayjs(minReleaseDate())}
                                                     name='releaseDate'
                                                     
                                                     sx={{

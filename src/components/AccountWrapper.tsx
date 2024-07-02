@@ -23,7 +23,7 @@ const AccountWrapper: React.FC<_Props> = ({ children }) => {
                 sx={{
                     bgcolor: darkTheme ? "#000" : "#fff", 
                     color: darkTheme ? "#fff" : "#000", 
-                    minHeight: "100vh", 
+                    minHeight: "80vh", 
                     pt: 5, 
                     position: "relative", 
                     overflow: "hidden"
@@ -48,7 +48,6 @@ const AccountWrapper: React.FC<_Props> = ({ children }) => {
                         </Box>
                     </>
                 }
-
 
                 { children }
 

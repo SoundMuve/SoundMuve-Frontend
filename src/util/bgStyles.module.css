@@ -105,6 +105,17 @@
     filter: blur(160.024px);
 }
 
+.mobileRightGradientLoading {
+    position: absolute;
+    width: 217.98px;
+    height: 217.98px;
+    right: 10.02px;
+    top: 46.39px;
+
+    background: linear-gradient(180deg, #CE2937 0%, rgba(157, 7, 38, 0) 100%);
+    filter: blur(160.024px);
+}
+
 .mobileRightGradient {
     position: absolute;
     width: 317.98px;

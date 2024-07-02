@@ -135,7 +135,7 @@ const SearchArtistModalComponent: React.FC<_Props> = ({
             >
                 <Box 
                     sx={{
-                        bgcolor: "#272727",
+                        bgcolor: darkTheme ? "#272727" : "#FBFBFB",
                         width: {xs: "92%", sm: "85%", md: "846px"},
                         minHeight: "404px",
                         maxHeight: '90%',
@@ -154,14 +154,15 @@ const SearchArtistModalComponent: React.FC<_Props> = ({
                                     fontWeight: "400",
                                     fontSize: "25px",
                                     lineHeight: "12px",
-                                    letterSpacing: "-0.13px"
+                                    letterSpacing: "-0.13px",
+                                    color: darkTheme ? "#fff" : "#000",
                                 }}
                             >Main Artist name?</Typography>
 
                             <Box>
                                 <IconButton onClick={() => closeSearchArtistModal() }>
                                     <CloseIcon 
-                                        sx={{color: "#fff", fontSize: "16px"}} 
+                                        sx={{color: darkTheme ? "#fff" : "#000", fontSize: "16px"}} 
                                     />
                                 </IconButton>
                             </Box>
@@ -431,8 +432,8 @@ const SearchArtistModalComponent: React.FC<_Props> = ({
                         sx={{
                             p: "15px 25px",
                             borderRadius: "12px",
-                            bgcolor: "#fff",
-                            color: "#000",
+                            bgcolor: darkTheme ? "#fff" : "#272727",
+                            color: darkTheme ? "#000" : "#fff",
                             width: "263px",
                             textAlign: "center",
                             mt: searchResult.length ? "15px" : "60px",

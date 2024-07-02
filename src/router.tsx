@@ -33,6 +33,12 @@ import AnalyticsReach from "./pages/account/artist/AnalyticsReach.tsx";
 import SongDetails from "./pages/account/artist/SongDetails.tsx";
 import AllMusic from "./pages/account/artist/AllMusic.tsx";
 import AlbumDetails from "./pages/account/artist/AlbumDetails.tsx";
+import CreateAlbumReleaseDetails from "./pages/account/createAlbumRelease/AlbumDetails.tsx";
+import CreateAlbumReleaseAdvanceFeatures from "./pages/account/createAlbumRelease/AdvanceFeatures.tsx";
+import CreateAlbumReleaseSelectStores from "./pages/account/createAlbumRelease/SelectStores.tsx";
+import CreateAlbumReleaseSongUpload from "./pages/account/createAlbumRelease/SongUpload.tsx";
+import CreateAlbumReleaseAlbumArt from "./pages/account/createAlbumRelease/AlbumArt.tsx";
+import CreateAlbumReleaseOverview from "./pages/account/createAlbumRelease/Overview.tsx";
 
 
 export const router = createBrowserRouter([
@@ -139,6 +145,30 @@ export const router = createBrowserRouter([
                 {
                   path: "create-single-release-continue",
                   element: <CreateSingleRelease2 />
+                },
+                {
+                  path: "create-album-release-details",
+                  element: <CreateAlbumReleaseDetails />
+                },
+                {
+                  path: "create-album-release-advance-features",
+                  element: <CreateAlbumReleaseAdvanceFeatures />
+                },
+                {
+                  path: "create-album-release-select-stores",
+                  element: <CreateAlbumReleaseSelectStores />
+                },
+                {
+                  path: "create-album-release-song-upload",
+                  element: <CreateAlbumReleaseSongUpload />
+                },
+                {
+                  path: "create-album-release-album-art",
+                  element: <CreateAlbumReleaseAlbumArt />
+                },
+                {
+                  path: "create-album-release-overview",
+                  element: <CreateAlbumReleaseOverview />
                 },
                 {
                   path: "balance-history",

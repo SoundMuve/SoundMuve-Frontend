@@ -98,7 +98,7 @@ const NewReleaseModalComponent: React.FC<_Props> = ({
                             </Box>
                         </Link>
 
-                        <Link to="/account/artist" style={{
+                        <Link to="/account/artist/create-album-release-details" style={{
                             textDecoration: "none",
                             color: "#000000",
                             border: "none",
@@ -124,7 +124,6 @@ const NewReleaseModalComponent: React.FC<_Props> = ({
                                 }}> Album </Typography>
                             </Box>
                         </Link>
-
 
                     </Box>
                 </Box>

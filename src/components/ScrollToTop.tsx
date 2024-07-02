@@ -9,9 +9,9 @@ import SnackbarToast from './ToastNotification';
 import { useSettingStore } from '../state/settingStore';
 
 const ScrollToTop = () => {
-    const accessToken = useUserStore((state) => state.accessToken);
-    const refreshToken = useUserStore((state) => state.refreshToken);
-    const userData = useUserStore((state) => state.userData);
+    // const accessToken = useUserStore((state) => state.accessToken);
+    // const refreshToken = useUserStore((state) => state.refreshToken);
+    // const userData = useUserStore((state) => state.userData);
     const _autoLogin = useUserStore((state) => state._autoLogin);
 
     const toastNotification = useSettingStore((state) => state.toastNotification);
@@ -30,11 +30,11 @@ const ScrollToTop = () => {
 
          
     const reAuthUser = async () => {
-        const access_token = getLocalStorage("access_token") || accessToken;
-        const refresh_token = getLocalStorage("refreshToken") || refreshToken;
-        const user_data = getLocalStorage("user") || userData;
+        const access_token = getLocalStorage("access_token")
+        const refresh_token = getLocalStorage("refreshToken");
+        const user_data = getLocalStorage("user");
 
-        setIsLoading(false);
+        // setIsLoading(false);
         if (!access_token || !refresh_token || !user_data ) {
             setIsLoading(false);
             return;
@@ -52,12 +52,13 @@ const ScrollToTop = () => {
             // console.log(response);
 
             setIsLoading(false);
-            if (user_data && access_token) _autoLogin(userData);
+            if (user_data && access_token) _autoLogin(user_data);
 
             return true;
         } catch (error: any) {
             const err = error.response.data;
             console.log(err);
+            setIsLoading(false);
 
             return false;
         }
