@@ -8,6 +8,7 @@ import Stack from '@mui/material/Stack';
 import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import StopCircleOutlinedIcon from '@mui/icons-material/StopCircleOutlined';
+import { useSettingStore } from '@/state/settingStore';
 
 
 interface _Props {
@@ -23,6 +24,7 @@ interface _Props {
 const SongPreviewComponent: React.FC<_Props> = ({
     songAudio, songTitle, subTitle, deleteSong = ()=>{}, editSong
 }) => {
+    const darkTheme = useSettingStore((state) => state.darkTheme);
     const waveDisplayRef = useRef();
     const waveSurferRef: any = useRef();
     const [isAudioPlaying, setIsAudioPlaying] = useState<boolean>(false);
@@ -31,7 +33,7 @@ const SongPreviewComponent: React.FC<_Props> = ({
         if(waveDisplayRef.current && songAudio) {
             waveSurferRef.current = WaveSurfer.create({
                 container: waveDisplayRef.current,
-                waveColor: '#666666',
+                waveColor: darkTheme ? '#666666' : "#272727",
                 progressColor: '#644986',
                 normalize: true,
                 cursorColor: "#fff",
@@ -55,14 +57,14 @@ const SongPreviewComponent: React.FC<_Props> = ({
             sx={{
                 // height: "185px",
                 borderRadius: "11px",
-                bgcolor: "#272727",
+                bgcolor: darkTheme ? "#272727" : "#B0AFAF",
                 width: "100%",
                 my: 1.5
             }}
         >
             <Stack 
                 direction="row" alignItems="center" justifyContent="space-between"
-                p="15px" bgcolor="#666666" borderRadius="11px"
+                p="15px" bgcolor="#666666" borderRadius="11px" color={darkTheme ? "#000" : "#fff"}
             >
                 <Box>
                     <Typography
@@ -105,7 +107,7 @@ const SongPreviewComponent: React.FC<_Props> = ({
                             }}
                         > Edit </Typography>
                     ) : (
-                        <DeleteForeverOutlinedIcon sx={{ color: "#313131", ":hover": { color: "#de2341" } }}
+                        <DeleteForeverOutlinedIcon sx={{ color: darkTheme ? "#313131" : "#fff", ":hover": { color: "#de2341" } }}
                             onClick={() => { 
                                 waveSurferRef.current.stop();
                                 waveSurferRef.current.destroy();

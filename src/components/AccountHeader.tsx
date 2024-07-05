@@ -22,10 +22,17 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import CloseIcon from '@mui/icons-material/Close';
 import LightbulbOutlinedIcon from '@mui/icons-material/LightbulbOutlined';
 
-import SoundMuve from "./../assets/images/SoundMuve.png";
-import light_off from "./../assets/images/light_off.png";
+import SettingsPowerIcon from '@mui/icons-material/SettingsPower';
+
+import SoundMuve from "@/assets/images/SoundMuve.png";
+import SoundMuv from "@/assets/images/SoundMuv.png";
+import light_off from "@/assets/images/light_off.png";
 import { useSettingStore } from '../state/settingStore';
 import NewReleaseModalComponent from './account/NewReleaseModal';
+import Tooltip from '@mui/material/Tooltip';
+import { useUserStore } from '@/state/userStore';
+import { stringAvatar, stringToColor } from '@/util/resources';
+import Avatar from '@mui/material/Avatar';
 
 const drawerWidth = 240;
 
@@ -36,6 +43,8 @@ export default function AccountHeaderComponent() {
     const [mobileOpen, setMobileOpen] = useState(false);
     const darkTheme = useSettingStore((state) => state.darkTheme);
     const _setTheme = useSettingStore((state) => state._setTheme);
+    const userData = useUserStore((state) => state.userData);
+    const _logOutUser = useUserStore((state) => state._logOutUser);
 
     const [openReleaseModal, setOpenReleaseModal] = useState(false);
     const closeReleaseModal = () => { setOpenReleaseModal(false) }
@@ -51,11 +60,11 @@ export default function AccountHeaderComponent() {
         //     link: "/",
         //     active: pathname == '/' ? true : false,
         // },
-        // {
-        //     title: "About",
-        //     link: "/about",
-        //     active: pathname.startsWith('/about'),
-        // },
+        {
+            title: "Dashboard",
+            link: "/account/artist",
+            active: pathname.startsWith('/account/artist'),
+        },
         {
             title: "Contact",
             link: "/contact",
@@ -71,58 +80,143 @@ export default function AccountHeaderComponent() {
     const drawer = (
         <Box 
             // onClick={handleDrawerToggle} 
-            sx={{ p: 2, color: "#fff", height: "100%", display: "flex", flexDirection: "column" }}
+            sx={{ 
+                p: 2, 
+                bgcolor: darkTheme ? "initial" : "#FBFBFB", 
+                color: darkTheme ? "#fff" : "#272727", 
+                height: "100%", 
+                display: "flex", 
+                flexDirection: "column", 
+            }}
         >
             <Box>
-                <Box sx={{width: "100%", textAlign: "right"}}>
+                <Box sx={{width: "100%", textAlign: "right" }}>
                     <CloseIcon onClick={handleDrawerToggle} />
                 </Box>
 
                 <Typography variant="h6" sx={{ my: 2 }}>
-                    <img src={SoundMuve} alt="SoundMuve Logo" style={{width: 130, cursor: 'pointer' }} />
+                    <img src={ darkTheme ? SoundMuve : SoundMuv } alt="SoundMuve Logo" style={{width: 130, cursor: 'pointer' }} />
                 </Typography>
 
                 <Divider color='#c1c1c1' />
 
                 <List onClick={handleDrawerToggle}>
-                    <Link to="/account/artist">
+                    {/* <Link to="/account/artist">
                         <ListItem disablePadding sx={{bgcolor: pathname.endsWith('/artist') ? "#141414" : ''}}>
                             <ListItemButton>
                                 <ListItemText primary="Dashboard" />
                             </ListItemButton>
                         </ListItem>
-                    </Link>
+                    </Link> */}
 
                     {menuItems.map((item) => (
-                        <Link key={item.title} to={item.link}>
-                            <ListItem disablePadding sx={{bgcolor: item.active ? "#141414" : ''}}>
+                        <Link key={item.title} to={item.link} style={{ color: "inherit" }}>
+                            <ListItem disablePadding sx={{bgcolor: item.active ? darkTheme ? "#141414" : "#D9D9D9" : ''}}>
                                 <ListItemButton>
                                     <ListItemText primary={item.title} />
                                 </ListItemButton>
                             </ListItem>
                         </Link>
                     ))}
+
+                    {/* <ListItem disablePadding onClick={() => _logOutUser() }>
+                        <ListItemButton>
+                            <ListItemText primary="Log out" />
+                        </ListItemButton>
+                    </ListItem> */}
                 </List>
             </Box>
 
             <Box sx={{mt: "auto"}}>
 
+                <Box mb="50px">
+                    <Stack direction="row" alignItems="center" spacing="10px" mb="20px">
+                        <Avatar
+                            alt={`${userData.firstName} ${userData.lastName}`}
+                            // src={userData.profile_image || ""}
+                            sx={{ 
+                                boxShadow: "0px 4px 8px -1px rgba(0, 0, 0, 0.1)",
+                                bgcolor: stringToColor(`${userData.firstName.trim()} ${userData.lastName.trim()}`),
+                            }}
+                            children={<Typography sx={{
+                                fontSize: "15px",
+                                fontWeight: "bold"
+                            }}>{stringAvatar(`${userData.firstName.trim()} ${userData.lastName.trim()}`)}</Typography>}
+                        />
+
+                        <Box width={"160px"}>
+                            <Typography noWrap variant="h1" component="h2"
+                                sx={{
+                                    fontWeight: "700",
+                                    fontSize: "16px",
+                                    lineHeight: "16px",
+                                    letterSpacing: "-0.13px",
+                                    color: darkTheme ? "#FBFBFB" : "#272727",
+                                    overflow: "hidden",
+                                }}
+                            >{ userData.firstName.trim() }</Typography>
+
+                            <Typography noWrap
+                                sx={{
+                                    fontWeight: "400",
+                                    fontSize: "13px",
+                                    lineHeight: "12px",
+                                    letterSpacing: "-0.13px",
+                                    color: "#797979",
+                                    mt: 0.5
+                                }}
+                            >Artist</Typography>
+                        </Box>
+                    </Stack>
+
+                    <Stack direction="row" alignItems='center' spacing="10px"
+                        onClick={() => _logOutUser() }
+                        sx={{
+                            width: "fit-content",
+                            bgcolor: darkTheme ? "#FBFBFB" : "#272727",
+                            padding: "5px 7px",
+                            color: darkTheme ? "#000" : "#fff",
+                            borderRadius: "5px",
+                            // mx: "auto",
+                            cursor: "pointer"
+                        }}
+                    >
+                        <SettingsPowerIcon
+                            sx={{ fontSize: "20px" }}
+                        />
+
+                        <Typography
+                            sx={{
+                                fontWeight: "400",
+                                fontSize: "16px",
+                                lineHeight: "5px",
+                                letterSpacing: "-0.08px"
+                            }}
+                        >Log out</Typography>
+                    </Stack>
+                </Box>
+
                 <Box sx={{display: "flex", flexDirection: "row", justifyContent: "space-between", gap: 10}}>
-                    <Box onClick={handleDrawerToggle} sx={{
-                        display: "flex", flexDirection: "row", gap: 0, color: "#FFF", 
-                        border: "1px solid #fff",
-                        p: 1, width: "90px",
-                        borderRadius: 3,
-                    }}>
+                    <Box onClick={handleDrawerToggle} 
+                        sx={{
+                            display: "flex", 
+                            flexDirection: "row", 
+                            gap: 0, 
+                            color: darkTheme ? "#FFF" : "#000",
+                            border: `1px solid ${ darkTheme ? '#fff' : '#000' }`,
+                            p: 1, 
+                            width: "90px",
+                            borderRadius: 3,
+                        }}
+                    >
                         <LanguageIcon />
-                        <Typography sx={{color: "#FFF"}}>Eng</Typography>
+                        <Typography>Eng</Typography>
                         <ArrowDropDownIcon />
                     </Box>
 
-
                     <IconButton 
                         onClick={() => _setTheme(!darkTheme)}
-                        sx={{color: "#fff"}}
+                        sx={{ color: darkTheme ? "#fff" : "#000" }}
                     >
                         { darkTheme ? 
                             <img 
@@ -138,6 +232,84 @@ export default function AccountHeaderComponent() {
             </Box>
         </Box>
     );
+
+    const accountProfile = (
+        <Box
+            sx={{
+                width: "147px",
+                height: "116px",
+                p: "10px",
+                display: "flex",
+                flexDirection: "column",
+            }}
+        >
+            <Stack direction="row" alignItems="center" spacing="10px">
+                <Avatar
+                    alt={`${userData.firstName} ${userData.lastName}`}
+                    // src={userData.profile_image || ""}
+                    sx={{ 
+                        boxShadow: "0px 4px 8px -1px rgba(0, 0, 0, 0.1)",
+                        bgcolor: stringToColor(`${userData.firstName.trim()} ${userData.lastName.trim()}`),
+                    }}
+                    children={<Typography sx={{
+                        fontSize: "15px",
+                        fontWeight: "bold"
+                    }}>{stringAvatar(`${userData.firstName.trim()} ${userData.lastName.trim()}`)}</Typography>}
+                />
+
+                <Box width={"90px"}>
+                    <Typography noWrap variant="h1" component="h2"
+                        sx={{
+                            fontWeight: "700",
+                            fontSize: "14px",
+                            lineHeight: "12px",
+                            letterSpacing: "-0.13px",
+                            color: darkTheme ? "#FBFBFB" : "#272727",
+                            overflow: "hidden",
+                        }}
+                    >{ userData.firstName.trim() }</Typography>
+
+                    <Typography noWrap
+                        sx={{
+                            fontWeight: "500",
+                            fontSize: "12px",
+                            lineHeight: "8px",
+                            letterSpacing: "-0.13px",
+                            color: "#797979",
+                            mt: 0.5
+                        }}
+                    >Artist</Typography>
+                </Box>
+            </Stack>
+
+            <Stack direction="row" alignItems='center' spacing="10px"
+                onClick={() => _logOutUser() }
+                sx={{
+                    width: "fit-content",
+                    bgcolor: "#FBFBFB",
+                    padding: "5px 7px",
+                    color: "#000",
+                    borderRadius: "5px",
+                    mt: "auto", mx: "auto",
+                    cursor: "pointer"
+                }}
+            >
+                <SettingsPowerIcon
+                    sx={{ fontSize: "15px" }}
+                />
+
+                <Typography
+                    sx={{
+                        fontWeight: "400",
+                        fontSize: "12px",
+                        lineHeight: "5px",
+                        letterSpacing: "-0.08px"
+                    }}
+                >Log out</Typography>
+            </Stack>
+
+        </Box>
+    )
 
 
     return (
@@ -238,9 +410,19 @@ export default function AccountHeaderComponent() {
                             </Box>
 
                             <Box sx={{ display: { xs: 'none', sm: 'block' }, alignSelf: "center" }}>
-                                <IconButton sx={{color: "#fff"}}>
-                                    <AccountCircleOutlined />
-                                </IconButton>
+                                <Tooltip title={accountProfile} arrow color='primary' placement="bottom-start" 
+                                    slotProps={{
+                                        tooltip: {
+                                            sx: {
+                                                backgroundColor: darkTheme ? "#272727" : "#D9D9D9",
+                                            },
+                                        },
+                                    }}
+                                >
+                                    <IconButton sx={{color: "#fff"}}>
+                                        <AccountCircleOutlined />
+                                    </IconButton>
+                                </Tooltip>
                             </Box>
                         </Stack>
 

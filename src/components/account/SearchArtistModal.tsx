@@ -110,9 +110,21 @@ const SearchArtistModalComponent: React.FC<_Props> = ({
     }
 
     const handleContinue = () => {
+        if (!artistNameInput && !selectedAppleMusicArtist && !selectedSpotifyArtist ) {
+            return;
+        }
+
+        const newData = {
+            id: 0,
+            name: artistNameInput,
+            latestAlbum: '',
+            image: ''
+        }
+        
         onSaveSelection({
             spotify: selectedSpotifyArtist,
             apple: selectedAppleMusicArtist,
+            unknown: newData
         });
         closeSearchArtistModal();
     }

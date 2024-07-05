@@ -6,12 +6,12 @@ import Typography from '@mui/material/Typography';
 import CloseIcon from '@mui/icons-material/Close';
 import Stack from '@mui/material/Stack';
 
-import AccountBalanceOutlinedIcon from '@mui/icons-material/AccountBalanceOutlined';
+// import AccountBalanceOutlinedIcon from '@mui/icons-material/AccountBalanceOutlined';
 import { useSettingStore } from '@/state/settingStore';
 
 import FlutterwaveLogo from "@/assets/images/FlutterwaveLogo.png";
 import PayPalLogo from "@/assets/images/PayPalLogo.png";
-import PayoneerLogo from "@/assets/images/PayoneerLogo.png";
+// import PayoneerLogo from "@/assets/images/PayoneerLogo.png";
 
 
 
@@ -24,7 +24,7 @@ interface _Props {
 }
 
 const PayoutModalComponent: React.FC<_Props> = ({
-    openModal, closeModal, openBankPayoutModal, openFlutterwavePayoutModal
+    openModal, closeModal, openFlutterwavePayoutModal
 }) => {
     const darkTheme = useSettingStore((state) => state.darkTheme);
 
@@ -33,10 +33,10 @@ const PayoutModalComponent: React.FC<_Props> = ({
         openFlutterwavePayoutModal();
     }
 
-    const handleOpenBankModal = () => {
-        closeModal();
-        openBankPayoutModal();
-    }
+    // const handleOpenBankModal = () => {
+    //     closeModal();
+    //     openBankPayoutModal();
+    // }
 
     return (
         <Modal
@@ -57,6 +57,7 @@ const PayoutModalComponent: React.FC<_Props> = ({
                 <Box sx={{
                     bgcolor: darkTheme ? "#272727" : "#fff",
                     maxWidth: {xs: "92%", sm: "496px"},
+                    width: "100%",
                     maxHeight: "605px",
                     borderRadius: "12px",
                     p: "25px",
@@ -121,7 +122,7 @@ const PayoutModalComponent: React.FC<_Props> = ({
                                 />
                             </Box>
 
-                            <Box
+                            {/* <Box
                                 sx={{
                                     width: "111.12px",
                                     height: "34.97px",
@@ -142,9 +143,9 @@ const PayoutModalComponent: React.FC<_Props> = ({
                                         objectFit: "contain"
                                     }}
                                 />
-                            </Box>
+                            </Box> */}
                             
-                            <Box
+                            {/* <Box
                                 sx={{
                                     width: "111.12px",
                                     height: "34.97px",
@@ -175,7 +176,7 @@ const PayoutModalComponent: React.FC<_Props> = ({
                                         sx={{ color: "#000" }}
                                     />
                                 </Stack>
-                            </Box>
+                            </Box> */}
                             
                             <Box
                                 sx={{

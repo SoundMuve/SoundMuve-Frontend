@@ -26,6 +26,7 @@ import appleMusicLightlogo from '@/assets/images/appleLightTheme.png';
 import spotifylogo from '@/assets/images/spotify.png';
 import spotifyLghtThemelogo from '@/assets/images/spotifyLghtTheme.png';
 import AppleSportifyCheckmark from '@/components/AppleSportifyCheckmark';
+import { useReleaseStore } from '@/state/releaseStore';
 
 
 
@@ -87,6 +88,9 @@ function SongDetails() {
     const darkTheme = useSettingStore((state) => state.darkTheme);
     const mdDevice = useMediaQuery('(min-width:900px)');
     const smDevice = useMediaQuery('(min-width:600px)');
+    
+    const songDetails = useReleaseStore((state) => state.songDetails);
+
 
 
     return (
@@ -176,7 +180,7 @@ function SongDetails() {
                                 lineHeight: {xs: "8.71px", md: "24px"},
                                 mt: 3
                             }}
-                        > Sensami </Typography>
+                        > { songDetails.song_title } </Typography>
 
                         <Stack direction="row" mt={5} spacing="20px" alignItems="center">
                             <Box
@@ -188,7 +192,7 @@ function SongDetails() {
                                 }}
                             >
                                 <img
-                                    src={ albumSampleArtImg } alt='album image'
+                                    src={ songDetails.cover_photo } alt={`${ songDetails.song_title } cover photo`}
                                     style={{
                                         width: "100%",
                                         height: "100%",
@@ -204,7 +208,7 @@ function SongDetails() {
                                         fontSize: "24px",
                                         lineHeight: "24px"
                                     }}
-                                >Sensami</Typography>
+                                > { songDetails.song_title } </Typography>
 
                                 <Typography
                                     sx={{
@@ -213,7 +217,7 @@ function SongDetails() {
                                         lineHeight: "24px",
                                         color: "#CACACA"
                                     }}
-                                >Skiibii</Typography>
+                                > { songDetails.artist_name } </Typography>
 
                                 <Stack direction="row" spacing="10px" mt="30px">
                                     <Typography
@@ -235,7 +239,7 @@ function SongDetails() {
                                             flex: "1 1 70%",
                                             color: "#CACACA"
                                         }}
-                                    >More Grace Music </Typography>
+                                    >{ songDetails.label_name } </Typography>
                                 </Stack>
 
                                 <Stack direction="row" spacing="10px" mt="20px">
@@ -282,7 +286,7 @@ function SongDetails() {
                                             flex: "1 1 70%",
                                             color: "#CACACA"
                                         }}
-                                    >123456789</Typography>
+                                    > { songDetails.upc_ean } </Typography>
                                 </Stack>
                             </Box>
                         </Stack>

@@ -21,9 +21,12 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import CloudUploadOutlinedIcon from '@mui/icons-material/CloudUploadOutlined';
 import AddIcon from '@mui/icons-material/Add';
 import CancelIcon from '@mui/icons-material/Cancel';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
 import AccountWrapper from '@/components/AccountWrapper';
 import SongPreviewComponent from '@/components/account/SongPreview';
+import SuccessModalComponent from '@/components/account/SuccessModal';
+import CopyrightOwnershipModalComponent from '@/components/account/CopyrightOwnershipModal';
 
 import { useSettingStore } from '@/state/settingStore';
 import { useUserStore } from '@/state/userStore';
@@ -33,7 +36,6 @@ import { apiEndpoint, minutes, musicStores, seconds, socialPlatformStores, songA
 import { languages } from '@/util/languages';
 
 import cloudUploadIconImg from "@/assets/images/cloudUploadIcon.png";
-import SuccessModalComponent from '@/components/account/SuccessModal';
 
 
 const formSchema = yup.object({
@@ -67,6 +69,7 @@ function CreateSingleRelease2() {
     const accessToken = useUserStore((state) => state.accessToken);
     const singleRelease1 = createReleaseStore((state) => state.singleRelease1);
     // const _setSingleRelease2 = createReleaseStore((state) => state._setSingleRelease2);
+    const [openCopyrightOwnershipModal, setOpenCopyrightOwnershipModal] = useState(false);
 
     const [openSuccessModal, setOpenSuccessModal] = useState(false);
 
@@ -85,6 +88,9 @@ function CreateSingleRelease2() {
     const [imagePreview, setImagePreview] = useState();
     const [songAudio, setSongAudio] = useState();
     const [songAudioPreview, setSongAudioPreview] = useState<any>();
+
+    const [selectCreativeRoleValue, setSelectCreativeRoleValue] = useState('Choose Roles');
+
 
     const { 
         handleSubmit, register, getValues, setError, setValue, resetField, formState: { errors, isValid, isSubmitting } 
@@ -189,21 +195,6 @@ function CreateSingleRelease2() {
             const newWritter = [ ...songWriters, formData.songWriter ];
             setSongWriters(newWritter);
             resetField("songWriter");
-            
-            if (!newWritter.length) {
-                _setToastNotification({
-                    display: true,
-                    status: "error",
-                    message: "Please add a song writer."
-                })
-    
-                setError(
-                    "songWriter", 
-                    { message: "Please add a song writer." },
-                    { shouldFocus: true }
-                );
-                return;
-            }
         } else {
             if (!songWriters.length) {
                 _setToastNotification({
@@ -221,27 +212,33 @@ function CreateSingleRelease2() {
             }
         }
 
-        if (formData.artistCreativeName) {
-            const newData = {
-                creativeName: formData.artistCreativeName,
-                creativeRole: formData.songArtistsCreativeRole || '',
-            };
 
-            const newCreatives = [ ...songArtists_Creatives, newData ];
-            setSongArtists_Creatives(newCreatives);
-            resetField("artistCreativeName");
-            resetField("songArtistsCreativeRole");
-            
-            if (!newCreatives.length) {
+        if (formData.artistCreativeName) {
+            if (formData.songArtistsCreativeRole && formData.songArtistsCreativeRole != 'Choose Roles') {
+                const newData = {
+                    creativeName: formData.artistCreativeName,
+                    creativeRole: formData.songArtistsCreativeRole,
+                };
+    
+                const newCreatives = [ ...songArtists_Creatives, newData ];
+                setSongArtists_Creatives(newCreatives);
+    
+                setTimeout(() => {
+                    resetField("artistCreativeName");
+                    resetField("songArtistsCreativeRole");
+                    setSelectCreativeRoleValue("Choose Roles");
+                }, 500);
+            } else {
                 _setToastNotification({
                     display: true,
                     status: "error",
-                    message: "Please add artists & creatives that worked on this song."
+                    message: `Please choose ${formData.artistCreativeName} role for this song.`,
                 })
     
                 setError(
-                    "artistCreativeName", 
-                    { message: "Please add artists & creatives that worked on this song." },
+                    "songArtistsCreativeRole", 
+                    { message: `Please choose ${formData.artistCreativeName} role for this song.` },
+                    // "Please add artists & creatives that worked on this song."
                     { shouldFocus: true }
                 )
                 return;
@@ -286,6 +283,8 @@ function CreateSingleRelease2() {
                 // message: "Copyright Ownership Permission::: Select if this song is a cover version of another song?"
                 message: "Copyright Ownership Permission is required."
             })
+
+            setOpenCopyrightOwnershipModal(true);
 
             setError(
                 "copyrightOwnershipPermission", 
@@ -366,7 +365,7 @@ function CreateSingleRelease2() {
         data2db.append('tikTokClipStartTime', `${ formData.tikTokClipStartTime_Minutes }:${ formData.tikTokClipStartTime_Seconds }`);
         data2db.append('cover_photo', image);
 
-        console.log(data2db);
+        // console.log(data2db);
         // _setSingleRelease2(data2db);
 
         try {
@@ -380,7 +379,7 @@ function CreateSingleRelease2() {
                     },
                 }
             )).data;
-            console.log(response);
+            // console.log(response);
             
             setApiResponse({
                 display: true,
@@ -393,13 +392,12 @@ function CreateSingleRelease2() {
                 message: response.message
             });
 
-            // navigate("/auth/login", {replace: true});
             setOpenSuccessModal(true);
 
             setTimeout(() => {
                 navigate("/account/artist");
                 setOpenSuccessModal(false);
-            }, 500);
+            }, 1000);
         } catch (error: any) {
             const err = error.response.data;
             console.log(err);
@@ -541,7 +539,7 @@ function CreateSingleRelease2() {
                                         > { singleRelease1.label_name } </Typography>
                                     </Stack>
 
-                                    <Stack direction="row" spacing={"auto"} justifyContent="space-between" alignItems="center">
+                                    {/* <Stack direction="row" spacing={"auto"} justifyContent="space-between" alignItems="center">
                                         <Typography
                                             sx={{
                                                 fontWeight: "400",
@@ -559,7 +557,7 @@ function CreateSingleRelease2() {
                                                 letterSpacing: "-0.13px"
                                             }}
                                         >  </Typography>
-                                    </Stack>
+                                    </Stack> */}
 
                                     <Stack direction="row" spacing={"auto"} justifyContent="space-between" alignItems="center">
                                         <Typography
@@ -1001,7 +999,7 @@ function CreateSingleRelease2() {
                                                                 fontSize: {xs: "15px", md: "18px"}
                                                             }} 
                                                             onClick={() => {
-                                                                const newWritter = songWriters.filter(item => item != writerName);
+                                                                const newWritter = songWriters.filter((_, index) => index != i );
                                                                 setSongWriters(newWritter);
                                                                 document.getElementById("songWriter")?.focus();
                                                             }}
@@ -1157,7 +1155,7 @@ function CreateSingleRelease2() {
                                                                 fontSize: {xs: "15px", md: "18px"}
                                                             }} 
                                                             onClick={() => {
-                                                                const newCreative = songArtists_Creatives.filter(item => item.creativeName != creative.creativeName );
+                                                                const newCreative = songArtists_Creatives.filter((_, index) => index != i );
                                                                 setSongArtists_Creatives(newCreative);
                                                                 document.getElementById("artistCreativeName")?.focus();
                                                             }}
@@ -1251,8 +1249,9 @@ function CreateSingleRelease2() {
                                                     labelId="songArtistsCreativeRole-label"
                                                     id="songArtistsCreativeRole"
                                                     label=""
-                                                    defaultValue="Choose Roles"
+                                                    // defaultValue="Choose Roles"
                                                     placeholder='Choose Roles'
+                                                    value={selectCreativeRoleValue}
 
                                                     sx={{
                                                         color: darkTheme ? "#000" : "#000",
@@ -1275,9 +1274,24 @@ function CreateSingleRelease2() {
                                                     }}
                                                     
                                                     error={ errors.songArtistsCreativeRole ? true : false }
-                                                    { ...register('songArtistsCreativeRole') }
+                                                    // { ...register('songArtistsCreativeRole') }
+
+                                                    onChange={(event) => {
+                                                        const value: any = event.target.value;
+                                                        setSelectCreativeRoleValue(value);
+
+                                                        setValue(
+                                                            "songArtistsCreativeRole", 
+                                                            value, 
+                                                            {
+                                                                shouldDirty: true,
+                                                                shouldTouch: true,
+                                                                shouldValidate: true
+                                                            }
+                                                        );
+                                                    }}
                                                 >
-                                                    <MenuItem value="Choose Roles" disabled selected>
+                                                    <MenuItem value="Choose Roles" disabled>
                                                         Choose Roles
                                                     </MenuItem>
 
@@ -1288,6 +1302,8 @@ function CreateSingleRelease2() {
                                                     )) }
                                                 </Select>
                                             </FormControl>
+
+                                            { errors.songArtistsCreativeRole && <Box sx={{fontSize: 13, color: "red", textAlign: "left"}}>{ errors.songArtistsCreativeRole?.message }</Box> }
                                         </Box>
 
                                         <Box 
@@ -1301,7 +1317,7 @@ function CreateSingleRelease2() {
                                             }}
                                             onClick={() => {
                                                 const creativeName = getValues("artistCreativeName");
-                                                const creativeRole = getValues("songArtistsCreativeRole");
+                                                const creativeRole = selectCreativeRoleValue; // getValues("songArtistsCreativeRole");
                                                 if (!creativeName) return;
                                                     
                                                 if (!creativeRole || creativeRole == 'Choose Roles') {
@@ -1310,6 +1326,8 @@ function CreateSingleRelease2() {
                                                         status: "warning",
                                                         message: `Please select ${ creativeName } Role in creating this song.`
                                                     })
+
+                                                    setError("songArtistsCreativeRole", {message: `Please select ${ creativeName } Role in creating this song.`});
                                                     return;
                                                 }
 
@@ -1317,6 +1335,7 @@ function CreateSingleRelease2() {
                                                 setSongArtists_Creatives(newCreatives);
                                                 resetField("artistCreativeName");
                                                 resetField("songArtistsCreativeRole");
+                                                setSelectCreativeRoleValue('Choose Roles');
                                                 document.getElementById("artistCreativeName")?.focus();
                                             }}
                                         >
@@ -1329,9 +1348,7 @@ function CreateSingleRelease2() {
                                                     lineHeight: {xs: "25px", md: "40px"},
                                                     letterSpacing: "-0.13px"
                                                 }}
-                                            >
-                                                Add more Creatives
-                                            </Typography>
+                                            > Add more Creatives </Typography>
                                         </Box>
                                     </Box>
 
@@ -1359,60 +1376,84 @@ function CreateSingleRelease2() {
                                                     lineHeight: {xs: "25px", md: "40px"},
                                                     letterSpacing: "-0.13px"
                                                 }}
-                                            >
-                                                Is this a cover version of another song?
-                                            </Typography>
+                                            > Is this a cover version of another song? </Typography>
 
-                                            <Stack direction={'row'} spacing={"15px"} sx={{my: "15px"}}>
-                                                <Box 
-                                                    sx={{
-                                                        p: {xs: "10.18px 19.68px 10.18px 19.68px", md: "15px 29px 15px 29px"},
-                                                        borderRadius: {xs: "8.14px", md: "12px"},
-                                                        background: copyrightOwnership == "Yes" ? "#644986" : "#fff",
-                                                        color: copyrightOwnership == "Yes" ? "#fff" : "#000",
-                                                        cursor: "pointer",
-                                                        display: "inline-block"
-                                                    }}
-                                                    onClick={() => { 
-                                                        setCopyrightOwnership("Yes"); 
-                                                        setValue("copyrightOwnership", "Yes", {shouldValidate: true, shouldDirty: true, shouldTouch: true}) 
-                                                    }}
-                                                >
-                                                    <Typography 
+                                            <Stack direction={'row'} spacing={ copyrightOwnership == "Yes" ? "5px" : "15px" } sx={{my: "15px"}}>
+                                                <Box>
+                                                    <Box 
                                                         sx={{
-                                                            fontWeight: '900',
-                                                            fontSize: {xs: "10.18px", md: "15px"},
-                                                            lineHeight: {xs: "8.82px", md: "13px"},
-                                                            letterSpacing: {xs: "-0.09px", md: "-0.13px"},
-                                                            textAlign: 'center',
+                                                            p: {xs: "10.18px 19.68px 10.18px 19.68px", md: "15px 29px 15px 29px"},
+                                                            borderRadius: {xs: "8.14px", md: "12px"},
+                                                            background: copyrightOwnership == "Yes" ? "#644986" : "#fff",
+                                                            color: copyrightOwnership == "Yes" ? "#fff" : "#000",
+                                                            cursor: "pointer",
+                                                            display: "inline-block"
                                                         }}
-                                                    > Yes </Typography>
+                                                        onClick={() => { 
+                                                            setCopyrightOwnership("Yes"); 
+                                                            setValue("copyrightOwnership", "Yes", {shouldValidate: true, shouldDirty: true, shouldTouch: true}) 
+                                                        }}
+                                                    >
+                                                        <Typography 
+                                                            sx={{
+                                                                fontWeight: '900',
+                                                                fontSize: {xs: "10.18px", md: "15px"},
+                                                                lineHeight: {xs: "8.82px", md: "13px"},
+                                                                letterSpacing: {xs: "-0.09px", md: "-0.13px"},
+                                                                textAlign: 'center',
+                                                            }}
+                                                        > Yes </Typography>
+                                                    </Box>
+
+                                                    { copyrightOwnership == "Yes" ? 
+                                                        <CheckCircleIcon 
+                                                            sx={{ 
+                                                                color: darkTheme ? "#fff" : "#c4c4c4",
+                                                                position: "relative", 
+                                                                left: -15,
+                                                                top: -8,
+                                                            }} 
+                                                        /> : <></>
+                                                    }
                                                 </Box>
 
-                                                <Box 
-                                                    sx={{
-                                                        p: {xs: "10.18px 19.68px 10.18px 19.68px", md: "15px 29px 15px 29px"},
-                                                        borderRadius: {xs: "8.14px", md: "12px"},
-                                                        background: copyrightOwnership == "No" ? "#644986" : "#fff",
-                                                        color: copyrightOwnership == "No" ? "#fff" : "#000",
-                                                        cursor: "pointer",
-                                                        display: "inline-block"
-                                                    }}
-                                                    onClick={() => { 
-                                                        setCopyrightOwnership("No"); 
-                                                        setValue("copyrightOwnership", "No", {shouldValidate: true, shouldDirty: true, shouldTouch: true}) 
-
-                                                    }}
-                                                >
-                                                    <Typography 
+                                                <Box>
+                                                    <Box 
                                                         sx={{
-                                                            fontWeight: '900',
-                                                            fontSize: {xs: "10.18px", md: "15px"},
-                                                            lineHeight: {xs: "8.82px", md: "13px"},
-                                                            letterSpacing: {xs: "-0.09px", md: "-0.13px"},
-                                                            textAlign: 'center',
+                                                            p: {xs: "10.18px 19.68px 10.18px 19.68px", md: "15px 29px 15px 29px"},
+                                                            borderRadius: {xs: "8.14px", md: "12px"},
+                                                            background: copyrightOwnership == "No" ? "#644986" : "#fff",
+                                                            color: copyrightOwnership == "No" ? "#fff" : "#000",
+                                                            cursor: "pointer",
+                                                            display: "inline-block"
                                                         }}
-                                                    > No </Typography>
+                                                        onClick={() => { 
+                                                            setCopyrightOwnership("No"); 
+                                                            setValue("copyrightOwnership", "No", {shouldValidate: true, shouldDirty: true, shouldTouch: true}) 
+
+                                                        }}
+                                                    >
+                                                        <Typography 
+                                                            sx={{
+                                                                fontWeight: '900',
+                                                                fontSize: {xs: "10.18px", md: "15px"},
+                                                                lineHeight: {xs: "8.82px", md: "13px"},
+                                                                letterSpacing: {xs: "-0.09px", md: "-0.13px"},
+                                                                textAlign: 'center',
+                                                            }}
+                                                        > No </Typography>
+                                                    </Box>
+
+                                                    { copyrightOwnership == "No" ? 
+                                                        <CheckCircleIcon 
+                                                            sx={{ 
+                                                                color: darkTheme ? "#fff" : "#c4c4c4",
+                                                                position: "relative", 
+                                                                left: -15,
+                                                                top: -8,
+                                                            }} 
+                                                        /> : <></>
+                                                    }
                                                 </Box>
                                             </Stack>
 
@@ -1434,55 +1475,81 @@ function CreateSingleRelease2() {
                                                         Please confirm:
                                                     </Typography>
 
-                                                    <Stack direction={'row'} spacing={"15px"} sx={{mt: "15px"}}>
-                                                        <Box 
-                                                            sx={{
-                                                                p: {xs: "10.18px 19.68px 10.18px 19.68px", md: "15px 29px 15px 29px"},
-                                                                borderRadius: {xs: "8.14px", md: "12px"},
-                                                                background: copyrightOwnershipPermission == "Yes" ? "#644986" : "#fff" ,
-                                                                color: copyrightOwnershipPermission == "Yes" ? "#fff" : "#000",
-                                                                cursor: "pointer",
-                                                                display: "inline-block"
-                                                            }}
-                                                            onClick={() => { 
-                                                                setCopyrightOwnershipPermission("Yes"); 
-                                                                setValue("copyrightOwnershipPermission", "Yes", {shouldValidate: true, shouldDirty: true, shouldTouch: true}) 
-                                                            }}
-                                                        >
-                                                            <Typography 
+                                                    <Stack direction={'row'} spacing={ copyrightOwnershipPermission == "Yes" ? "5px" : "15px"} sx={{mt: "15px"}}>
+                                                        <Box>
+                                                            <Box 
                                                                 sx={{
-                                                                    fontWeight: '900',
-                                                                    fontSize: {xs: "10.18px", md: "15px"},
-                                                                    lineHeight: {xs: "8.82px", md: "13px"},
-                                                                    letterSpacing: {xs: "-0.09px", md: "-0.13px"},
-                                                                    textAlign: 'center',
+                                                                    p: {xs: "10.18px 19.68px 10.18px 19.68px", md: "15px 29px 15px 29px"},
+                                                                    borderRadius: {xs: "8.14px", md: "12px"},
+                                                                    background: copyrightOwnershipPermission == "Yes" ? "#644986" : "#fff" ,
+                                                                    color: copyrightOwnershipPermission == "Yes" ? "#fff" : "#000",
+                                                                    cursor: "pointer",
+                                                                    display: "inline-block"
                                                                 }}
-                                                            > Yes </Typography>
+                                                                onClick={() => { 
+                                                                    setCopyrightOwnershipPermission("Yes"); 
+                                                                    setValue("copyrightOwnershipPermission", "Yes", {shouldValidate: true, shouldDirty: true, shouldTouch: true}) 
+                                                                }}
+                                                            >
+                                                                <Typography 
+                                                                    sx={{
+                                                                        fontWeight: '900',
+                                                                        fontSize: {xs: "10.18px", md: "15px"},
+                                                                        lineHeight: {xs: "8.82px", md: "13px"},
+                                                                        letterSpacing: {xs: "-0.09px", md: "-0.13px"},
+                                                                        textAlign: 'center',
+                                                                    }}
+                                                                > Yes </Typography>
+                                                            </Box>
+
+                                                            { copyrightOwnershipPermission == "Yes" ? 
+                                                                <CheckCircleIcon 
+                                                                    sx={{ 
+                                                                        color: darkTheme ? "#fff" : "#c4c4c4",
+                                                                        position: "relative", 
+                                                                        left: -15,
+                                                                        top: -8,
+                                                                    }} 
+                                                                /> : <></>
+                                                            }
                                                         </Box>
 
-                                                        <Box 
-                                                            sx={{
-                                                                p: {xs: "10.18px 19.68px 10.18px 19.68px", md: "15px 29px 15px 29px"},
-                                                                borderRadius: {xs: "8.14px", md: "12px"},
-                                                                background: copyrightOwnershipPermission == "No" ? "#644986" : "#fff",
-                                                                color: copyrightOwnershipPermission == "No" ? "#fff" : "#000",
-                                                                cursor: "pointer",
-                                                                display: "inline-block"
-                                                            }}
-                                                            onClick={() => {
-                                                                setCopyrightOwnershipPermission("No");
-                                                                setValue("copyrightOwnershipPermission", "No", {shouldValidate: true, shouldDirty: true, shouldTouch: true}) 
-                                                            }}
-                                                        >
-                                                            <Typography 
+                                                        <Box>
+                                                            <Box 
                                                                 sx={{
-                                                                    fontWeight: '900',
-                                                                    fontSize: {xs: "10.18px", md: "15px"},
-                                                                    lineHeight: {xs: "8.82px", md: "13px"},
-                                                                    letterSpacing: {xs: "-0.09px", md: "-0.13px"},
-                                                                    textAlign: 'center',
+                                                                    p: {xs: "10.18px 19.68px 10.18px 19.68px", md: "15px 29px 15px 29px"},
+                                                                    borderRadius: {xs: "8.14px", md: "12px"},
+                                                                    background: copyrightOwnershipPermission == "No" ? "#644986" : "#fff",
+                                                                    color: copyrightOwnershipPermission == "No" ? "#fff" : "#000",
+                                                                    cursor: "pointer",
+                                                                    display: "inline-block"
                                                                 }}
-                                                            > No </Typography>
+                                                                onClick={() => {
+                                                                    setCopyrightOwnershipPermission("No");
+                                                                    setValue("copyrightOwnershipPermission", "No", {shouldValidate: true, shouldDirty: true, shouldTouch: true}) 
+                                                                }}
+                                                            >
+                                                                <Typography 
+                                                                    sx={{
+                                                                        fontWeight: '900',
+                                                                        fontSize: {xs: "10.18px", md: "15px"},
+                                                                        lineHeight: {xs: "8.82px", md: "13px"},
+                                                                        letterSpacing: {xs: "-0.09px", md: "-0.13px"},
+                                                                        textAlign: 'center',
+                                                                    }}
+                                                                > No </Typography>
+                                                            </Box>
+
+                                                            { copyrightOwnershipPermission == "No" ? 
+                                                                <CheckCircleIcon 
+                                                                    sx={{ 
+                                                                        color: darkTheme ? "#fff" : "#c4c4c4",
+                                                                        position: "relative", 
+                                                                        left: -15,
+                                                                        top: -8,
+                                                                    }} 
+                                                                /> : <></>
+                                                            }
                                                         </Box>
                                                     </Stack>
 
@@ -1951,6 +2018,11 @@ function CreateSingleRelease2() {
             <SuccessModalComponent 
                 openModal={openSuccessModal}
                 closeModal={() => setOpenSuccessModal(false)}
+            />
+
+            <CopyrightOwnershipModalComponent
+                openModal={openCopyrightOwnershipModal}
+                closeModal={() => setOpenCopyrightOwnershipModal(false)}
             />
         </AccountWrapper>
     )

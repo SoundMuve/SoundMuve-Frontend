@@ -79,6 +79,10 @@ export function getPinDisplayButtons() {
 }
 
 
+export function pauseExecution(ms: number) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 
 export function maskPhoneNumber(phoneNumber: string) {
   // Remove any non-digit characters from the input

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import * as yup from "yup";
@@ -29,6 +29,7 @@ import dayjs from 'dayjs';
 
 import IconButton from '@mui/material/IconButton';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+// import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
 import AccountWrapper from '@/components/AccountWrapper';
 import SearchArtistModalComponent from '@/components/account/SearchArtistModal';
@@ -43,10 +44,11 @@ import { languages } from '@/util/languages';
 import { primaryGenre, secondaryGenre, hours, minutes, minReleaseDate } from '@/util/resources';
 import albumSampleArt from "@/assets/images/albumSampleArt.png"
 
+
 const formSchema = yup.object({
-    albumTitle: yup.string().required().trim().label("Song Title"),
+    albumTitle: yup.string().required().trim().label("Album Title"),
     artistName: yup.string().trim().label("Artist Name"),
-    explicitSongLyrics: yup.string().trim(),
+    // explicitSongLyrics: yup.string().trim(),
     language: yup.string().required().trim().label("Language"),
     primaryGenre: yup.string().required().trim().label("Primary Genre"),
     secondaryGenre: yup.string().required().trim().label("Secondary Genre"),
@@ -65,9 +67,10 @@ function AlbumDetails() {
     const navigate = useNavigate();
     const outerTheme = useTheme();
     const darkTheme = useSettingStore((state) => state.darkTheme);
-    const [explicitLyrics, setExplicitLyrics] = useState("No");
+    // const [explicitLyrics, setExplicitLyrics] = useState(""); // No
     const userData = useUserStore((state) => state.userData);
     // const accessToken = useUserStore((state) => state.accessToken);
+    const albumReleaseDetails = createReleaseStore((state) => state.albumReleaseDetails);
     const _setAlbumReleaseDetails = createReleaseStore((state) => state._setAlbumReleaseDetails);
     const _setToastNotification = useSettingStore((state) => state._setToastNotification);
 
@@ -77,8 +80,22 @@ function AlbumDetails() {
         message: ""
     });
 
+    const [selectLanguageValue, setSelectLanguageValue] = useState('Select Language');
+    const [selectSecondaryGenreValue, setSelectSecondaryGenreValue] = useState('Select Secondary Genre');
+    const [selectPrimaryGenreValue, setSelectPrimaryGenreValue] = useState('Select Primary Genre');
+    
+    const [selectReleaseDateValue, setSelectReleaseDateValue] = useState<any>('');
+
+    const [selectReleaseTimeHoursValue, setSelectReleaseTimeHoursValue] = useState('12');
+    const [selectReleaseTimeMinutesValue, setSelectReleaseTimeMinutesValue] = useState('00');
+    const [selectReleaseTimeFormatValue, setSelectReleaseTimeFormatValue] = useState('AM');
+
+    const [selectListenerTimezoneValue, setSelectListenerTimezoneValue] = useState(false);
+    const [selectGeneralTimezoneValue, setSelectGeneralTimezoneValue] = useState(false);
+    
     const [openSearchArtistModal, setOpenSearchArtistModal] = useState(false);
     const [selectArtistName, setSelectArtistName] = useState<any>();
+
 
     const { 
         handleSubmit, register, setValue, getValues, setError, formState: { errors, isValid, isSubmitting } 
@@ -86,7 +103,7 @@ function AlbumDetails() {
         resolver: yupResolver(formSchema),
         mode: 'onBlur',
         defaultValues: { 
-            explicitSongLyrics: explicitLyrics,
+            // explicitSongLyrics: explicitLyrics,
             // releaseTimeHours: "00",
             releaseTimeMinutes: "00",
             releaseTimeHourFormat: "AM",
@@ -96,12 +113,60 @@ function AlbumDetails() {
         } 
     });
 
+    useEffect(() => {
+
+        if (albumReleaseDetails.album_title) {
+    
+            setValue("albumTitle", albumReleaseDetails.album_title, {shouldDirty: true, shouldTouch: true, shouldValidate: true});
+            setValue("artistName", albumReleaseDetails.artist_name, {shouldDirty: true, shouldTouch: true, shouldValidate: true});
+            // TODO::: work on displaying the artist name and details
+            setSelectArtistName(albumReleaseDetails.selectedArtistName);
+    
+            // setValue("explicitSongLyrics", albumReleaseDetails.explicitLyrics, {shouldDirty: true, shouldTouch: true, shouldValidate: true});
+            // setExplicitLyrics(albumReleaseDetails.explicitLyrics);
+            
+            setValue("language", albumReleaseDetails.language, {shouldDirty: true, shouldTouch: true, shouldValidate: true});
+            setSelectLanguageValue(albumReleaseDetails.language);
+    
+            setValue("primaryGenre", albumReleaseDetails.primary_genre, {shouldDirty: true, shouldTouch: true, shouldValidate: true});
+            setSelectPrimaryGenreValue(albumReleaseDetails.primary_genre);
+    
+            setValue("secondaryGenre", albumReleaseDetails.secondary_genre, {shouldDirty: true, shouldTouch: true, shouldValidate: true});
+            setSelectSecondaryGenreValue(albumReleaseDetails.secondary_genre);
+    
+            // TODO::: release date
+            setValue("releaseDate", albumReleaseDetails.releaseDate, {shouldDirty: true, shouldTouch: true, shouldValidate: true});
+            setSelectReleaseDateValue(albumReleaseDetails.releaseDate);
+    
+            setValue("releaseTimeHours", albumReleaseDetails.releaseTimeHours, {shouldDirty: true, shouldTouch: true, shouldValidate: true});
+            setSelectReleaseTimeHoursValue(albumReleaseDetails.releaseTimeHours);
+    
+            setValue("releaseTimeMinutes", albumReleaseDetails.releaseTimeMinutes, {shouldDirty: true, shouldTouch: true, shouldValidate: true});
+            setSelectReleaseTimeMinutesValue(albumReleaseDetails.releaseTimeMinutes);
+    
+            setValue("releaseTimeHourFormat", albumReleaseDetails.releaseTimeFormat, {shouldDirty: true, shouldTouch: true, shouldValidate: true});
+            setSelectReleaseTimeFormatValue(albumReleaseDetails.releaseTimeFormat);
+    
+            setValue("listenerTimezone", albumReleaseDetails.listenerTimeZone, {shouldDirty: true, shouldTouch: true, shouldValidate: true});
+            setSelectListenerTimezoneValue(albumReleaseDetails.listenerTimeZone);
+    
+            setValue("generalTimezone", albumReleaseDetails.generalTimeZone, {shouldDirty: true, shouldTouch: true, shouldValidate: true});
+            setSelectGeneralTimezoneValue(albumReleaseDetails.generalTimeZone);
+            
+        }
+
+    }, []);
+    
+
     const handleSetArtistName = (details: any) => {
         // console.log(details);
         setSelectArtistName(details);
+
+        let name = details.spotify ? details.spotify.name : details.apple ? details.apple.name : details.unknown.name;
+
         setValue(
             "artistName", 
-            details.spotify.name || details.apple.name, 
+            name,
             {shouldDirty: true, shouldTouch: true, shouldValidate: true} 
         );
         setOpenSearchArtistModal(false)
@@ -129,16 +194,16 @@ function AlbumDetails() {
             return;
         }
 
-        if (!explicitLyrics) {
-            _setToastNotification({
-                display: true,
-                status: "error",
-                message: "Please choose if this song has explicit lyrics."
-            })
+        // if (!explicitLyrics) {
+        //     _setToastNotification({
+        //         display: true,
+        //         status: "error",
+        //         message: "Please choose if this song has explicit lyrics."
+        //     })
 
-            setError("explicitSongLyrics", {message: "Please choose if this song has explicit lyrics."})
-            return;
-        }
+        //     setError("explicitSongLyrics", {message: "Please choose if this song has explicit lyrics."})
+        //     return;
+        // }
 
         if (formData.language == "Select Language") {
             _setToastNotification({
@@ -190,10 +255,11 @@ function AlbumDetails() {
             email: userData.email,
             release_type: "Album",
         
-            song_title: formData.albumTitle,
+            album_title: formData.albumTitle,
             artist_name: formData.artistName,
+            selectedArtistName: selectArtistName,
         
-            explicitLyrics: explicitLyrics,
+            // explicitLyrics: explicitLyrics,
         
             language: formData.language,
             primary_genre: formData.primaryGenre,
@@ -201,6 +267,10 @@ function AlbumDetails() {
         
             releaseDate: formData.releaseDate,
             release_time: `${ formData.releaseTimeHours } : ${ formData.releaseTimeMinutes } ${ formData.releaseTimeHourFormat }`,
+
+            releaseTimeHours: formData.releaseTimeHours || '12',
+            releaseTimeMinutes: formData.releaseTimeMinutes || '00',
+            releaseTimeFormat: formData.releaseTimeHourFormat || 'AM',
 
             listenerTimeZone: formData.listenerTimezone ? true : false,
             generalTimeZone: formData.generalTimezone ? true : false,
@@ -387,7 +457,7 @@ function AlbumDetails() {
                                                                             color: "#fff"
                                                                         }}
                                                                     > 
-                                                                        { selectArtistName.apple ? selectArtistName.apple.name : selectArtistName.spotify ? selectArtistName.spotify.name : '' } 
+                                                                        { getValues("artistName") }
                                                                     </Typography>
                                                                 </Box>
 
@@ -407,86 +477,6 @@ function AlbumDetails() {
                                                         </Box>
                                                     ) : <></>
                                                 }
-
-                                                <Typography
-                                                    sx={{
-                                                        fontWeight: "400",
-                                                        fontSize: {xs: "16.96px", md: "20px"},
-                                                        lineHeight: {xs: "27.14px", md: "40px"},
-                                                        letterSpacing: {xs: "-0.09px", md: "-0.13px"}
-                                                    }}
-                                                >
-                                                    Does this song have explicit lyrics? &#32;
-                                                    <span
-                                                        // onClick={() => { }}
-                                                        style={{
-                                                            color: "#C8F452",
-                                                            cursor: "pointer"
-                                                        }}
-                                                    >
-                                                        Read More
-                                                    </span>
-                                                </Typography>
-
-                                                <Box
-                                                    sx={{
-                                                        display: "flex",
-                                                        flexDirection: "row",
-                                                        alignItems: "center",
-                                                        gap: "15px",
-                                                        mt: "21px",
-                                                    }}
-                                                >
-                                                    <Box 
-                                                        sx={{
-                                                            p: {xs: "10.18px 19.68px 10.18px 19.68px", md: "15px 29px 15px 29px"},
-                                                            borderRadius: {xs: "8.14px", md: "12px"},
-                                                            background: getValues("explicitSongLyrics") == "Yes" ? "#644986" : darkTheme ? "#fff" : "#D4D4D4",
-                                                            color: getValues("explicitSongLyrics") == "Yes" ? "#fff" : darkTheme ? "#000" : "#000",
-                                                            cursor: "pointer",
-                                                            display: "inline-block"
-                                                        }}
-                                                        onClick={() => {
-                                                            setValue("explicitSongLyrics", "Yes");
-                                                            setExplicitLyrics("Yes");
-                                                        }}
-                                                    >
-                                                        <Typography 
-                                                            sx={{
-                                                                fontWeight: '900',
-                                                                fontSize: {xs: "10.18px", md: "15px"},
-                                                                lineHeight: {xs: "8.82px", md: "13px"},
-                                                                letterSpacing: {xs: "-0.09px", md: "-0.13px"},
-                                                                textAlign: 'center',
-                                                            }}
-                                                        > Yes </Typography>
-                                                    </Box>
-
-                                                    <Box 
-                                                        sx={{
-                                                            p: {xs: "10.18px 19.68px 10.18px 19.68px", md: "15px 29px 15px 29px"},
-                                                            borderRadius: {xs: "8.14px", md: "12px"},
-                                                            background: getValues("explicitSongLyrics") == "No" ? "#644986" : darkTheme ? "#fff" : "#D4D4D4",
-                                                            color: getValues("explicitSongLyrics") == "No" ? "#fff" : darkTheme ? "#000" : "#000",
-                                                            cursor: "pointer",
-                                                            display: "inline-block"
-                                                        }}
-                                                        onClick={() => {
-                                                            setValue("explicitSongLyrics", "No");
-                                                            setExplicitLyrics("No");
-                                                        }}
-                                                    >
-                                                        <Typography 
-                                                            sx={{
-                                                                fontWeight: '900',
-                                                                fontSize: {xs: "10.18px", md: "15px"},
-                                                                lineHeight: {xs: "8.82px", md: "13px"},
-                                                                letterSpacing: {xs: "-0.09px", md: "-0.13px"},
-                                                                textAlign: 'center',
-                                                            }}
-                                                        > No </Typography>
-                                                    </Box>
-                                                </Box>
                                             </Box>
                                         </Grid>
                                     </Grid>
@@ -512,8 +502,8 @@ function AlbumDetails() {
                                                         labelId="language"
                                                         id="language-select"
                                                         label=""
-                                                        defaultValue="Select Language"
                                                         placeholder='Select Language'
+                                                        value={selectLanguageValue}
 
                                                         sx={{
                                                             color: darkTheme ? "#000" : "#fff",
@@ -534,9 +524,23 @@ function AlbumDetails() {
                                                         }}
                                                         
                                                         error={ errors.language ? true : false }
-                                                        { ...register('language') }
+                                                        // { ...register('language') }
+                                                        onChange={(event) => {
+                                                            const value: any = event.target.value;
+                                                            setSelectLanguageValue(value);
+
+                                                            setValue(
+                                                                "language", 
+                                                                value, 
+                                                                {
+                                                                    shouldDirty: true,
+                                                                    shouldTouch: true,
+                                                                    shouldValidate: true
+                                                                }
+                                                            );
+                                                        }}
                                                     >
-                                                        <MenuItem value="Select Language" disabled selected>
+                                                        <MenuItem value="Select Language" disabled>
                                                             Select Language
                                                         </MenuItem>
                                                         { languages.map((langItem: any, index) => (
@@ -573,8 +577,8 @@ function AlbumDetails() {
                                                         labelId="primaryGenre"
                                                         id="primaryGenre-select"
                                                         label=""
-                                                        defaultValue="Select Primary Genre"
                                                         placeholder='Select Primary Genre'
+                                                        value={selectPrimaryGenreValue}
 
                                                         sx={{
                                                             color: darkTheme ? "#000" : "#fff",
@@ -596,9 +600,23 @@ function AlbumDetails() {
                                                         }}
                                                         
                                                         error={ errors.primaryGenre ? true : false }
-                                                        { ...register('primaryGenre') }
+                                                        // { ...register('primaryGenre') }
+                                                        onChange={(event) => {
+                                                            const value: any = event.target.value;
+                                                            setSelectPrimaryGenreValue(value);
+
+                                                            setValue(
+                                                                "primaryGenre", 
+                                                                value, 
+                                                                {
+                                                                    shouldDirty: true,
+                                                                    shouldTouch: true,
+                                                                    shouldValidate: true
+                                                                }
+                                                            );
+                                                        }}
                                                     >
-                                                        <MenuItem value="Select Primary Genre" disabled selected>
+                                                        <MenuItem value="Select Primary Genre" disabled>
                                                             Select Primary Genre
                                                         </MenuItem>
                                                         { primaryGenre.map((item: any, index) => (
@@ -635,8 +653,9 @@ function AlbumDetails() {
                                                         labelId="secondaryGenre"
                                                         id="secondaryGenre-select"
                                                         label=""
-                                                        defaultValue="Select Secondary Genre"
+                                                        // defaultValue="Select Secondary Genre"
                                                         placeholder='Select Secondary Genre'
+                                                        value={selectSecondaryGenreValue}
 
                                                         sx={{
                                                             color: darkTheme ? "#000" : "#fff",
@@ -658,9 +677,24 @@ function AlbumDetails() {
                                                         }}
                                                         
                                                         error={ errors.secondaryGenre ? true : false }
-                                                        { ...register('secondaryGenre') }
+                                                        // { ...register('secondaryGenre') }
+
+                                                        onChange={(event) => {
+                                                            const value: any = event.target.value;
+                                                            setSelectSecondaryGenreValue(value);
+
+                                                            setValue(
+                                                                "secondaryGenre", 
+                                                                value, 
+                                                                {
+                                                                    shouldDirty: true,
+                                                                    shouldTouch: true,
+                                                                    shouldValidate: true
+                                                                }
+                                                            );
+                                                        }}
                                                     >
-                                                        <MenuItem value="Select Secondary Genre" disabled selected>
+                                                        <MenuItem value="Select Secondary Genre" disabled>
                                                             Select Secondary Genre
                                                         </MenuItem>
                                                         { secondaryGenre.map((item: any, index) => (
@@ -683,9 +717,7 @@ function AlbumDetails() {
                                                 fontSize: {xs: "13.12px", md: "20px"},
                                                 lineHeight: {xs: "21px", md: "32px"},
                                                 letterSpacing: {xs: "-0.07px", md: "-0.13px"}
-                                            }}>
-                                                Release Date
-                                            </Typography>
+                                            }}> Release Date</Typography>
                                         </Grid>
 
                                         <Grid item xs={12} md={8}
@@ -700,6 +732,7 @@ function AlbumDetails() {
                                                             label="" 
                                                             name='releaseDate'
                                                             // defaultValue={dayjs('2022-04-17')} 
+                                                            value={ selectReleaseDateValue ? dayjs(selectReleaseDateValue) : null }
                                                             minDate={dayjs(minReleaseDate())}
                                                             sx={{
                                                                 width: "100%",
@@ -740,8 +773,10 @@ function AlbumDetails() {
                                                             }}
                                                             format='DD/MM/YYYY'
                                                             onChange={(newValue) => {
-                                                                const value = dayjs(newValue).format('DD/MM/YYYY');
+                                                                // const value = dayjs(newValue).format('DD/MM/YYYY');
+                                                                const value = dayjs(newValue).format('YYYY/MM/DD');
                                                                 setValue("releaseDate", value, {shouldDirty: true, shouldTouch: true, shouldValidate: true});
+                                                                setSelectReleaseDateValue(value);
                                                             }}
                                                         />
                                                     </DemoContainer>
@@ -785,9 +820,7 @@ function AlbumDetails() {
                                                 fontSize: {xs: "11px", md: "20px"},
                                                 lineHeight: {xs: "17.6px", md: "32px"},
                                                 letterSpacing: {xs: "-0.06px", md: "-0.13px"}
-                                            }}>
-                                                Release Time (Spotify Only)
-                                            </Typography>
+                                            }}> Release Time (Spotify Only) </Typography>
                                         </Grid>
 
                                         <Grid item xs={12} md={8}>
@@ -807,7 +840,7 @@ function AlbumDetails() {
                                                             labelId="releaseTimeHours"
                                                             id="releaseTimeHours-select"
                                                             label=""
-                                                            defaultValue="12"
+                                                            value={selectReleaseTimeHoursValue}
                                                             placeholder='12'
 
                                                             sx={{
@@ -828,10 +861,25 @@ function AlbumDetails() {
                                                             }}
                                                             
                                                             error={ errors.releaseTimeHours ? true : false }
-                                                            { ...register('releaseTimeHours') }
+                                                            // { ...register('releaseTimeHours') }
+
+                                                            onChange={(event) => {
+                                                                const value: any = event.target.value;
+                                                                setSelectReleaseTimeHoursValue(value);
+
+                                                                setValue(
+                                                                    "releaseTimeHours", 
+                                                                    value, 
+                                                                    {
+                                                                        shouldDirty: true,
+                                                                        shouldTouch: true,
+                                                                        shouldValidate: true
+                                                                    }
+                                                                );
+                                                            }}
                                                         >
                                                             { hours.map((hourItem: any, index) => (
-                                                                <MenuItem key={index} value={hourItem} selected={hourItem == "12" ? true : false}>
+                                                                <MenuItem key={index} value={hourItem}>
                                                                     {hourItem}
                                                                 </MenuItem>
                                                             )) }
@@ -843,8 +891,8 @@ function AlbumDetails() {
                                                             labelId="releaseTimeMinutes"
                                                             id="releaseTimeMinutes-select"
                                                             label=""
-                                                            defaultValue="00"
                                                             placeholder='00'
+                                                            value={selectReleaseTimeMinutesValue}
 
                                                             sx={{
                                                                 color: darkTheme ? "#fff" : "#000",
@@ -864,10 +912,25 @@ function AlbumDetails() {
                                                             }}
                                                             
                                                             error={ errors.releaseTimeMinutes ? true : false }
-                                                            { ...register('releaseTimeMinutes') }
+                                                            // { ...register('releaseTimeMinutes') }
+
+                                                            onChange={(event) => {
+                                                                const value: any = event.target.value;
+                                                                setSelectReleaseTimeMinutesValue(value);
+
+                                                                setValue(
+                                                                    "releaseTimeMinutes", 
+                                                                    value, 
+                                                                    {
+                                                                        shouldDirty: true,
+                                                                        shouldTouch: true,
+                                                                        shouldValidate: true
+                                                                    }
+                                                                );
+                                                            }}
                                                         >
                                                             { minutes.map((minItem: any, index) => (
-                                                                <MenuItem key={index} value={minItem} selected={minItem == "00" ? true : false}>
+                                                                <MenuItem key={index} value={minItem}>
                                                                     {minItem}
                                                                 </MenuItem>
                                                             )) }
@@ -879,8 +942,8 @@ function AlbumDetails() {
                                                             labelId="releaseTimeHourFormat"
                                                             id="releaseTimeHourFormat-select"
                                                             label=""
-                                                            defaultValue="AM"
                                                             placeholder='AM'
+                                                            value={selectReleaseTimeFormatValue}
 
                                                             sx={{
                                                                 color: darkTheme ? "#fff" : "#000",
@@ -903,9 +966,24 @@ function AlbumDetails() {
                                                             }}
                                                             
                                                             error={ errors.releaseTimeHourFormat ? true : false }
-                                                            { ...register('releaseTimeHourFormat') }
+                                                            // { ...register('releaseTimeHourFormat') }
+
+                                                            onChange={(event) => {
+                                                                const value: any = event.target.value;
+                                                                setSelectReleaseTimeFormatValue(value);
+
+                                                                setValue(
+                                                                    "releaseTimeHourFormat", 
+                                                                    value, 
+                                                                    {
+                                                                        shouldDirty: true,
+                                                                        shouldTouch: true,
+                                                                        shouldValidate: true
+                                                                    }
+                                                                );
+                                                            }}
                                                         >
-                                                            <MenuItem value="AM" selected>
+                                                            <MenuItem value="AM">
                                                                 AM
                                                             </MenuItem>
 
@@ -931,7 +1009,8 @@ function AlbumDetails() {
                                                 <FormGroup>
                                                     <FormControlLabel 
                                                         control={<Checkbox 
-                                                            defaultChecked 
+                                                            // defaultChecked 
+                                                            checked={selectListenerTimezoneValue}
                                                             sx={{
                                                                 color: darkTheme ? "#fff" : "#797979",
                                                                 '&.Mui-checked': {
@@ -956,17 +1035,25 @@ function AlbumDetails() {
                                                             </Typography>
                                                         </Box>}
                                                         sx={{ mb: 2, alignItems: 'flex-start' }}
+                                                        // value={selectListenerTimezoneValue}
                                                         onChange={(event) => {
                                                             const eValue: any = event.target;
                                                             // console.log(eValue.checked);
-                                                            setValue("listenerTimezone", eValue.checked, {shouldDirty: true, shouldTouch: true, shouldValidate: true});
+
+                                                            if (eValue.checked == true) {
+                                                                setValue("listenerTimezone", eValue.checked, {shouldDirty: true, shouldTouch: true, shouldValidate: true});
+                                                                setSelectListenerTimezoneValue(eValue.checked);
+
+                                                                setValue("generalTimezone", false, {shouldDirty: true, shouldTouch: true, shouldValidate: true});
+                                                                setSelectGeneralTimezoneValue(false);
+                                                            }
                                                         }}
                                                     />
 
                                                     <FormControlLabel 
                                                         control={<Checkbox 
-                                                            defaultChecked 
-                                                            // checked={tnc}
+                                                            // defaultChecked 
+                                                            checked={selectGeneralTimezoneValue}
                                                             sx={{
                                                                 color: darkTheme ? "#fff" : "#797979",
                                                                 '&.Mui-checked': {
@@ -986,10 +1073,17 @@ function AlbumDetails() {
                                                             </Typography>
                                                         </Box>}
                                                         sx={{ alignItems: 'flex-start' }}
+                                                        // value={selectGeneralTimezoneValue}
                                                         onChange={(event) => {
                                                             const eValue: any = event.target;
                                                             // console.log(eValue.checked);
-                                                            setValue("generalTimezone", eValue.checked, {shouldDirty: true, shouldTouch: true, shouldValidate: true} );
+                                                            if (eValue.checked) {
+                                                                setValue("generalTimezone", eValue.checked, {shouldDirty: true, shouldTouch: true, shouldValidate: true} );
+                                                                setSelectGeneralTimezoneValue(eValue.checked);
+
+                                                                setValue("listenerTimezone", false, {shouldDirty: true, shouldTouch: true, shouldValidate: true} );
+                                                                setSelectListenerTimezoneValue(false);
+                                                            }
                                                         }}
                                                     />
                                                 </FormGroup>

@@ -14,20 +14,27 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 
 import { useUserStore } from '@/state/userStore';
 import { useSettingStore } from '@/state/settingStore';
-// import { createReleaseStore } from '@/state/createReleaseStore';
+import { createReleaseStore } from '@/state/createReleaseStore';
 
 import AccountWrapper from '@/components/AccountWrapper';
 
-import recordLabelImage from "@/assets/images/recordLabelSignup.jpg";
-import testAudio from "@/assets/testAudio.mp3";
 import SongPreviewComponent from '@/components/account/SongPreview';
+import SuccessModalComponent from '@/components/account/SuccessModal';
 
 
 function CreateAlbumReleaseOverview() {
     const navigate = useNavigate();
     const darkTheme = useSettingStore((state) => state.darkTheme);
     const userData = useUserStore((state) => state.userData);
-    // const accessToken = useUserStore((state) => state.accessToken);
+    const [openSuccessModal, setOpenSuccessModal] = useState(false);
+
+    const albumReleaseDetails = createReleaseStore((state) => state.albumReleaseDetails);
+    const albumReleaseAdvanceFeatures = createReleaseStore((state) => state.albumReleaseAdvanceFeatures);
+    const albumReleaseStores = createReleaseStore((state) => state.albumReleaseStores);
+    const albumReleaseSongUpload = createReleaseStore((state) => state.albumReleaseSongUpload);
+    const _removeAlbumReleaseSongUpload = createReleaseStore((state) => state._removeAlbumReleaseSongUpload);
+    const albumReleaseAlbumArt = createReleaseStore((state) => state.albumReleaseAlbumArt);
+
     const _setToastNotification = useSettingStore((state) => state._setToastNotification);
     const [apiResponse, setApiResponse] = useState({
         display: false,
@@ -35,30 +42,9 @@ function CreateAlbumReleaseOverview() {
         message: ""
     });
 
-    const [image, setImage] = useState();
-    const [imagePreview, setImagePreview] = useState();
+    const [image, setImage] = useState(albumReleaseAlbumArt.image);
+    const [imagePreview, setImagePreview] = useState(albumReleaseAlbumArt.imagePreview);
 
-
-    const [ audioSongs, setAudioSongs] = useState([
-        {
-            title: "Good God",
-            audio: testAudio,
-        },
-        {
-            title: "Good God",
-            audio: testAudio,
-        },
-        {
-            title: "Good God",
-            audio: testAudio,
-        },
-        {
-            title: "Good God",
-            audio: testAudio,
-        }
-    ]);
-
-    
     const handleFileUpload = async (e: any) => {
         const file = e.target.files[0]; 
         setImage(file);
@@ -92,8 +78,6 @@ function CreateAlbumReleaseOverview() {
     }
 
     const onSubmit = () => {
-        console.log(imagePreview);
-
         setApiResponse({
             display: false,
             status: true,
@@ -117,18 +101,25 @@ function CreateAlbumReleaseOverview() {
         }
 
 
+        setOpenSuccessModal(true);
+        
+        setTimeout(() => {
+            setOpenSuccessModal(false);
+
+            navigate("/account/artist");
+        }, 1000);
+
         const data2db = new FormData();
         data2db.append('email', userData.email);
         data2db.append('release_type', "Single");
 
         data2db.append('cover_photo', image);
 
-        console.log(data2db);
+        // console.log(data2db);
 
-        navigate("/account/artist/create-single-release-continue");
+        // navigate("/account/artist/create-single-release-continue");
 
     }
-
 
 
     return (
@@ -184,7 +175,8 @@ function CreateAlbumReleaseOverview() {
                                     sx={{
                                         height: {xs: "32.53px", sm: "72px"},
                                         bgcolor: "#272727",
-                                        borderBottom: {xs: "0.45px solid #FFFFFF", sm: "1px solid #FFFFFF"},
+                                        color: "#fff",
+                                        borderBottom: darkTheme ? {xs: "0.45px solid #FFFFFF", sm: "1px solid #FFFFFF"} : "none",
                                         px: {xs: "10px", sm: "25px"},
                                         display: "flex",
                                         flexDirection: "row",
@@ -202,12 +194,13 @@ function CreateAlbumReleaseOverview() {
                                         }}
                                     >Details</Typography>
 
-                                    <Typography
+                                    <Typography onClick={() => navigate("/account/artist/create-album-release-details")}
                                         sx={{
                                             fontWeight: "400",
                                             fontSize: {xs: "15px", sm: "20px"},
                                             lineHeight: {xs: "20px", sm: "40px"},
-                                            letterSpacing: {xs: "-0.06px", sm: "-0.13px"}
+                                            letterSpacing: {xs: "-0.06px", sm: "-0.13px"},
+                                            cursor: 'pointer'
                                         }}
                                     >Edit</Typography>
                                 </Box>
@@ -215,7 +208,7 @@ function CreateAlbumReleaseOverview() {
                                 <Box
                                     sx={{
                                         p: {xs: "10px", sm: "25px"},
-                                        bgcolor: darkTheme ? "#000" : "#797979",
+                                        bgcolor: darkTheme ? "#000" : "#B0AFAF",
                                         mt: {xs: "15px", sm: "0px"}
                                     }}
                                 >
@@ -226,7 +219,8 @@ function CreateAlbumReleaseOverview() {
                                             lineHeight: {xs: "10.84px", sm: "24px"},
                                             letterSpacing: {xs: "-0.61px", sm: "-1.34px"},
                                         }}
-                                    >Good God: Joseph solomon</Typography>
+                                    > { albumReleaseDetails.album_title } : { albumReleaseDetails.artist_name } </Typography>
+                                    {/* >Good God: Joseph solomon</Typography> */}
 
                                     <Box sx={{ mt: {xs: "15px", sm: "30px"} }}>
                                         <Stack direction="row" spacing={"auto"} justifyContent="space-between" alignItems="center">
@@ -246,7 +240,7 @@ function CreateAlbumReleaseOverview() {
                                                     lineHeight: {xs: "25px", sm: "40px"},
                                                     letterSpacing: "-0.13px"
                                                 }}
-                                            >20-May-2024</Typography>
+                                            > { albumReleaseDetails.releaseDate } </Typography>
                                         </Stack>
                                         
                                         <Stack direction="row" spacing={"auto"} justifyContent="space-between" alignItems="center">
@@ -266,7 +260,7 @@ function CreateAlbumReleaseOverview() {
                                                     lineHeight: {xs: "25px", sm: "40px"},
                                                     letterSpacing: "-0.13px"
                                                 }}
-                                            >Joseph solomon</Typography>
+                                            > { albumReleaseAdvanceFeatures.label_name } </Typography>
                                         </Stack>
 
                                         <Stack direction="row" spacing={"auto"} justifyContent="space-between" alignItems="center">
@@ -286,7 +280,7 @@ function CreateAlbumReleaseOverview() {
                                                     lineHeight: {xs: "25px", sm: "40px"},
                                                     letterSpacing: "-0.13px"
                                                 }}
-                                            >TCAIH2403832</Typography>
+                                            > </Typography>
                                         </Stack>
 
                                         <Stack direction="row" spacing={"auto"} justifyContent="space-between" alignItems="center">
@@ -306,7 +300,7 @@ function CreateAlbumReleaseOverview() {
                                                     lineHeight: {xs: "25px", sm: "40px"},
                                                     letterSpacing: "-0.13px"
                                                 }}
-                                            >859788645275</Typography>
+                                            > { albumReleaseAdvanceFeatures.upc_ean } </Typography>
                                         </Stack>
 
                                         <Stack direction="row" spacing={"auto"} justifyContent="space-between" alignItems="center">
@@ -326,7 +320,7 @@ function CreateAlbumReleaseOverview() {
                                                     lineHeight: {xs: "25px", sm: "40px"},
                                                     letterSpacing: "-0.13px"
                                                 }}
-                                            >Alternative</Typography>
+                                            > { albumReleaseDetails.primary_genre } </Typography>
                                         </Stack>
 
                                         <Stack direction="row" spacing={"auto"} justifyContent="space-between" alignItems="center">
@@ -346,7 +340,7 @@ function CreateAlbumReleaseOverview() {
                                                     lineHeight: {xs: "25px", sm: "40px"},
                                                     letterSpacing: "-0.13px"
                                                 }}
-                                            >Alternative</Typography>
+                                            > { albumReleaseDetails.secondary_genre } </Typography>
                                         </Stack>
 
                                         <Stack direction="row" spacing={"auto"} justifyContent="space-between" alignItems="center">
@@ -366,7 +360,7 @@ function CreateAlbumReleaseOverview() {
                                                     lineHeight: {xs: "25px", sm: "40px"},
                                                     letterSpacing: "-0.13px"
                                                 }}
-                                            >English</Typography>
+                                            > { albumReleaseDetails.language } </Typography>
                                         </Stack>
                                     </Box>
                                 </Box>
@@ -387,7 +381,8 @@ function CreateAlbumReleaseOverview() {
                                     sx={{
                                         height: {xs: "32.53px", sm: "72px"},
                                         bgcolor: "#272727",
-                                        borderBottom: {xs: "0.45px solid #FFFFFF", sm: "1px solid #FFFFFF"},
+                                        color: "#fff",
+                                        borderBottom: darkTheme ? {xs: "0.45px solid #FFFFFF", sm: "1px solid #FFFFFF"} : 'none',
                                         px: {xs: "10px", sm: "25px"},
                                         display: "flex",
                                         flexDirection: "row",
@@ -405,7 +400,8 @@ function CreateAlbumReleaseOverview() {
                                         }}
                                     >Selected Stores</Typography>
                                     
-                                    <Typography
+                                    <Typography 
+                                        onClick={() => navigate("/account/artist/create-album-release-select-stores")}
                                         sx={{
                                             fontWeight: "400",
                                             fontSize: {xs: "15px", sm: "20px"},
@@ -419,15 +415,15 @@ function CreateAlbumReleaseOverview() {
                                 <Box
                                     sx={{
                                         p: {xs: "10px", sm: "25px"},
-                                        bgcolor: darkTheme ? "#000" : "#797979",
+                                        bgcolor: darkTheme ? "#000" : "#B0AFAF",
 
                                         display: "flex",
                                         justifyItems: "center",
                                         alignItems: "center"
                                     }}
                                 >
+                                    { albumReleaseStores.stores }
                                     
-
                                 </Box>
                             </Box>
 
@@ -445,6 +441,7 @@ function CreateAlbumReleaseOverview() {
                                     sx={{
                                         height: {xs: "32.53px", sm: "72px"},
                                         bgcolor: "#272727",
+                                        color: "#fff",
                                         borderBottom: {xs: "0.45px solid #FFFFFF", sm: "1px solid #FFFFFF"},
                                         px: {xs: "10px", sm: "25px"},
                                         display: "flex",
@@ -463,8 +460,8 @@ function CreateAlbumReleaseOverview() {
                                         }}
                                     >Social Platforms - Automatically Selected</Typography>
 
-                                     
                                     <Typography
+                                        onClick={() => navigate("/account/artist/create-album-release-select-stores")}
                                         sx={{
                                             fontWeight: "400",
                                             fontSize: {xs: "15px", sm: "20px"},
@@ -478,8 +475,7 @@ function CreateAlbumReleaseOverview() {
                                 <Box
                                     sx={{
                                         p: {xs: "10px", sm: "25px"},
-                                        bgcolor: darkTheme ? "#000" : "#797979",
-
+                                        bgcolor: darkTheme ? "#000" : "#B0AFAF",
                                         display: "flex",
                                         flexDirection: "column",
                                         justifyItems: "center",
@@ -501,14 +497,19 @@ function CreateAlbumReleaseOverview() {
                                         <b> Click 'Edit' to remove a social platform. </b>
                                     </Typography>
 
-
+                                    <Box mt={2}>
+                                        { albumReleaseStores.socialPlatforms }
+                                    </Box>
                                 </Box>
                             </Box>
 
                             <Box
                                 sx={{
                                     maxWidth: {xs: "330px", sm: "892px"},
-                                    border: {xs: "0.45px solid #FFFFFF", sm: "1px solid #FFFFFF"},
+                                    border: {
+                                        xs: `0.45px solid ${ darkTheme ? "#fff" : "#272727" }`, 
+                                        sm: `1px solid ${ darkTheme ? "#fff" : "#272727" }`
+                                    },
                                     borderRadius: {xs: "5.42px", sm: "12px"},
                                     overflow: "hidden",
                                     mt: "25px",
@@ -519,6 +520,7 @@ function CreateAlbumReleaseOverview() {
                                     sx={{
                                         height: {xs: "32.53px", sm: "72px"},
                                         bgcolor: "#272727",
+                                        color: "#fff",
                                         borderBottom: {xs: "0.45px solid #FFFFFF", sm: "1px solid #FFFFFF"},
                                         px: {xs: "10px", sm: "25px"},
                                         display: "flex",
@@ -538,6 +540,7 @@ function CreateAlbumReleaseOverview() {
                                     > Song </Typography>
                                      
                                     <Typography
+                                        onClick={() => navigate("/account/artist/create-album-release-song-upload")}
                                         sx={{
                                             fontWeight: "400",
                                             fontSize: {xs: "15px", sm: "20px"},
@@ -551,7 +554,7 @@ function CreateAlbumReleaseOverview() {
                                 <Box
                                     sx={{
                                         p: {xs: "10px", sm: "25px"},
-                                        bgcolor: darkTheme ? "#000" : "#797979",
+                                        bgcolor: darkTheme ? "#000" : "#fff",
                                         display: "flex",
                                         flexDirection: "column",
                                         justifyItems: "center",
@@ -559,25 +562,16 @@ function CreateAlbumReleaseOverview() {
                                     }}
                                 >
                                     {
-                                        audioSongs.map((item, i) => (
+                                        albumReleaseSongUpload.map((item, i) => (
                                             <Box key={i} width="100%">
                                                 {
-                                                    item.audio ? (
-                                                        <SongPreviewComponent 
-                                                            songAudio={item.audio} 
-                                                            songTitle={item.title}
-                                                            deleteSong={() => {
-                                                                const result = audioSongs.map((_item, index) => {
-                                                                    if (index == i) return({ title: '', audio: '' });
-                                                                    return _item;
-                                                                });
-                                                                
-                                                                // const result = audioSongs.filter((_item, index) => index != i);
-                                                                setAudioSongs(result);
-                                                            }} 
-                                                        />
-
-                                                    ) : <></>
+                                                    <SongPreviewComponent key={i}
+                                                        songAudio={item.songAudioPreview} 
+                                                        songTitle={item.song_title}
+                                                        deleteSong={() => {
+                                                            _removeAlbumReleaseSongUpload(i);
+                                                        }} 
+                                                    />
                                                 }
                                             </Box>
                                         ))
@@ -615,7 +609,7 @@ function CreateAlbumReleaseOverview() {
                                             my: {xs: "10px", sm: "20px"},
                                             p: {xs: "5px 5px 10px 5px", sm: "5px 5px 25px 5px"},
 
-                                            backgroundImage: `url(${recordLabelImage})`, // Replace with your image URL
+                                            backgroundImage: `url(${imagePreview})`, // Replace with your image URL
                                             backgroundPosition: 'center',
                                             backgroundSize: 'cover',
                                         }}
@@ -668,22 +662,22 @@ function CreateAlbumReleaseOverview() {
                                     onClick={() => onSubmit()}
                                     // disabled={ !isValid || isSubmitting } 
                                     sx={{ 
-                                        bgcolor: "#fff",
+                                        bgcolor: darkTheme ? "#fff" : "#644986",
                                         maxWidth: "312px",
                                         "&.Mui-disabled": {
                                             background: "#9c9c9c",
                                             color: "#797979"
                                         },
                                         "&:hover": {
-                                            bgcolor: "#fff",
+                                            bgcolor: darkTheme ? "#fff" : "#644986",
                                         },
                                         "&:active": {
-                                            bgcolor: "#fff",
+                                            bgcolor: darkTheme ? "#fff" : "#644986",
                                         },
                                         "&:focus": {
-                                            bgcolor: "#fff",
+                                            bgcolor: darkTheme ? "#fff" : "#644986",
                                         },
-                                        color: "#000",
+                                        color: darkTheme ? "#000" : "#fff",
                                         borderRadius: "12px",
                                         my: 3, py: 1.5,
                                         fontSize: {sm: "15.38px"},
@@ -696,7 +690,6 @@ function CreateAlbumReleaseOverview() {
                         </Box>
                     </Box>
                 </Box>
-
             </Box>
 
 
@@ -707,6 +700,11 @@ function CreateAlbumReleaseOverview() {
                 accept='image/*' 
                 onChange={handleFileUpload}
                 style={{display: "none"}}
+            />
+
+            <SuccessModalComponent 
+                openModal={openSuccessModal}
+                closeModal={() => setOpenSuccessModal(false)}
             />
 
         </AccountWrapper>

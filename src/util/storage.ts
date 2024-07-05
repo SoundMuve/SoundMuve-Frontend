@@ -40,27 +40,23 @@ export function clearLocalStorage() {
   
 
 // THE FOLLOWING FUNCTIONS ARE USED FOR SESSION STORAGE
-export async function setSessionStorage(storageKey: string, value: any) {
-    const encryptedvalue = btoa(escape(JSON.stringify(value)));
-    return await sessionStorage.setItem(storageKey, encryptedvalue);
+export function setSessionStorage(storageKey: string, value: any) {
+    const lowLevelEncryption = btoa(JSON.stringify(value));
+    return sessionStorage.setItem(storageKey, lowLevelEncryption);
 }
   
 export function getSessionStorage(storageKey: string) {
-    return new Promise((resolve) => {
-        const localData = sessionStorage.getItem(storageKey);
-        if (localData) {
-            resolve(JSON.parse(unescape(atob(localData))));
-        } else {
-            resolve(false);
-        }
-    });
+    const storedData = sessionStorage.getItem(storageKey);
+    const storedValue = storedData ? JSON.parse(atob(storedData)) : null;
+  
+    return storedValue;
 }
   
-export async function removeSessionStorageItem(storageKey: string) {
-    await sessionStorage.removeItem(storageKey);
+export function removeSessionStorageItem(storageKey: string) {
+    sessionStorage.removeItem(storageKey);
 }
   
-export async function clearSessionStorage() {
-    await sessionStorage.clear();
+export function clearSessionStorage() {
+    sessionStorage.clear();
 }
   

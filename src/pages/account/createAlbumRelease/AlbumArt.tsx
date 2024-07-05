@@ -1,7 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import SideNav from './SideNav';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
@@ -11,21 +10,20 @@ import Button from '@mui/material/Button';
 
 import { useUserStore } from '@/state/userStore';
 import { useSettingStore } from '@/state/settingStore';
-// import { createReleaseStore } from '@/state/createReleaseStore';
+import { createReleaseStore } from '@/state/createReleaseStore';
 
+import SideNav from './SideNav';
 import AccountWrapper from '@/components/AccountWrapper';
-
 import cloudUploadIconImg from "@/assets/images/cloudUploadIcon.png";
-
-
-
 
 
 function CreateAlbumReleaseAlbumArt() {
     const navigate = useNavigate();
-    // const darkTheme = useSettingStore((state) => state.darkTheme);
+    const darkTheme = useSettingStore((state) => state.darkTheme);
     const userData = useUserStore((state) => state.userData);
-    // const accessToken = useUserStore((state) => state.accessToken);
+    const albumReleaseAlbumArt = createReleaseStore((state) => state.albumReleaseAlbumArt);
+    const _setAlbumReleaseAlbumArt = createReleaseStore((state) => state._setAlbumReleaseAlbumArt);
+
     const _setToastNotification = useSettingStore((state) => state._setToastNotification);
     const [apiResponse, setApiResponse] = useState({
         display: false,
@@ -33,8 +31,16 @@ function CreateAlbumReleaseAlbumArt() {
         message: ""
     });
     
-    const [image, setImage] = useState();
-    const [imagePreview, setImagePreview] = useState();
+    const [image, setImage] = useState<any>();
+    const [imagePreview, setImagePreview] = useState<any>();
+
+    useEffect(() => {
+        if (albumReleaseAlbumArt.image) {
+            setImage(albumReleaseAlbumArt.image);
+            setImagePreview(albumReleaseAlbumArt.imagePreview);
+        }
+    }, [albumReleaseAlbumArt]);
+    
 
     const handleFileUpload = async (e: any) => {
         const file = e.target.files[0]; 
@@ -67,7 +73,7 @@ function CreateAlbumReleaseAlbumArt() {
             }
         });
     }
- 
+    
 
     const onSubmit = () => {
         setApiResponse({
@@ -92,14 +98,12 @@ function CreateAlbumReleaseAlbumArt() {
             return;
         }
 
-
         const data2db = new FormData();
         data2db.append('email', userData.email);
-        data2db.append('release_type', "Single");
-
+        data2db.append('release_type', "Album");
         data2db.append('cover_photo', image);
 
-        console.log(data2db);
+        _setAlbumReleaseAlbumArt({image, imagePreview});
 
         navigate("/account/artist/create-album-release-overview");
 
@@ -146,7 +150,7 @@ function CreateAlbumReleaseAlbumArt() {
                                             flexDirection: "column",
                                             justifyContent: "end",
                                             alignItems: "center",
-                                            bgcolor: "#272727",
+                                            bgcolor: darkTheme ? "#272727" : "#666666",
                                             borderRadius: "12px",
                                             height: {xs: "146.55px", md: "326px"},
                                             width: {xs: "128.45px", md: "347px"},
@@ -196,7 +200,7 @@ function CreateAlbumReleaseAlbumArt() {
                                             flexDirection: "column",
                                             justifyContent: "end",
                                             alignItems: "center",
-                                            bgcolor: "#272727",
+                                            bgcolor: darkTheme ? "#272727" : "#666666",
                                             borderRadius: "12px",
                                             height: {xs: "146.55px", md: "326px"},
                                             width: {xs: "128.45px", md: "347px"},
@@ -263,22 +267,22 @@ function CreateAlbumReleaseAlbumArt() {
                                     onClick={() => onSubmit()}
                                     // disabled={ !isValid || isSubmitting } 
                                     sx={{ 
-                                        bgcolor: "#fff",
+                                        bgcolor: darkTheme ? "#fff" : "#644986",
                                         maxWidth: "312px",
                                         "&.Mui-disabled": {
                                             background: "#9c9c9c",
                                             color: "#797979"
                                         },
                                         "&:hover": {
-                                            bgcolor: "#fff",
+                                            bgcolor: darkTheme ? "#fff" : "#644986",
                                         },
                                         "&:active": {
-                                            bgcolor: "#fff",
+                                            bgcolor: darkTheme ? "#fff" : "#644986",
                                         },
                                         "&:focus": {
-                                            bgcolor: "#fff",
+                                            bgcolor: darkTheme ? "#fff" : "#644986",
                                         },
-                                        color: "#000",
+                                        color: darkTheme ? "#000" : "#fff",
                                         borderRadius: "12px",
                                         my: 3, py: 1.5,
                                         fontSize: {md: "15.38px"},

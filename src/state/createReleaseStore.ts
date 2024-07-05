@@ -6,14 +6,23 @@ const singleRelease1 = {
     release_type: "",
     song_title: "",
     artist_name: "",
+    selectedArtistName: <any> {},
+
     explicitLyrics: "",
-    language: "",
-    primary_genre: "",
-    secondary_genre: "",
+
+    language: 'Select Language',
+    primary_genre: 'Select Primary Genre',
+    secondary_genre: 'Select Secondary Genre',
+
     releaseDate: "",
     listenerTimeZone: true,
     generalTimeZone: true,
     release_time: "",
+
+    releaseTimeHours: "12",
+    releaseTimeMinutes: "00",
+    releaseTimeFormat: "AM",
+
     soldWorldwide: "",
     label_name: "",
     recording_location: "",
@@ -44,14 +53,20 @@ const singleRelease2 = {
 const albumReleaseDetails = {
     email: '',
     release_type: '',
-    song_title: '',
+    album_title: '',
     artist_name: '',
-    explicitLyrics: '',
-    language: '',
-    primary_genre: '',
-    secondary_genre: '',
+    selectedArtistName: <any> {},
+    // explicitLyrics: '',
+    language: 'Select Language',
+    primary_genre: 'Select Primary Genre',
+    secondary_genre: 'Select Secondary Genre',
     releaseDate: '',
     release_time: '',
+
+    releaseTimeHours: "12",
+    releaseTimeMinutes: "00",
+    releaseTimeFormat: "AM",
+
     listenerTimeZone: true,
     generalTimeZone: true
 }
@@ -84,12 +99,18 @@ const albumReleaseSongUpload = {
     song_title: '',
     song_writer: <string[]> [],
     songArtistsCreativeRole: <creativeType[]> [],
+    explicitLyrics: '',
     copyright_ownership: '',
     copyright_ownership_permissions: '',
     isrc_number: '',
     language_lyrics: '',
     lyrics: '',
     tikTokClipStartTime: '',
+}
+
+const albumReleaseAlbumArt = {
+    image: <any> '',
+    imagePreview: <any> '',
 }
 
 type _typeInterface_ = {
@@ -100,12 +121,14 @@ type _typeInterface_ = {
     albumReleaseAdvanceFeatures: typeof albumReleaseAdvanceFeatures;
     albumReleaseStores: typeof albumReleaseStores;
     albumReleaseSongUpload: typeof albumReleaseSongUpload[];
+    albumReleaseAlbumArt: typeof albumReleaseAlbumArt;
 
     _setAlbumReleaseDetails : (details: typeof albumReleaseDetails) => void;
     _setAlbumReleaseAdvanceFeatures: (details: typeof albumReleaseAdvanceFeatures) => void;
     _setAlbumReleaseStores: (details: typeof albumReleaseStores) => void;
     _setAlbumReleaseSongUpload: (details: typeof albumReleaseSongUpload) => void;
     _removeAlbumReleaseSongUpload: (index: number) => void;
+    _setAlbumReleaseAlbumArt: (details: typeof albumReleaseAlbumArt) => void;
 
     _setSingleRelease1: (release: typeof singleRelease1) => void;
     _setSingleRelease2: (release: typeof singleRelease2) => void;
@@ -125,6 +148,7 @@ export const createReleaseStore = create<_typeInterface_>((set) => ({
     albumReleaseAdvanceFeatures,
     albumReleaseStores,
     albumReleaseSongUpload: [],
+    albumReleaseAlbumArt,
   
     _setSingleRelease1: (release) => {
         // setLocalStorage("user", user);
@@ -200,6 +224,13 @@ export const createReleaseStore = create<_typeInterface_>((set) => ({
         });
     },
 
+    _setAlbumReleaseAlbumArt : (details) => {
+        set((_state) => {
+            return {
+                albumReleaseAlbumArt: details,
+            };
+        });
+    },
 
 
 }));

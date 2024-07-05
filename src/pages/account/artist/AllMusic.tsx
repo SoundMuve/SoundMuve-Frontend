@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
@@ -12,81 +13,90 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import albumImage from '@/assets/images/album.png';
 
 import AccountWrapper from '@/components/AccountWrapper';
-import { useSettingStore } from '@/state/settingStore';
+import EmptyListComponent from '@/components/EmptyList';
+import LoadingDataComponent from '@/components/LoadingData';
+import ReleaseStatusComponent from '@/components/ReleaseStatus';
 
+import { useSettingStore } from '@/state/settingStore';
+import { useUserStore } from '@/state/userStore';
+
+import { apiEndpoint } from '@/util/resources';
+import { getLocalStorage, setLocalStorage } from '@/util/storage';
+
+// type status = "Live" | "Pending" | "Incomplete" | "Complete" | "Failed";
 
 const albumSongs = [
     {
-        musicImg: albumImage,
-        songTitle: "Good God",
-        artistName: "Joseph solomon",
+        song_cover: albumImage,
+        song_title: "Good God",
+        artist_name: "Joseph solomon",
+        status: "Live"
+    },
+    {
+        song_cover: albumImage,
+        song_title: "Good God",
+        artist_name: "Joseph solomon",
         status: "Complete"
     },
     {
-        musicImg: albumImage,
-        songTitle: "Good God",
-        artistName: "Joseph solomon",
-        status: "Complete"
-    },
-    {
-        musicImg: albumImage,
-        songTitle: "Good God",
-        artistName: "Joseph solomon",
+        song_cover: albumImage,
+        song_title: "Good God",
+        artist_name: "Joseph solomon",
         status: "Incomplete"
     },
     {
-        musicImg: albumImage,
-        songTitle: "Good God",
-        artistName: "Joseph solomon",
+        song_cover: albumImage,
+        song_title: "Good God",
+        artist_name: "Joseph solomon",
+        status: "Pending"
+    },
+    {
+        song_cover: albumImage,
+        song_title: "Good God",
+        artist_name: "Joseph solomon",
+        status: "Live"
+    },
+    {
+        song_cover: albumImage,
+        song_title: "Good God",
+        artist_name: "Joseph solomon",
         status: "Complete"
     },
     {
-        musicImg: albumImage,
-        songTitle: "Good God",
-        artistName: "Joseph solomon",
+        song_cover: albumImage,
+        song_title: "Good God",
+        artist_name: "Joseph solomon",
+        status: "Failed"
+    },
+    {
+        song_cover: albumImage,
+        song_title: "Good God",
+        artist_name: "Joseph solomon",
+        status: "Pending"
+    },
+    {
+        song_cover: albumImage,
+        song_title: "Good God",
+        artist_name: "Joseph solomon",
         status: "Complete"
     },
     {
-        musicImg: albumImage,
-        songTitle: "Good God",
-        artistName: "Joseph solomon",
+        song_cover: albumImage,
+        song_title: "Good God",
+        artist_name: "Joseph solomon",
         status: "Complete"
     },
     {
-        musicImg: albumImage,
-        songTitle: "Good God",
-        artistName: "Joseph solomon",
-        status: "Error"
+        song_cover: albumImage,
+        song_title: "Good God",
+        artist_name: "Joseph solomon",
+        status: "Failed"
     },
     {
-        musicImg: albumImage,
-        songTitle: "Good God",
-        artistName: "Joseph solomon",
-        status: "Complete"
-    },
-    {
-        musicImg: albumImage,
-        songTitle: "Good God",
-        artistName: "Joseph solomon",
-        status: "Complete"
-    },
-    {
-        musicImg: albumImage,
-        songTitle: "Good God",
-        artistName: "Joseph solomon",
-        status: "Complete"
-    },
-    {
-        musicImg: albumImage,
-        songTitle: "Good God",
-        artistName: "Joseph solomon",
-        status: "Error"
-    },
-    {
-        musicImg: albumImage,
-        songTitle: "Good God",
-        artistName: "Joseph solomon",
-        status: "Error"
+        song_cover: albumImage,
+        song_title: "Good God",
+        artist_name: "Joseph solomon",
+        status: "Failed"
     },
 ];
 
@@ -95,8 +105,129 @@ function AllMusic() {
     const navigate = useNavigate();
     const [albumType, setAlbumType] = useState<"Single" | "Album">("Single");
     const darkTheme = useSettingStore((state) => state.darkTheme);
+    const userData = useUserStore((state) => state.userData);
+    const accessToken = useUserStore((state) => state.accessToken);
+    const [singleRelease, setSingleRelease] = useState<any[]>();
+
+    const _setToastNotification = useSettingStore((state) => state._setToastNotification);
+    const [apiResponse, setApiResponse] = useState({
+        display: false,
+        status: true,
+        message: ""
+    });
 
 
+    useEffect(() => {
+        const localResponds = getLocalStorage("singleRelease");
+        if (localResponds && localResponds.length) setSingleRelease(localResponds);
+        
+        getSingleRelease();
+    }, []);
+
+
+    const getSingleRelease = async () => {
+        try {
+            const response = (await axios.get(`${apiEndpoint}/Release/getReleaseByEmail/${ userData.email }`, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`
+                }
+            })).data;
+            console.log(response);
+
+            setLocalStorage("singleRelease", response);
+            setSingleRelease(response);
+
+            if (!response.length) {
+                setApiResponse({
+                    display: true,
+                    status: true,
+                    message: "You don't have any single Release yet."
+                });
+            }
+
+        } catch (error: any) {
+            const errorResponse = error.response.data;
+            console.error(errorResponse);
+
+            setSingleRelease([]);
+
+            setApiResponse({
+                display: true,
+                status: false,
+                message: errorResponse.message || "Ooops and error occurred!"
+            });
+
+            _setToastNotification({
+                display: true,
+                status: "error",
+                message: errorResponse.message || "Ooops and error occurred!"
+            });
+        }
+    }
+    
+
+    const songView = (song: any, index: number) => (
+        <Grid item xs={6} md={4} key={index}>
+            <Box sx={{ width: "95%" }}>
+                <Box
+                    sx={{
+                        height: {xs: "152.99px", md: "268px"},
+                        borderRadius: {xs: "6.85px", md: "12px"},
+                        bgcolor: "#343434",
+                        textAlign: "center",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center"
+                    }}
+                >
+                    <Box 
+                        sx={{
+                            width: {xs: "124.48px", md: "218.06px"},
+                            height: {xs: "124.48px", md: "218.06px"}
+                        }}
+                    >
+                        <img
+                            src={song.song_cover} alt={`${song.song_title} song cover`}
+                            style={{
+                                width: "100%",
+                                height: "100%",
+                                objectFit: "contain"
+                            }}
+                        />
+                    </Box>
+                </Box>
+
+                <Typography
+                    sx={{
+                        fontWeight: "900",
+                        fontSize: {xs: "10.85px", md: "19px"},
+                        lineHeight: {xs: "13.7px", md: "24px"},
+                        letterSpacing: {xs: "-0.77px", md: "-1.34px"},
+                        // color: "#fff",
+                        my: {xs: "8px 0 0 0", md: "8px 0 8px 0"}
+                    }}
+                > { song.song_title } </Typography>
+
+
+                <Typography
+                    sx={{
+                        display: albumType == "Album" ? "block" : "none",
+                        fontWeight: "400",
+                        fontSize: {xs: "8.02px", md: "15px"},
+                        lineHeight: {xs: "12.83px", md: "24px"},
+                        // letterSpacing: {xs: "-0.77px", md: "-1.34px"},
+                        color: "#979797",
+                        mb: {md: 1}
+                    }}
+                > Album </Typography>
+
+                <ReleaseStatusComponent status={song.status} />
+
+            </Box>
+        </Grid>
+    );
+
+      
     return (
         <AccountWrapper>
             <Box sx={{px: {xs: 2, md: 5, lg: 12}, pb: 5, position: "relative", zIndex: 10, mt: {xs: 5, md: 10}  }}>
@@ -112,7 +243,6 @@ function AllMusic() {
                         <ChevronLeftIcon />
                     </IconButton>
 
-
                     <Box></Box>
                 </Stack>
 
@@ -126,9 +256,7 @@ function AllMusic() {
                         letterSpacing: {xs: "-0.89px", md: "-1.34px"},
                         my: {xs: "50px", md: "100px"},
                     }}
-                >
-                    Your Releases
-                </Typography>
+                > Your Releases </Typography>
 
 
                 <Box 
@@ -219,88 +347,23 @@ function AllMusic() {
 
                 <Grid container spacing="20px">
                     {
-                        albumSongs.map((song, index) => (
-                            <Grid item xs={6} md={4} key={index}>
-                                <Box 
-                                    sx={{ 
-                                        width: "95%",
-                                        // mx: "auto"
-                                    }}
-                                >
-                                    <Box
-                                        sx={{
-                                            height: {xs: "152.99px", md: "268px"},
-                                            borderRadius: {xs: "6.85px", md: "12px"},
-                                            bgcolor: "#343434",
-                                            textAlign: "center",
-                                            display: "flex",
-                                            justifyContent: "center",
-                                            alignItems: "center"
-                                        }}
-                                    >
-                                        <Box 
-                                            sx={{
-                                                width: {xs: "124.48px", md: "218.06px"},
-                                                height: {xs: "124.48px", md: "218.06px"}
-                                            }}
-                                        >
-                                            <img
-                                                src={song.musicImg} alt='album image'
-                                                style={{
-                                                    width: "100%",
-                                                    objectFit: "contain"
-                                                }}
-                                            />
-                                        </Box>
-                                    </Box>
-
-                                    <Typography
-                                        sx={{
-                                            fontWeight: "900",
-                                            fontSize: {xs: "10.85px", md: "19px"},
-                                            lineHeight: {xs: "13.7px", md: "24px"},
-                                            letterSpacing: {xs: "-0.77px", md: "-1.34px"},
-                                            // color: "#fff",
-                                            my: {xs: "8px 0 0 0", md: "8px 0 8px 0"}
-                                        }}
-                                    > { song.songTitle } </Typography>
-
-
-                                    <Typography
-                                        sx={{
-                                            display: albumType == "Album" ? "block" : "none",
-                                            fontWeight: "400",
-                                            fontSize: {xs: "8.02px", md: "15px"},
-                                            lineHeight: {xs: "12.83px", md: "24px"},
-                                            // letterSpacing: {xs: "-0.77px", md: "-1.34px"},
-                                            color: "#979797",
-                                            mb: {md: 1}
-                                        }}
-                                    > Album </Typography>
-
-
-                                    <Box
-                                        sx={{
-                                            // bgcolor: "#B4D28A",
-                                            bgcolor: song.status == 'Complete' ? "#B4D28A" : song.status == 'Incomplete' ? "#D3AA5A" : song.status == 'Error' ? "#ffc9d9" : "#c4c4c4",
-
-                                            p: {xs: "0px 11.99px 0px 11.99px", md: "0px 21px 0px 21px"},
-                                            borderRadius: {xs: "15.98px", md: "28px"},
-                                            display: "inline-block"
-                                        }}
-                                    >
-                                        <Typography
-                                            sx={{
-                                                color: song.status == 'Complete' ? "#33500B" : song.status == 'Incomplete' ? "#7F580C" : song.status == 'Error' ? "#de2341" : "#343434",
-                                                fontSize: {xs: "6.28px", md: "11px"},
-                                                lineHeight: {xs: "13.7px", md: "24px"},
-                                                letterSpacing: {xs: "0.06px", md: "0.1px"}
-                                            }}
-                                        > { song.status } </Typography>
-                                    </Box>
-                                </Box>
-                            </Grid>
-                        ))
+                        albumType === "Single" ? (
+                            singleRelease ? 
+                                singleRelease.length ?
+                                    singleRelease.map((song, index) => (
+                                        songView(song, index)
+                                    ))
+                                : <EmptyListComponent notFoundText={apiResponse.message} />
+                            : <LoadingDataComponent />
+                        ) : (
+                            albumSongs ? 
+                                albumSongs.length ?
+                                    albumSongs.map((song, index) => (
+                                        songView(song, index)
+                                    ))
+                                : <EmptyListComponent notFoundText={apiResponse.message} />
+                            : <LoadingDataComponent />
+                        )
                     }
                 </Grid>
 

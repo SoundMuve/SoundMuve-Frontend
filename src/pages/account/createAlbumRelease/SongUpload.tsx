@@ -20,6 +20,7 @@ import TextField from '@mui/material/TextField';
 import CloudUploadOutlinedIcon from '@mui/icons-material/CloudUploadOutlined';
 import AddIcon from '@mui/icons-material/Add';
 import CancelIcon from '@mui/icons-material/Cancel';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
 import { ThemeProvider, useTheme } from '@mui/material/styles';
 
@@ -32,7 +33,8 @@ import SongPreviewComponent from '@/components/account/SongPreview';
 
 import { customTextFieldTheme } from '@/util/mui';
 import { languages } from '@/util/languages';
-import { minutes, seconds, songArtistsCreativesRoles } from '@/util/resources';
+import { minutes, seconds, songArtistsCreativesRoles, pauseExecution } from '@/util/resources';
+import CopyrightOwnershipModalComponent from '@/components/account/CopyrightOwnershipModal';
 
 
 const formSchema = yup.object({
@@ -41,6 +43,8 @@ const formSchema = yup.object({
     songWriter: yup.string().trim().label("Song Writer"),
     artistCreativeName: yup.string().trim().label("Artist/Creative Name"),
     songArtistsCreativeRole: yup.string().trim().label("Artist/Creative Role"),
+
+    explicitSongLyrics: yup.string().trim(),
     
     copyrightOwnership: yup.string().trim().label("Copyright Ownership"),
     copyrightOwnershipPermission: yup.string().trim().label("Copyright Ownership Permission"),
@@ -59,7 +63,6 @@ interface creativeType {
     creativeRole: string,
 }
 
-
 function CreateAlbumReleaseSongUpload() {
     const navigate = useNavigate();
     const outerTheme = useTheme();
@@ -70,6 +73,7 @@ function CreateAlbumReleaseSongUpload() {
     const _setAlbumReleaseSongUpload = createReleaseStore((state) => state._setAlbumReleaseSongUpload);
     const albumReleaseDetails = createReleaseStore((state) => state.albumReleaseDetails);
     const _removeAlbumReleaseSongUpload = createReleaseStore((state) => state._removeAlbumReleaseSongUpload);
+    const [openCopyrightOwnershipModal, setOpenCopyrightOwnershipModal] = useState(false);
 
     const _setToastNotification = useSettingStore((state) => state._setToastNotification);
     const [apiResponse, setApiResponse] = useState({
@@ -77,7 +81,9 @@ function CreateAlbumReleaseSongUpload() {
         status: true,
         message: ""
     });
+    // const [submitBtnType, setSubmitBtnType] = useState<'next' | "add">();
     
+    const [explicitLyrics, setExplicitLyrics] = useState(""); // No
     const [copyrightOwnership, setCopyrightOwnership] = useState('');
     const [copyrightOwnershipPermission, setCopyrightOwnershipPermission] = useState('');
     const [songWriters, setSongWriters] = useState<string[]>([]);
@@ -91,7 +97,7 @@ function CreateAlbumReleaseSongUpload() {
 
 
     const { 
-        handleSubmit, register, getValues, setError, setValue, resetField, setFocus, reset, formState: { errors, isValid, isSubmitting } 
+        handleSubmit, register, getValues, setError, setValue, resetField, setFocus, reset, formState: { errors, isSubmitting } 
     } = useForm({ 
         resolver: yupResolver(formSchema),
         mode: 'onBlur', reValidateMode: 'onChange', 
@@ -114,23 +120,21 @@ function CreateAlbumReleaseSongUpload() {
         setSongAudio(songData.mp3_file);
         setSongAudioPreview(songData.songAudioPreview);
 
-        // setSelectRoleValue("Choose Roles");
+        setSongWriters(songData.song_writer);
+        setSongArtists_Creatives(songData.songArtistsCreativeRole);
+
+        setExplicitLyrics(songData.explicitLyrics);
+        setValue("explicitSongLyrics", songData.explicitLyrics, {shouldDirty: true, shouldTouch: true, shouldValidate: true})
 
         setSelectLyricsLanguageValue(songData.language_lyrics);
-        setValue("lyricsLanguage", songData.language_lyrics);
+        setValue("lyricsLanguage", songData.language_lyrics, {shouldDirty: true, shouldTouch: true, shouldValidate: true});
 
         setCopyrightOwnership(songData.copyright_ownership);
         setValue("copyrightOwnership", songData.copyright_ownership);
         setCopyrightOwnershipPermission(songData.copyright_ownership_permissions);
         setValue("copyrightOwnershipPermission", songData.copyright_ownership_permissions);
 
-        setSongWriters(songData.song_writer);
-        setSongArtists_Creatives(songData.songArtistsCreativeRole);
-
         const tiktokTimer = songData.tikTokClipStartTime.split(':');
-
-        console.log(tiktokTimer);
-        
 
         setValue("tikTokClipStartTime_Minutes", tiktokTimer[0], {shouldDirty: true, shouldTouch: true, shouldValidate: true});
         setValue("tikTokClipStartTime_Seconds", tiktokTimer[1], {shouldDirty: true, shouldTouch: true, shouldValidate: true});
@@ -154,10 +158,22 @@ function CreateAlbumReleaseSongUpload() {
     }
 
     const handleNextBTN = () => {
-        navigate("/account/artist/create-album-release-album-art");
+
+        if (albumReleaseSongUpload.length) {
+            navigate("/account/artist/create-album-release-album-art");
+            
+        } else {
+            _setToastNotification({
+                display: true,
+                status: "warning",
+                message: "Please add a songs to proceed."
+            });
+        }
+        
     }
 
-    const onSubmit = async (formData: typeof formSchema.__outputType) => {
+    const onSubmit = async (formData: typeof formSchema.__outputType) => {  
+        // console.log(formData);
 
         setApiResponse({
             display: false,
@@ -191,26 +207,31 @@ function CreateAlbumReleaseSongUpload() {
         }
 
         if (formData.artistCreativeName) {
-            const newData = {
-                creativeName: formData.artistCreativeName,
-                creativeRole: formData.songArtistsCreativeRole || '',
-            };
-
-            const newCreatives = [ ...songArtists_Creatives, newData ];
-            setSongArtists_Creatives(newCreatives);
-            resetField("artistCreativeName");
-            resetField("songArtistsCreativeRole");
-            
-            if (!newCreatives.length) {
+            if (formData.songArtistsCreativeRole && formData.songArtistsCreativeRole != 'Choose Roles') {
+                const newData = {
+                    creativeName: formData.artistCreativeName,
+                    creativeRole: formData.songArtistsCreativeRole,
+                };
+    
+                const newCreatives = [ ...songArtists_Creatives, newData ];
+                setSongArtists_Creatives(newCreatives);
+    
+                setTimeout(() => {
+                    resetField("artistCreativeName");
+                    resetField("songArtistsCreativeRole");
+                    setSelectRoleValue("Choose Roles");
+                }, 500);
+            } else {
                 _setToastNotification({
                     display: true,
                     status: "error",
-                    message: "Please add artists & creatives that worked on this song."
+                    message: `Please choose ${formData.artistCreativeName} role for this song.`,
                 })
     
                 setError(
-                    "artistCreativeName", 
-                    { message: "Please add artists & creatives that worked on this song." },
+                    "songArtistsCreativeRole", 
+                    { message: `Please choose ${formData.artistCreativeName} role for this song.` },
+                    // "Please add artists & creatives that worked on this song."
                     { shouldFocus: true }
                 )
                 return;
@@ -232,6 +253,17 @@ function CreateAlbumReleaseSongUpload() {
             }
         }
 
+        if (!explicitLyrics) {
+            _setToastNotification({
+                display: true,
+                status: "error",
+                message: "Please choose if this song has explicit lyrics."
+            })
+
+            setError("explicitSongLyrics", {message: "Please choose if this song has explicit lyrics."})
+            return;
+        }
+
         if (!copyrightOwnership) {
             _setToastNotification({
                 display: true,
@@ -249,13 +281,15 @@ function CreateAlbumReleaseSongUpload() {
                 status: "error",
                 // message: "Copyright Ownership Permission::: Select if this song is a cover version of another song?"
                 message: "Copyright Ownership Permission is required."
-            })
+            });
+            setOpenCopyrightOwnershipModal(true);
 
             setError(
                 "copyrightOwnershipPermission", 
                 { message: "Copyright Ownership Permission is required." },
                 { shouldFocus: true }
             );
+
             return;
         }
 
@@ -275,6 +309,9 @@ function CreateAlbumReleaseSongUpload() {
             return;
         }
 
+        await pauseExecution(500);
+        // Pause for 500 milliseconds so that setSongWriters && setSongArtists_Creatives will complete.
+
         const newSongData = {
             email: userData.email,
             mp3_file: songAudio,
@@ -282,6 +319,9 @@ function CreateAlbumReleaseSongUpload() {
             song_title: formData.songTitle,
             song_writer: songWriters,
             songArtistsCreativeRole: songArtists_Creatives,
+
+            explicitLyrics: explicitLyrics,
+
             copyright_ownership: copyrightOwnership,
             copyright_ownership_permissions: copyrightOwnershipPermission,
             isrc_number: formData.ISRC_Number || '',
@@ -296,6 +336,7 @@ function CreateAlbumReleaseSongUpload() {
         data2db.append('song_title', newSongData.song_title );
         data2db.append('song_writer', newSongData.song_writer.toString());
         data2db.append('songArtistsCreativeRole', newSongData.songArtistsCreativeRole.toString());
+        data2db.append('explicitLyrics', newSongData.explicitLyrics);
         data2db.append('copyright_ownership', newSongData.copyright_ownership);
         data2db.append('copyright_ownership_permissions', newSongData.copyright_ownership_permissions);
         data2db.append('isrc_number', newSongData.isrc_number);
@@ -303,8 +344,9 @@ function CreateAlbumReleaseSongUpload() {
         data2db.append('lyrics', newSongData.lyrics);
         data2db.append('tikTokClipStartTime', newSongData.tikTokClipStartTime);
 
-        console.log(newSongData);
+        // console.log(newSongData);
         _setAlbumReleaseSongUpload(newSongData);
+
 
         setFocus("songTitle", {shouldSelect: true});
         reset();
@@ -315,7 +357,9 @@ function CreateAlbumReleaseSongUpload() {
         setSongWriters([]);
         setSongArtists_Creatives([]);
         setSelectRoleValue("Choose Roles");
-        setValue("songArtistsCreativeRole", "Choose Roles")
+        setValue("explicitSongLyrics", "");
+        setExplicitLyrics("");
+        setValue("songArtistsCreativeRole", "Choose Roles");
         setValue("tikTokClipStartTime_Minutes", "00");
         setValue("tikTokClipStartTime_Seconds", "00");
         setSelectTiktokMinValue("00");
@@ -390,7 +434,11 @@ function CreateAlbumReleaseSongUpload() {
                                             <Box
                                                 sx={{
                                                     maxWidth: {xs: "330px", md: "892px"},
-                                                    border: {xs: "0.45px solid #FFFFFF", md: "1px solid #FFFFFF"},
+                                                    border: {
+                                                        xs: `0.45px solid ${ darkTheme ? "#fff" : "#000" }`,
+                                                        md: `1px solid ${ darkTheme ? "#fff" : "#000" }`
+                                                    },
+                                                    bgcolor: darkTheme ? "#000" : "#fff", // "#797979",
                                                     borderRadius: {xs: "5.42px", md: "12px"},
                                                     overflow: "hidden",
                                                     mb: {xs: 2, sm: 3}
@@ -414,7 +462,8 @@ function CreateAlbumReleaseSongUpload() {
                                                             fontWeight: "900",
                                                             fontSize: {xs: "15px", md: "15px"},
                                                             lineHeight: {xs: "20px", md: "31px"},
-                                                            letterSpacing: {xs: "-0.06px", md: "-0.13px"}
+                                                            letterSpacing: {xs: "-0.06px", md: "-0.13px"},
+                                                            color: "#fff"
                                                         }}
                                                     >Song</Typography>
 
@@ -424,7 +473,7 @@ function CreateAlbumReleaseSongUpload() {
                                                 <Box
                                                     sx={{
                                                         p: {xs: "10px", md: "25px"},
-                                                        bgcolor: darkTheme ? "#000" : "#797979",
+                                                        // bgcolor: darkTheme ? "#000" : "#797979",
 
                                                         display: "flex",
                                                         flexDirection: "column",
@@ -454,9 +503,13 @@ function CreateAlbumReleaseSongUpload() {
                                     <Box
                                         sx={{
                                             maxWidth: {xs: "330px", md: "892px"},
-                                            border: {xs: "0.45px solid #FFFFFF", md: "1px solid #FFFFFF"},
+                                            border: {
+                                                xs: `0.45px solid ${ darkTheme ? "#fff" : "#000" }`,
+                                                md: `1px solid ${ darkTheme ? "#fff" : "#000" }`
+                                            },
                                             borderRadius: {xs: "5.42px", md: "12px"},
-                                            overflow: "hidden"
+                                            overflow: "hidden",
+                                            bgcolor: darkTheme ? "#000" : "#fff", // "#797979",
                                         }}
                                     >
                                         <Box
@@ -477,7 +530,8 @@ function CreateAlbumReleaseSongUpload() {
                                                     fontWeight: "900",
                                                     fontSize: {xs: "15px", md: "15px"},
                                                     lineHeight: {xs: "20px", md: "31px"},
-                                                    letterSpacing: {xs: "-0.06px", md: "-0.13px"}
+                                                    letterSpacing: {xs: "-0.06px", md: "-0.13px"},
+                                                    color: "#fff"
                                                 }}
                                             >Song</Typography>
 
@@ -487,7 +541,7 @@ function CreateAlbumReleaseSongUpload() {
                                         <Box
                                             sx={{
                                                 p: {xs: "10px", md: "25px"},
-                                                bgcolor: darkTheme ? "#000" : "#797979",
+                                                // bgcolor: darkTheme ? "#000" : "#797979",
 
                                                 display: "flex",
                                                 flexDirection: "column",
@@ -515,8 +569,8 @@ function CreateAlbumReleaseSongUpload() {
                                                     p: {xs: "", md: "10px 25px"},
                                                     borderRadius: '16px',
                                                     width: "459px",
-                                                    bgcolor: "#fff",
-                                                    color: "#000",
+                                                    bgcolor: darkTheme ? "#fff" : "#000",
+                                                    color: darkTheme ? "#000" : "#fff",
                                                     my: 3,
                                                     cursor: "pointer"
                                                 }}
@@ -590,9 +644,10 @@ function CreateAlbumReleaseSongUpload() {
                                             <Stack spacing={{xs: "20px", md: "35px"}} sx={{width: "100%"}}>
                                                 <Box
                                                     sx={{
-                                                        bgcolor: "#272727",
+                                                        bgcolor: darkTheme ? "#272727" : "#666666",
+                                                        color: "#fff",
                                                         p: {xs: "10px", md: "25px"},
-                                                        borderRadius: "12px"
+                                                        borderRadius: "12px",
                                                     }}
                                                 >
                                                     <Typography component={"h3"} variant='h3'
@@ -647,7 +702,7 @@ function CreateAlbumReleaseSongUpload() {
                                                                             fontSize: {xs: "15px", md: "18px"}
                                                                         }} 
                                                                         onClick={() => {
-                                                                            const newWritter = songWriters.filter(item => item != writerName);
+                                                                            const newWritter = songWriters.filter((_, index) => index != i );
                                                                             setSongWriters(newWritter);
                                                                             document.getElementById("songWriter")?.focus();
                                                                         }}
@@ -699,6 +754,10 @@ function CreateAlbumReleaseSongUpload() {
                                                                     //     color: "gray"
                                                                     // },
                                                                 },
+
+                                                                '& .MuiInputBase-input': { // Target input text
+                                                                    color: "#fff" // Change to your desired text color
+                                                                },
                                                             }}
                                                             error={ errors.songWriter ? true : false }
                                                             { ...register('songWriter') }
@@ -749,7 +808,8 @@ function CreateAlbumReleaseSongUpload() {
 
                                                 <Box
                                                     sx={{
-                                                        bgcolor: "#272727",
+                                                        bgcolor: darkTheme ? "#272727" : "#666666",
+                                                        color: "#fff",
                                                         p: {xs: "10px", md: "25px"},
                                                         borderRadius: "12px"
                                                     }}
@@ -803,7 +863,7 @@ function CreateAlbumReleaseSongUpload() {
                                                                             fontSize: {xs: "15px", md: "18px"}
                                                                         }} 
                                                                         onClick={() => {
-                                                                            const newCreative = songArtists_Creatives.filter(item => item.creativeName != creative.creativeName );
+                                                                            const newCreative = songArtists_Creatives.filter((_, index) => index != i );
                                                                             setSongArtists_Creatives(newCreative);
                                                                             document.getElementById("artistCreativeName")?.focus();
                                                                         }}
@@ -872,6 +932,10 @@ function CreateAlbumReleaseSongUpload() {
                                                                     // "& ::placeholder": {
                                                                     //     color: "gray"
                                                                     // },
+                                                                },
+
+                                                                '& .MuiInputBase-input': { // Target input text
+                                                                    color: "#fff" // Change to your desired text color
                                                                 },
                                                             }}
                                                             error={ errors.artistCreativeName ? true : false }
@@ -1001,11 +1065,121 @@ function CreateAlbumReleaseSongUpload() {
 
                                                 <Box
                                                     sx={{
-                                                        bgcolor: "#272727",
+                                                        bgcolor: darkTheme ? "#272727" : "#666666",
+                                                        color: "#fff",
                                                         p: {xs: "10px", md: "25px"},
                                                         borderRadius: "12px"
                                                     }}
                                                 >
+                                                    <Box>
+                                                        <Typography
+                                                            sx={{
+                                                                fontWeight: "900",
+                                                                fontSize: {xs: "13px", md: "16px"},
+                                                                lineHeight: {xs: "25px", md: "32px"},
+                                                                letterSpacing: "-0.13px"
+                                                            }}
+                                                        >
+                                                            Does this song have explicit lyrics? &#32;
+                                                            <span
+                                                                style={{
+                                                                    color: "#C8F452",
+                                                                    cursor: "pointer"
+                                                                }}
+                                                            >
+                                                                Read More
+                                                            </span>
+                                                        </Typography>
+
+                                                        <Box
+                                                            sx={{
+                                                                display: "flex",
+                                                                flexDirection: "row",
+                                                                alignItems: "center",
+                                                                gap: explicitLyrics == "Yes" ? "5px" : "15px",
+                                                                mb: "20px",
+                                                            }}
+                                                        >
+
+                                                            <Box>
+                                                                <Box 
+                                                                    sx={{
+                                                                        p: {xs: "10.18px 19.68px", md: "15px 29px"},
+                                                                        borderRadius: {xs: "8.14px", md: "12px"},
+                                                                        background: getValues("explicitSongLyrics") == "Yes" ? "#644986" : darkTheme ? "#fff" : "#D4D4D4",
+                                                                        color: getValues("explicitSongLyrics") == "Yes" ? "#fff" : darkTheme ? "#000" : "#000",
+                                                                        cursor: "pointer",
+                                                                        display: "inline-block"
+                                                                    }}
+                                                                    onClick={() => {
+                                                                        setValue("explicitSongLyrics", "Yes");
+                                                                        setExplicitLyrics("Yes");
+                                                                    }}
+                                                                >
+                                                                    <Typography 
+                                                                        sx={{
+                                                                            fontWeight: '900',
+                                                                            fontSize: {xs: "10.18px", md: "15px"},
+                                                                            lineHeight: {xs: "8.82px", md: "13px"},
+                                                                            letterSpacing: {xs: "-0.09px", md: "-0.13px"},
+                                                                            textAlign: 'center',
+                                                                        }}
+                                                                    > Yes </Typography>
+                                                                </Box>
+
+                                                                { explicitLyrics == "Yes" ? 
+                                                                    <CheckCircleIcon 
+                                                                        sx={{ 
+                                                                            color: darkTheme ? "#fff" : "#c4c4c4",
+                                                                            position: "relative", 
+                                                                            left: -15,
+                                                                            top: -8,
+                                                                        }} 
+                                                                    /> : <></>
+                                                                }
+                                                            </Box>
+
+                                                            <Box>
+                                                                <Box 
+                                                                    sx={{
+                                                                        p: {xs: "10.18px 19.68px 10.18px 19.68px", md: "15px 29px 15px 29px"},
+                                                                        borderRadius: {xs: "8.14px", md: "12px"},
+                                                                        background: getValues("explicitSongLyrics") == "No" ? "#644986" : darkTheme ? "#fff" : "#D4D4D4",
+                                                                        color: getValues("explicitSongLyrics") == "No" ? "#fff" : darkTheme ? "#000" : "#000",
+                                                                        cursor: "pointer",
+                                                                        display: "inline-block"
+                                                                    }}
+                                                                    onClick={() => {
+                                                                        setValue("explicitSongLyrics", "No");
+                                                                        setExplicitLyrics("No");
+                                                                    }}
+                                                                >
+                                                                    <Typography 
+                                                                        sx={{
+                                                                            fontWeight: '900',
+                                                                            fontSize: {xs: "10.18px", md: "15px"},
+                                                                            lineHeight: {xs: "8.82px", md: "13px"},
+                                                                            letterSpacing: {xs: "-0.09px", md: "-0.13px"},
+                                                                            textAlign: 'center',
+                                                                        }}
+                                                                    > No </Typography>
+                                                                </Box>
+
+                                                                { explicitLyrics == "No" ? 
+                                                                    <CheckCircleIcon 
+                                                                        sx={{ 
+                                                                            color: darkTheme ? "#fff" : "#c4c4c4",
+                                                                            position: "relative", 
+                                                                            left: -15,
+                                                                            top: -8,
+                                                                        }} 
+                                                                    /> : <></>
+                                                                }
+                                                            </Box>
+                                                        </Box>
+                                                    </Box>
+
+
                                                     <Box>
                                                         <Typography component={"h3"} variant='h3'
                                                             sx={{
@@ -1027,56 +1201,84 @@ function CreateAlbumReleaseSongUpload() {
                                                             Is this a cover version of another song?
                                                         </Typography>
 
-                                                        <Stack direction={'row'} spacing={"15px"} sx={{my: "15px"}}>
-                                                            <Box 
-                                                                sx={{
-                                                                    p: {xs: "10.18px 19.68px 10.18px 19.68px", md: "15px 29px 15px 29px"},
-                                                                    borderRadius: {xs: "8.14px", md: "12px"},
-                                                                    background: copyrightOwnership == "Yes" ? "#644986" : "#fff",
-                                                                    color: copyrightOwnership == "Yes" ? "#fff" : "#000",
-                                                                    cursor: "pointer",
-                                                                    display: "inline-block"
-                                                                }}
-                                                                onClick={() => { 
-                                                                    setCopyrightOwnership("Yes"); 
-                                                                    setValue("copyrightOwnership", "Yes", {shouldValidate: true, shouldDirty: true, shouldTouch: true}) 
-                                                                }}
-                                                            >
-                                                                <Typography 
+                                                        <Stack direction={'row'} spacing={ copyrightOwnership == "Yes" ? "0px" : "15px"} sx={{my: "15px"}}>
+                                                            <Box>
+                                                                <Box 
                                                                     sx={{
-                                                                        fontWeight: '900',
-                                                                        fontSize: {xs: "10.18px", md: "15px"},
-                                                                        lineHeight: {xs: "8.82px", md: "13px"},
-                                                                        letterSpacing: {xs: "-0.09px", md: "-0.13px"},
-                                                                        textAlign: 'center',
+                                                                        p: {xs: "10.18px 19.68px 10.18px 19.68px", md: "15px 29px 15px 29px"},
+                                                                        borderRadius: {xs: "8.14px", md: "12px"},
+                                                                        background: copyrightOwnership == "Yes" ? "#644986" : "#fff",
+                                                                        color: copyrightOwnership == "Yes" ? "#fff" : "#000",
+                                                                        cursor: "pointer",
+                                                                        display: "inline-block"
                                                                     }}
-                                                                > Yes </Typography>
+                                                                    onClick={() => { 
+                                                                        setCopyrightOwnership("Yes"); 
+                                                                        setValue("copyrightOwnership", "Yes", {shouldValidate: true, shouldDirty: true, shouldTouch: true}) 
+                                                                    }}
+                                                                >
+                                                            
+
+                                                                    <Typography 
+                                                                        sx={{
+                                                                            fontWeight: '900',
+                                                                            fontSize: {xs: "10.18px", md: "15px"},
+                                                                            lineHeight: {xs: "8.82px", md: "13px"},
+                                                                            letterSpacing: {xs: "-0.09px", md: "-0.13px"},
+                                                                            textAlign: 'center',
+                                                                        }}
+                                                                    > Yes </Typography>
+                                                                </Box>
+
+                                                                { copyrightOwnership == "Yes" ? 
+                                                                    <CheckCircleIcon 
+                                                                        sx={{ 
+                                                                            color: "#fff", // darkTheme ? "#C8F452" : "#33500B",
+                                                                            position: "relative", 
+                                                                            left: -15,
+                                                                            top: -8,
+                                                                        }} 
+                                                                    /> : <></>
+                                                                }
                                                             </Box>
 
-                                                            <Box 
-                                                                sx={{
-                                                                    p: {xs: "10.18px 19.68px 10.18px 19.68px", md: "15px 29px 15px 29px"},
-                                                                    borderRadius: {xs: "8.14px", md: "12px"},
-                                                                    background: copyrightOwnership == "No" ? "#644986" : "#fff",
-                                                                    color: copyrightOwnership == "No" ? "#fff" : "#000",
-                                                                    cursor: "pointer",
-                                                                    display: "inline-block"
-                                                                }}
-                                                                onClick={() => { 
-                                                                    setCopyrightOwnership("No"); 
-                                                                    setValue("copyrightOwnership", "No", {shouldValidate: true, shouldDirty: true, shouldTouch: true}) 
-
-                                                                }}
-                                                            >
-                                                                <Typography 
+                                                            <Box>
+                                                                <Box 
                                                                     sx={{
-                                                                        fontWeight: '900',
-                                                                        fontSize: {xs: "10.18px", md: "15px"},
-                                                                        lineHeight: {xs: "8.82px", md: "13px"},
-                                                                        letterSpacing: {xs: "-0.09px", md: "-0.13px"},
-                                                                        textAlign: 'center',
+                                                                        p: {xs: "10.18px 19.68px 10.18px 19.68px", md: "15px 29px 15px 29px"},
+                                                                        borderRadius: {xs: "8.14px", md: "12px"},
+                                                                        background: copyrightOwnership == "No" ? "#644986" : "#fff",
+                                                                        color: copyrightOwnership == "No" ? "#fff" : "#000",
+                                                                        cursor: "pointer",
+                                                                        display: "inline-block"
                                                                     }}
-                                                                > No </Typography>
+                                                                    onClick={() => { 
+                                                                        setCopyrightOwnership("No"); 
+                                                                        setValue("copyrightOwnership", "No", {shouldValidate: true, shouldDirty: true, shouldTouch: true}) 
+
+                                                                    }}
+                                                                >
+                                                                    <Typography 
+                                                                        sx={{
+                                                                            fontWeight: '900',
+                                                                            fontSize: {xs: "10.18px", md: "15px"},
+                                                                            lineHeight: {xs: "8.82px", md: "13px"},
+                                                                            letterSpacing: {xs: "-0.09px", md: "-0.13px"},
+                                                                            textAlign: 'center',
+                                                                        }}
+                                                                    > No </Typography>
+                                                                </Box>
+
+                                                                { copyrightOwnership == "No" ? 
+                                                                    <CheckCircleIcon 
+                                                                        sx={{ 
+                                                                            color: "#fff", // darkTheme ? "#C8F452" : "#33500B",
+                                                                            position: "relative", 
+                                                                            left: -15,
+                                                                            top: -8
+                                                                        }} 
+                                                                    /> : <></>
+                                                                }
                                                             </Box>
                                                         </Stack>
 
@@ -1098,55 +1300,82 @@ function CreateAlbumReleaseSongUpload() {
                                                                     Please confirm:
                                                                 </Typography>
 
-                                                                <Stack direction={'row'} spacing={"15px"} sx={{mt: "15px"}}>
-                                                                    <Box 
-                                                                        sx={{
-                                                                            p: {xs: "10.18px 19.68px 10.18px 19.68px", md: "15px 29px 15px 29px"},
-                                                                            borderRadius: {xs: "8.14px", md: "12px"},
-                                                                            background: copyrightOwnershipPermission == "Yes" ? "#644986" : "#fff" ,
-                                                                            color: copyrightOwnershipPermission == "Yes" ? "#fff" : "#000",
-                                                                            cursor: "pointer",
-                                                                            display: "inline-block"
-                                                                        }}
-                                                                        onClick={() => { 
-                                                                            setCopyrightOwnershipPermission("Yes"); 
-                                                                            setValue("copyrightOwnershipPermission", "Yes", {shouldValidate: true, shouldDirty: true, shouldTouch: true}) 
-                                                                        }}
-                                                                    >
-                                                                        <Typography 
+                                                                <Stack direction={'row'} spacing={ copyrightOwnershipPermission == "Yes" ? "0px" : "15px"} sx={{mt: "15px"}}>
+
+                                                                    <Box>
+                                                                        <Box 
                                                                             sx={{
-                                                                                fontWeight: '900',
-                                                                                fontSize: {xs: "10.18px", md: "15px"},
-                                                                                lineHeight: {xs: "8.82px", md: "13px"},
-                                                                                letterSpacing: {xs: "-0.09px", md: "-0.13px"},
-                                                                                textAlign: 'center',
+                                                                                p: {xs: "10.18px 19.68px 10.18px 19.68px", md: "15px 29px 15px 29px"},
+                                                                                borderRadius: {xs: "8.14px", md: "12px"},
+                                                                                background: copyrightOwnershipPermission == "Yes" ? "#644986" : "#fff" ,
+                                                                                color: copyrightOwnershipPermission == "Yes" ? "#fff" : "#000",
+                                                                                cursor: "pointer",
+                                                                                display: "inline-block"
                                                                             }}
-                                                                        > Yes </Typography>
+                                                                            onClick={() => { 
+                                                                                setCopyrightOwnershipPermission("Yes"); 
+                                                                                setValue("copyrightOwnershipPermission", "Yes", {shouldValidate: true, shouldDirty: true, shouldTouch: true}) 
+                                                                            }}
+                                                                        >
+                                                                            <Typography 
+                                                                                sx={{
+                                                                                    fontWeight: '900',
+                                                                                    fontSize: {xs: "10.18px", md: "15px"},
+                                                                                    lineHeight: {xs: "8.82px", md: "13px"},
+                                                                                    letterSpacing: {xs: "-0.09px", md: "-0.13px"},
+                                                                                    textAlign: 'center',
+                                                                                }}
+                                                                            > Yes </Typography>
+                                                                        </Box>
+
+                                                                        { copyrightOwnershipPermission == "Yes" ? 
+                                                                            <CheckCircleIcon 
+                                                                                sx={{ 
+                                                                                    color: "#fff",
+                                                                                    position: "relative", 
+                                                                                    left: -15,
+                                                                                    top: -8
+                                                                                }} 
+                                                                            /> : <></>
+                                                                        }
                                                                     </Box>
 
-                                                                    <Box 
-                                                                        sx={{
-                                                                            p: {xs: "10.18px 19.68px 10.18px 19.68px", md: "15px 29px 15px 29px"},
-                                                                            borderRadius: {xs: "8.14px", md: "12px"},
-                                                                            background: copyrightOwnershipPermission == "No" ? "#644986" : "#fff",
-                                                                            color: copyrightOwnershipPermission == "No" ? "#fff" : "#000",
-                                                                            cursor: "pointer",
-                                                                            display: "inline-block"
-                                                                        }}
-                                                                        onClick={() => {
-                                                                            setCopyrightOwnershipPermission("No");
-                                                                            setValue("copyrightOwnershipPermission", "No", {shouldValidate: true, shouldDirty: true, shouldTouch: true}) 
-                                                                        }}
-                                                                    >
-                                                                        <Typography 
+                                                                    <Box>
+                                                                        <Box 
                                                                             sx={{
-                                                                                fontWeight: '900',
-                                                                                fontSize: {xs: "10.18px", md: "15px"},
-                                                                                lineHeight: {xs: "8.82px", md: "13px"},
-                                                                                letterSpacing: {xs: "-0.09px", md: "-0.13px"},
-                                                                                textAlign: 'center',
+                                                                                p: {xs: "10.18px 19.68px 10.18px 19.68px", md: "15px 29px 15px 29px"},
+                                                                                borderRadius: {xs: "8.14px", md: "12px"},
+                                                                                background: copyrightOwnershipPermission == "No" ? "#644986" : "#fff",
+                                                                                color: copyrightOwnershipPermission == "No" ? "#fff" : "#000",
+                                                                                cursor: "pointer",
+                                                                                display: "inline-block"
                                                                             }}
-                                                                        > No </Typography>
+                                                                            onClick={() => {
+                                                                                setCopyrightOwnershipPermission("No");
+                                                                                setValue("copyrightOwnershipPermission", "No", {shouldValidate: true, shouldDirty: true, shouldTouch: true}) 
+                                                                            }}
+                                                                        >
+                                                                            <Typography 
+                                                                                sx={{
+                                                                                    fontWeight: '900',
+                                                                                    fontSize: {xs: "10.18px", md: "15px"},
+                                                                                    lineHeight: {xs: "8.82px", md: "13px"},
+                                                                                    letterSpacing: {xs: "-0.09px", md: "-0.13px"},
+                                                                                    textAlign: 'center',
+                                                                                }}
+                                                                            > No </Typography>
+                                                                        </Box>
+
+                                                                        { copyrightOwnershipPermission == "No" ? 
+                                                                            <CheckCircleIcon 
+                                                                                sx={{ 
+                                                                                    color: "#fff",
+                                                                                    position: "relative", 
+                                                                                    left: -15,
+                                                                                    top: -8
+                                                                                }} 
+                                                                            /> : <></>
+                                                                        }
                                                                     </Box>
                                                                 </Stack>
 
@@ -1159,7 +1388,8 @@ function CreateAlbumReleaseSongUpload() {
 
                                                 <Box
                                                     sx={{
-                                                        bgcolor: "#272727",
+                                                        bgcolor: darkTheme ? "#272727" : "#666666",
+                                                        color: "#fff",
                                                         p: {xs: "10px", md: "25px"},
                                                         borderRadius: "12px"
                                                     }}
@@ -1218,8 +1448,11 @@ function CreateAlbumReleaseSongUpload() {
                                                                     //     color: "gray"
                                                                     // },
                                                                 },
-
                                                         
+                                                                '& .MuiInputBase-input': { // Target input text
+                                                                    color: "#fff" // Change to your desired text color
+                                                                },
+                                                                
                                                             }}
                                                             error={ errors.ISRC_Number ? true : false }
                                                             { ...register('ISRC_Number') }
@@ -1333,6 +1566,7 @@ function CreateAlbumReleaseSongUpload() {
                                                                 "& .MuiOutlinedInput-root": {
                                                                     '& fieldset.MuiOutlinedInput-notchedOutline': {
                                                                         borderColor: '#fff',
+                                                                        color: "#fff"
                                                                     },
                                                                     // '&:hover .MuiOutlinedInput-notchedOutline': {
                                                                     //     borderColor: darkTheme ? '#fff' : '#000',
@@ -1344,6 +1578,10 @@ function CreateAlbumReleaseSongUpload() {
                                                                     //     color: "gray"
                                                                     // },
                                                                 },
+
+                                                                '& .MuiInputBase-input': { // Target input text
+                                                                    color: "#fff" // Change to your desired text color
+                                                                },
                                                             }}
                                                             error={ errors.songLyrics ? true : false }
                                                             { ...register('songLyrics') }
@@ -1354,7 +1592,8 @@ function CreateAlbumReleaseSongUpload() {
 
                                                 <Box
                                                     sx={{
-                                                        bgcolor: "#272727",
+                                                        bgcolor: darkTheme ? "#272727" : "#666666",
+                                                        color: "#fff",
                                                         p: {xs: "10px", md: "25px"},
                                                         borderRadius: "12px"
                                                     }}
@@ -1509,41 +1748,15 @@ function CreateAlbumReleaseSongUpload() {
                                             <Button variant="text" 
                                                 type="submit" 
                                                 // disabled={ !isValid || isSubmitting } 
-                                                sx={{ 
-                                                    my: 3,
-
-                                                    // bgcolor: "#644986",
-                                                    // maxWidth: "312px",
-                                                    // "&.Mui-disabled": {
-                                                    //     background: "#9c9c9c",
-                                                    //     color: "#797979"
-                                                    // },
-                                                    // "&:hover": {
-                                                    //     bgcolor: "#644986",
-                                                    // },
-                                                    // "&:active": {
-                                                    //     bgcolor: "#644986",
-                                                    // },
-                                                    // "&:focus": {
-                                                    //     bgcolor: "#644986",
-                                                    // },
-                                                    // color: "#fff",
-                                                    // borderRadius: "12px",
-                                                    // my: 3, py: 1.5,
-                                                    // fontSize: {md: "15.38px"},
-                                                    // fontWeight: "900",
-                                                    // letterSpacing: "-0.12px",
-                                                    // textTransform: "none"
-                                                }}
+                                                sx={{ my: 3, p: 0 }}
                                             >
-
                                                 <Stack direction="row" justifyContent="space-between" alignItems="center"
                                                     sx={{
                                                         p: {xs: "", md: "10px 25px"},
                                                         borderRadius: '16px',
                                                         width: "200px",
-                                                        bgcolor: "#fff",
-                                                        color: "#000",
+                                                        bgcolor: darkTheme ? "#fff" : "#000",
+                                                        color: darkTheme ? "#000" : "#fff",
                                                         // my: 3,
                                                         cursor: "pointer"
                                                     }}
@@ -1562,7 +1775,6 @@ function CreateAlbumReleaseSongUpload() {
 
                                             </Button>
                                         </Box>
-
                                     </Box>
 
 
@@ -1606,38 +1818,43 @@ function CreateAlbumReleaseSongUpload() {
                                                 }}
                                             > Previous step </Button>
 
-                                            <Button variant="contained" 
-                                                fullWidth type="submit" 
-                                                disabled={ (!albumReleaseSongUpload.length && !isValid) || isSubmitting } 
-                                                sx={{ 
-                                                    bgcolor: "#644986",
-                                                    maxWidth: "312px",
-                                                    "&.Mui-disabled": {
-                                                        background: "#9c9c9c",
-                                                        color: "#797979"
-                                                    },
-                                                    "&:hover": {
+
+                                            {/* <Box onClick={() => setSubmitBtnType('next')} maxWidth="312px" width="100%"> */}
+                                                <Button variant="contained" 
+                                                    fullWidth // type="submit" 
+                                                    // disabled={ (!albumReleaseSongUpload.length && !isValid) || isSubmitting } 
+                                                    disabled={ !albumReleaseSongUpload.length } 
+                                                    sx={{ 
                                                         bgcolor: "#644986",
-                                                    },
-                                                    "&:active": {
-                                                        bgcolor: "#644986",
-                                                    },
-                                                    "&:focus": {
-                                                        bgcolor: "#644986",
-                                                    },
-                                                    color: "#fff",
-                                                    borderRadius: "12px",
-                                                    my: 3, py: 1.5,
-                                                    fontSize: {md: "15.38px"},
-                                                    fontWeight: "900",
-                                                    letterSpacing: "-0.12px",
-                                                    textTransform: "none"
-                                                }}
-                                                onClick={() => handleNextBTN() }
-                                            >
-                                                <span style={{ display: isSubmitting ? "none" : "initial" }}>Next</span>
-                                                <CircularProgress size={25} sx={{ display: isSubmitting ? "initial" : "none", color: "#8638E5", fontWeight: "bold" }} />
-                                            </Button>
+                                                        maxWidth: "312px",
+                                                        "&.Mui-disabled": {
+                                                            background: "#9c9c9c",
+                                                            color: "#797979"
+                                                        },
+                                                        "&:hover": {
+                                                            bgcolor: "#644986",
+                                                        },
+                                                        "&:active": {
+                                                            bgcolor: "#644986",
+                                                        },
+                                                        "&:focus": {
+                                                            bgcolor: "#644986",
+                                                        },
+                                                        color: "#fff",
+                                                        borderRadius: "12px",
+                                                        // my: 3, 
+                                                        py: 1.5,
+                                                        fontSize: {md: "15.38px"},
+                                                        fontWeight: "900",
+                                                        letterSpacing: "-0.12px",
+                                                        textTransform: "none"
+                                                    }}
+                                                    onClick={() => handleNextBTN() }
+                                                >
+                                                    <span style={{ display: isSubmitting ? "none" : "initial" }}>Next</span>
+                                                    <CircularProgress size={25} sx={{ display: isSubmitting ? "initial" : "none", color: "#8638E5", fontWeight: "bold" }} />
+                                                </Button>
+                                            {/* </Box> */}
                                         </Stack>
                                     </Box>
 
@@ -1657,6 +1874,11 @@ function CreateAlbumReleaseSongUpload() {
                 accept='audio/*' 
                 onChange={handleAudioFileUpload}
                 style={{display: "none"}}
+            />
+
+            <CopyrightOwnershipModalComponent
+                openModal={openCopyrightOwnershipModal}
+                closeModal={() => setOpenCopyrightOwnershipModal(false)}
             />
 
         </AccountWrapper>

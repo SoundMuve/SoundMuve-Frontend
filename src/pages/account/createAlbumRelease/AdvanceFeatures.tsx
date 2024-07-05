@@ -1,5 +1,5 @@
 // import axios from 'axios';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import * as yup from "yup";
@@ -19,6 +19,7 @@ import { ThemeProvider, useTheme } from '@mui/material/styles';
 
 import IconButton from '@mui/material/IconButton';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
 import { useUserStore } from '@/state/userStore';
 import { useSettingStore } from '@/state/settingStore';
@@ -40,9 +41,11 @@ function CreateAlbumReleaseAdvanceFeatures() {
     const navigate = useNavigate();
     const outerTheme = useTheme();
     const darkTheme = useSettingStore((state) => state.darkTheme);
-    const [soldWorldwide, setSoldWorldwide] = useState("Yes");
+    const [soldWorldwide, setSoldWorldwide] = useState(""); // Yes
     const userData = useUserStore((state) => state.userData);
+    const albumReleaseAdvanceFeatures = createReleaseStore((state) => state.albumReleaseAdvanceFeatures);
     const _setAlbumReleaseAdvanceFeatures = createReleaseStore((state) => state._setAlbumReleaseAdvanceFeatures);
+    const _setToastNotification = useSettingStore((state) => state._setToastNotification);
 
     const [apiResponse, setApiResponse] = useState({
         display: false,
@@ -50,11 +53,22 @@ function CreateAlbumReleaseAdvanceFeatures() {
         message: ""
     });
 
+    useEffect(() => {
+        setValue("labelName", albumReleaseAdvanceFeatures.label_name, {shouldDirty: true, shouldTouch: true, shouldValidate: true});
+        setValue("recordingLocation", albumReleaseAdvanceFeatures.recording_location, {shouldDirty: true, shouldTouch: true, shouldValidate: true});
+
+        setValue("soldWorldwide", albumReleaseAdvanceFeatures.soldWorldwide || soldWorldwide, {shouldDirty: true, shouldTouch: true, shouldValidate: true});
+        setSoldWorldwide(albumReleaseAdvanceFeatures.soldWorldwide || soldWorldwide);
+
+        setValue("UPC_EANcode", albumReleaseAdvanceFeatures.upc_ean, {shouldDirty: true, shouldTouch: true, shouldValidate: true});
+    }, [albumReleaseAdvanceFeatures]);
+    
+
     const { 
-        handleSubmit, register, setValue, getValues, formState: { errors, isValid, isSubmitting } 
+        handleSubmit, register, setValue, getValues, setError, formState: { errors, isValid, isSubmitting } 
     } = useForm({ 
         resolver: yupResolver(formSchema),
-        mode: 'onBlur', defaultValues: { soldWorldwide }
+        mode: 'onBlur'
     });
 
 
@@ -66,17 +80,30 @@ function CreateAlbumReleaseAdvanceFeatures() {
             message: ""
         });
 
+
+        if (!soldWorldwide) {
+            _setToastNotification({
+                display: true,
+                status: "error",
+                message: "Please select if this release can be sold worldwide?"
+            });
+
+            setError("soldWorldwide", {message: "Please select if this release can be sold worldwide?"})
+            return;
+        }
+
+
         const data2db = {
             email: userData.email,
             release_type: "Album",
 
             label_name: formData.labelName || '',
             recording_location: formData.recordingLocation || '',
-            soldWorldwide: formData.soldWorldwide || '',
+            soldWorldwide: formData.soldWorldwide || soldWorldwide,
             upc_ean: formData.UPC_EANcode || '',
         };
 
-        console.log(data2db);
+        // console.log(data2db);
         _setAlbumReleaseAdvanceFeatures(data2db);
         navigate("/account/artist/create-album-release-select-stores");
     }
@@ -125,9 +152,7 @@ function CreateAlbumReleaseAdvanceFeatures() {
                                 <form noValidate onSubmit={ handleSubmit(onSubmit) } 
                                     style={{ width: "100%", maxWidth: "916px" }}
                                 >
-                                        
                                     <Box>
-
                                         <Grid container spacing="20px" sx={{my: "31px"}}>
                                             <Grid item
                                                 xs={12} md={4}
@@ -264,64 +289,92 @@ function CreateAlbumReleaseAdvanceFeatures() {
                                                             display: "flex",
                                                             flexDirection: "row",
                                                             alignItems: "center",
-                                                            gap: "15px",
+                                                            gap: soldWorldwide == "Yes" ? "1px" : "15px",
                                                             mt: "21px",
                                                         }}
                                                     >
-                                                        <Box 
-                                                            sx={{
-                                                                p: {xs: "10.18px 19.68px 10.18px 19.68px", md: "15px 29px 15px 29px"},
-                                                                borderRadius: {xs: "8.14px", md: "12px"},
-
-                                                                background: getValues("soldWorldwide") == "Yes" ? "#644986" : darkTheme ? "#fff" : "#272727",
-                                                                color: getValues("soldWorldwide") == "Yes" ? "#fff" : darkTheme ? "#000" : "#fff",
-
-                                                                cursor: "pointer",
-                                                                display: "inline-block"
-                                                            }}
-                                                            onClick={() => {
-                                                                setValue("soldWorldwide", "Yes");
-                                                                setSoldWorldwide("Yes");
-                                                            }}
-                                                        >
-                                                            <Typography 
+                                                        <Box>
+                                                            <Box 
                                                                 sx={{
-                                                                    fontWeight: '900',
-                                                                    fontSize: {xs: "10.18px", md: "15px"},
-                                                                    lineHeight: {xs: "8.82px", md: "13px"},
-                                                                    letterSpacing: {xs: "-0.09px", md: "-0.13px"},
-                                                                    textAlign: 'center',
+                                                                    p: {xs: "10.18px 19.68px 10.18px 19.68px", md: "15px 29px 15px 29px"},
+                                                                    borderRadius: {xs: "8.14px", md: "12px"},
+
+                                                                    background: getValues("soldWorldwide") == "Yes" ? "#644986" : darkTheme ? "#fff" : "#272727",
+                                                                    color: getValues("soldWorldwide") == "Yes" ? "#fff" : darkTheme ? "#000" : "#fff",
+
+                                                                    cursor: "pointer",
+                                                                    display: "inline-block"
                                                                 }}
-                                                            > Yes </Typography>
+                                                                onClick={() => {
+                                                                    setValue("soldWorldwide", "Yes");
+                                                                    setSoldWorldwide("Yes");
+                                                                }}
+                                                            >
+                                                                <Typography 
+                                                                    sx={{
+                                                                        fontWeight: '900',
+                                                                        fontSize: {xs: "10.18px", md: "15px"},
+                                                                        lineHeight: {xs: "8.82px", md: "13px"},
+                                                                        letterSpacing: {xs: "-0.09px", md: "-0.13px"},
+                                                                        textAlign: 'center',
+                                                                    }}
+                                                                > Yes </Typography>
+                                                            </Box>
+
+                                                            { soldWorldwide == "Yes" ? 
+                                                                <CheckCircleIcon 
+                                                                    sx={{ 
+                                                                        color: darkTheme ? "#fff" : "#c4c4c4",
+                                                                        position: "relative", 
+                                                                        left: -15,
+                                                                        top: -8,
+                                                                    }} 
+                                                                /> : <></>
+                                                            }
                                                         </Box>
 
-                                                        <Box 
-                                                            sx={{
-                                                                p: {xs: "10.18px 19.68px 10.18px 19.68px", md: "15px 29px 15px 29px"},
-                                                                borderRadius: {xs: "8.14px", md: "12px"},
-
-                                                                background: getValues("soldWorldwide") == "No" ? "#644986" : darkTheme ? "#fff" : "#272727",
-                                                                color: getValues("soldWorldwide") == "No" ? "#fff" : darkTheme ? "#000" : "#fff",
-
-                                                                cursor: "pointer",
-                                                                display: "inline-block"
-                                                            }}
-                                                            onClick={() => {
-                                                                setValue("soldWorldwide", "No");
-                                                                setSoldWorldwide("No");
-                                                            }}
-                                                        >
-                                                            <Typography 
+                                                        <Box>
+                                                            <Box 
                                                                 sx={{
-                                                                    fontWeight: '900',
-                                                                    fontSize: {xs: "10.18px", md: "15px"},
-                                                                    lineHeight: {xs: "8.82px", md: "13px"},
-                                                                    letterSpacing: {xs: "-0.09px", md: "-0.13px"},
-                                                                    textAlign: 'center',
+                                                                    p: {xs: "10.18px 19.68px 10.18px 19.68px", md: "15px 29px 15px 29px"},
+                                                                    borderRadius: {xs: "8.14px", md: "12px"},
+
+                                                                    background: getValues("soldWorldwide") == "No" ? "#644986" : darkTheme ? "#fff" : "#272727",
+                                                                    color: getValues("soldWorldwide") == "No" ? "#fff" : darkTheme ? "#000" : "#fff",
+
+                                                                    cursor: "pointer",
+                                                                    display: "inline-block"
                                                                 }}
-                                                            > No </Typography>
+                                                                onClick={() => {
+                                                                    setValue("soldWorldwide", "No");
+                                                                    setSoldWorldwide("No");
+                                                                }}
+                                                            >
+                                                                <Typography 
+                                                                    sx={{
+                                                                        fontWeight: '900',
+                                                                        fontSize: {xs: "10.18px", md: "15px"},
+                                                                        lineHeight: {xs: "8.82px", md: "13px"},
+                                                                        letterSpacing: {xs: "-0.09px", md: "-0.13px"},
+                                                                        textAlign: 'center',
+                                                                    }}
+                                                                > No </Typography>
+                                                            </Box>
+
+                                                            { soldWorldwide == "No" ? 
+                                                                <CheckCircleIcon 
+                                                                    sx={{ 
+                                                                        color: darkTheme ? "#fff" : "#c4c4c4",
+                                                                        position: "relative", 
+                                                                        left: -15,
+                                                                        top: -8,
+                                                                    }} 
+                                                                /> : <></>
+                                                            }
                                                         </Box>
                                                     </Box>
+
+                                                    { errors.soldWorldwide && <Box sx={{fontSize: 13, color: "red", textAlign: "left"}}>{ errors.soldWorldwide?.message }</Box> }
                                                 </Box>
                                             </Grid>
                                         </Grid>
@@ -386,7 +439,6 @@ function CreateAlbumReleaseAdvanceFeatures() {
                                             </Grid>
                                         </Grid>
                                     </Box>
-
 
                                     {
                                         apiResponse.display && (
