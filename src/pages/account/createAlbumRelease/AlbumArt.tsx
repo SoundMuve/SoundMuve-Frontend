@@ -15,14 +15,19 @@ import { createReleaseStore } from '@/state/createReleaseStore';
 import SideNav from './SideNav';
 import AccountWrapper from '@/components/AccountWrapper';
 import cloudUploadIconImg from "@/assets/images/cloudUploadIcon.png";
+import axios from 'axios';
+import { apiEndpoint } from '@/util/resources';
 
 
 function CreateAlbumReleaseAlbumArt() {
     const navigate = useNavigate();
     const darkTheme = useSettingStore((state) => state.darkTheme);
-    const userData = useUserStore((state) => state.userData);
+    // const userData = useUserStore((state) => state.userData);
+    const accessToken = useUserStore((state) => state.accessToken);
     const albumReleaseAlbumArt = createReleaseStore((state) => state.albumReleaseAlbumArt);
     const _setAlbumReleaseAlbumArt = createReleaseStore((state) => state._setAlbumReleaseAlbumArt);
+    const completeAlbumData = createReleaseStore((state) => state.completeAlbumData);
+    const _setCompleteAlbumData = createReleaseStore((state) => state._setCompleteAlbumData);
 
     const _setToastNotification = useSettingStore((state) => state._setToastNotification);
     const [apiResponse, setApiResponse] = useState({
@@ -75,7 +80,7 @@ function CreateAlbumReleaseAlbumArt() {
     }
     
 
-    const onSubmit = () => {
+    const onSubmit = async () => {
         setApiResponse({
             display: false,
             status: true,
@@ -99,14 +104,44 @@ function CreateAlbumReleaseAlbumArt() {
         }
 
         const data2db = new FormData();
-        data2db.append('email', userData.email);
-        data2db.append('release_type', "Album");
-        data2db.append('cover_photo', image);
+        // data2db.append('email', userData.email);
+        // data2db.append('release_type', "Album");
+        data2db.append('song_cover_url', image);
 
         _setAlbumReleaseAlbumArt({image, imagePreview});
 
-        navigate("/account/artist/create-album-release-overview");
 
+        try {
+            const response = (await axios.put(
+                `${apiEndpoint}/Album/update-album/${ completeAlbumData._id }/page5`,
+                data2db,  
+                {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                        Authorization: `Bearer ${accessToken}`
+                    },
+                }
+            )).data;
+            console.log(response);
+
+            const savedImage = response.updatedAlbum.song_cover_url;
+
+            _setCompleteAlbumData(response.updatedAlbum);
+            _setAlbumReleaseAlbumArt({image: savedImage, imagePreview: savedImage});
+
+            navigate("/account/artist/create-album-release-overview");
+        } catch (error: any) {
+            const err = error.response.data;
+            console.log(err);
+
+            setApiResponse({
+                display: true,
+                status: false,
+                message: err.message || "Oooops, failed to update details. please try again."
+            });
+        }
+
+        // navigate("/account/artist/create-album-release-overview");
     }
 
 

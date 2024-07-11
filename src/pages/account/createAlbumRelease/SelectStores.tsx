@@ -24,7 +24,8 @@ import { createReleaseStore } from '@/state/createReleaseStore';
 
 import AccountWrapper from '@/components/AccountWrapper';
 import { customTextFieldTheme } from '@/util/mui';
-import { musicStores, socialPlatformStores } from '@/util/resources';
+import { apiEndpoint, musicStores, socialPlatformStores } from '@/util/resources';
+import axios from 'axios';
 
 const formSchema = yup.object({
     store: yup.string().trim().label("Store"),
@@ -37,8 +38,11 @@ function CreateAlbumReleaseSelectStores() {
     const outerTheme = useTheme();
     const darkTheme = useSettingStore((state) => state.darkTheme);
     const userData = useUserStore((state) => state.userData);
+    const accessToken = useUserStore((state) => state.accessToken);
     const _setToastNotification = useSettingStore((state) => state._setToastNotification);
     const _setAlbumReleaseStores = createReleaseStore((state) => state._setAlbumReleaseStores);
+    const completeAlbumData = createReleaseStore((state) => state.completeAlbumData);
+    const _setCompleteAlbumData = createReleaseStore((state) => state._setCompleteAlbumData);
 
     const [apiResponse, setApiResponse] = useState({
         display: false,
@@ -85,7 +89,7 @@ function CreateAlbumReleaseSelectStores() {
         }
         
 
-        const data2db = {
+        const formDetails = {
             email: userData.email,
             release_type: "Album",
 
@@ -94,10 +98,42 @@ function CreateAlbumReleaseSelectStores() {
         };
 
         // console.log(data2db);
-        _setAlbumReleaseStores(data2db);
-        navigate("/account/artist/create-album-release-song-upload");
+        _setAlbumReleaseStores(formDetails);
 
-        return;
+        const data2db = {
+            store: formDetails.stores,
+            social_platform: formDetails.socialPlatforms
+        }
+
+        try {
+            const response = (await axios.put(
+                `${apiEndpoint}/Album/update-album/${ completeAlbumData._id }/page3?Authorization=Bearer ${accessToken}`,
+                data2db,  
+                {
+                    headers: {
+                        // 'Content-Type': 'multipart/form-data',
+                        Authorization: `Bearer ${accessToken}`
+                    },
+                }
+            )).data;
+            console.log(response);
+
+            _setCompleteAlbumData(response.updatedAlbum);
+
+            navigate("/account/artist/create-album-release-song-upload");
+
+        } catch (error: any) {
+            const err = error.response.data;
+            console.log(err);
+
+            setApiResponse({
+                display: true,
+                status: false,
+                message: err.message || "Oooops, failed to update details. please try again."
+            });
+        }
+
+        // navigate("/account/artist/create-album-release-song-upload");
     }
 
 

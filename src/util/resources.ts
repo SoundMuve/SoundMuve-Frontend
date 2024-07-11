@@ -157,10 +157,16 @@ export const stringToColor = (string: string) => {
 };
 
 export const stringAvatar = (name: string) => {
-  return `${name.split(" ")[0][0]}${name.split(" ")[1][0]}`;
-  // return {
-  //   children: `${name.split(' ')[0][0]}${name.split(' ')[1][0]}`,
-  // };
+  // return `${name.split(" ")[0][0]}${name.split(" ")[1][0]}`;
+
+  const items = name.split(" ");
+
+  let newName = '';
+  for (let i = 0; i < items.length; i++) {
+      newName = newName + items[i][0];
+      if (i > 1) break;
+  }
+  return newName;
 };
 
 export const currencyDisplay = (amount: number) => {

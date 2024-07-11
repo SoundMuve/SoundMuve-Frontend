@@ -331,8 +331,8 @@ function CreateAlbumReleaseSongUpload() {
         };
 
         const data2db = new FormData();
-        data2db.append('email', newSongData.email);
-        data2db.append('mp3_file', newSongData.mp3_file);
+        // data2db.append('email', newSongData.email);
+        data2db.append('song_mp3', newSongData.mp3_file);
         data2db.append('song_title', newSongData.song_title );
         data2db.append('song_writer', newSongData.song_writer.toString());
         data2db.append('songArtistsCreativeRole', newSongData.songArtistsCreativeRole.toString());
@@ -340,7 +340,7 @@ function CreateAlbumReleaseSongUpload() {
         data2db.append('copyright_ownership', newSongData.copyright_ownership);
         data2db.append('copyright_ownership_permissions', newSongData.copyright_ownership_permissions);
         data2db.append('isrc_number', newSongData.isrc_number);
-        data2db.append('language_lyrics', newSongData.language_lyrics);
+        data2db.append('language_of_lyrics', newSongData.language_lyrics);
         data2db.append('lyrics', newSongData.lyrics);
         data2db.append('tikTokClipStartTime', newSongData.tikTokClipStartTime);
 

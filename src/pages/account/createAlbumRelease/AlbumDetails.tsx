@@ -3,8 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import * as yup from "yup";
 import { yupResolver } from '@hookform/resolvers/yup';
+import axios from 'axios';
 
-import SideNav from './SideNav';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
@@ -31,6 +31,7 @@ import IconButton from '@mui/material/IconButton';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 // import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
+import SideNav from './SideNav';
 import AccountWrapper from '@/components/AccountWrapper';
 import SearchArtistModalComponent from '@/components/account/SearchArtistModal';
 import AppleSportifyCheckmark from '@/components/AppleSportifyCheckmark';
@@ -41,7 +42,7 @@ import { createReleaseStore } from '@/state/createReleaseStore';
 
 import { customTextFieldTheme } from '@/util/mui';
 import { languages } from '@/util/languages';
-import { primaryGenre, secondaryGenre, hours, minutes, minReleaseDate } from '@/util/resources';
+import { primaryGenre, secondaryGenre, hours, minutes, minReleaseDate, apiEndpoint } from '@/util/resources';
 import albumSampleArt from "@/assets/images/albumSampleArt.png"
 
 
@@ -69,9 +70,10 @@ function AlbumDetails() {
     const darkTheme = useSettingStore((state) => state.darkTheme);
     // const [explicitLyrics, setExplicitLyrics] = useState(""); // No
     const userData = useUserStore((state) => state.userData);
-    // const accessToken = useUserStore((state) => state.accessToken);
+    const accessToken = useUserStore((state) => state.accessToken);
     const albumReleaseDetails = createReleaseStore((state) => state.albumReleaseDetails);
     const _setAlbumReleaseDetails = createReleaseStore((state) => state._setAlbumReleaseDetails);
+    const _setCompleteAlbumData = createReleaseStore((state) => state._setCompleteAlbumData);
     const _setToastNotification = useSettingStore((state) => state._setToastNotification);
 
     const [apiResponse, setApiResponse] = useState({
@@ -251,7 +253,7 @@ function AlbumDetails() {
             return;
         }
 
-        const data2db = {
+        const formDetails = {
             email: userData.email,
             release_type: "Album",
         
@@ -275,11 +277,52 @@ function AlbumDetails() {
             listenerTimeZone: formData.listenerTimezone ? true : false,
             generalTimeZone: formData.generalTimezone ? true : false,
         };
+        _setAlbumReleaseDetails(formDetails);
 
         // console.log(data2db);
 
-        _setAlbumReleaseDetails(data2db);
-        navigate("/account/artist/create-album-release-advance-features");
+        const data2db = {
+            email: formDetails.email,
+            album_title: formDetails.album_title,
+            artist_name: formDetails.artist_name,
+            language: formDetails.language,
+            primary_genre: formDetails.primary_genre,
+            secondary_genre: formDetails.secondary_genre,
+            release_date: formDetails.releaseDate,
+            release_time: formDetails.release_time,
+            listenerTimeZone: formDetails.listenerTimeZone,
+            otherTimeZone: formDetails.generalTimeZone,
+        }
+
+        try {
+            const response = (await axios.post(
+                `${apiEndpoint}/Album/create-album`,
+                data2db,  
+                {
+                    headers: {
+                        // 'Content-Type': 'multipart/form-data',
+                        Authorization: `Bearer ${accessToken}`
+                    },
+                }
+            )).data;
+            console.log(response);
+
+            _setCompleteAlbumData(response.savedAlbum);
+            
+            navigate("/account/artist/create-album-release-advance-features");
+
+        } catch (error: any) {
+            const err = error.response.data;
+            console.log(err);
+
+            setApiResponse({
+                display: true,
+                status: false,
+                message: err.message || "Oooops, failed to update details. please try again."
+            });
+        }
+
+        // navigate("/account/artist/create-album-release-advance-features");
     }
 
 

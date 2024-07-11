@@ -88,6 +88,43 @@ const albumReleaseStores = {
 }
 
 
+const completeAlbumData = {
+    email: "latham01@yopmail.com",
+    album_title: "New Dawn",
+    artist_name: "John Doe",
+    language: "English",
+    primary_genre: "Rock",
+    secondary_genre: "Alternative",
+    release_date: "2024-07-15",
+    release_time: "14:00",
+    listenerTimeZone: "CST +3",
+    otherTimeZone: "GMT +1",
+    label_name: '',
+    soldWorldwide: '',
+    recording_location: '',
+    upc_ean: '',
+    store: <any> '',
+    social_platform: <any> '',
+    song_mp3: <any> '',
+    song_title: '',
+    song_writer: <any> '',
+    song_artists: <any> '',
+    creattive_name: <any> '',
+    roles: <any> '',
+    copyright_ownership: '',
+    copyright_ownership_permissions: '',
+    isrc_number: '',
+    language_of_lyrics: '',
+    language_of_lyrics_optional: '',
+    ticktokClipStartTime: '',
+    song_url: '',
+    song_cover_url: '',
+    _id: "668ae15ba93d3ea6345ba9e4",
+    created_at: "2024-07-07T18:41:31.326Z",
+    // "__v": 0
+}
+
+
 interface creativeType {
     creativeName: string,
     creativeRole: string,
@@ -117,12 +154,16 @@ type _typeInterface_ = {
     singleRelease1: typeof singleRelease1;
     singleRelease2: typeof singleRelease2;
 
+    completeAlbumData: typeof completeAlbumData;
+
     albumReleaseDetails: typeof albumReleaseDetails;
     albumReleaseAdvanceFeatures: typeof albumReleaseAdvanceFeatures;
     albumReleaseStores: typeof albumReleaseStores;
     albumReleaseSongUpload: typeof albumReleaseSongUpload[];
     albumReleaseAlbumArt: typeof albumReleaseAlbumArt;
 
+    _setCompleteAlbumData: (details: typeof completeAlbumData) => void;
+    
     _setAlbumReleaseDetails : (details: typeof albumReleaseDetails) => void;
     _setAlbumReleaseAdvanceFeatures: (details: typeof albumReleaseAdvanceFeatures) => void;
     _setAlbumReleaseStores: (details: typeof albumReleaseStores) => void;
@@ -133,7 +174,7 @@ type _typeInterface_ = {
     _setSingleRelease1: (release: typeof singleRelease1) => void;
     _setSingleRelease2: (release: typeof singleRelease2) => void;
 
-    _setCreateAlbum_details: (release: typeof singleRelease2) => void;
+    // _setCreateAlbum_details: (release: typeof singleRelease2) => void;
 
     // updatePlayerAsync: () => Promise<void>;
 };
@@ -143,6 +184,8 @@ type _typeInterface_ = {
 export const createReleaseStore = create<_typeInterface_>((set) => ({
     singleRelease1: singleRelease1,
     singleRelease2: singleRelease2,
+
+    completeAlbumData,
 
     albumReleaseDetails,
     albumReleaseAdvanceFeatures,
@@ -170,15 +213,25 @@ export const createReleaseStore = create<_typeInterface_>((set) => ({
         });
     },
   
-    _setCreateAlbum_details: (release) => {
+    _setCompleteAlbumData: (data) => {
         // setLocalStorage("user", user);
 
         set((_state) => {
             return {
-                singleRelease2: release,
+                completeAlbumData: data,
             };
         });
     },
+  
+    // _setCreateAlbum_details: (release) => {
+    //     // setLocalStorage("user", user);
+
+    //     set((_state) => {
+    //         return {
+    //             singleRelease2: release,
+    //         };
+    //     });
+    // },
   
     _setAlbumReleaseDetails: (details) => {
         set((_state) => {

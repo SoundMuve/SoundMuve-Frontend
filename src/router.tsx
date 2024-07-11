@@ -25,7 +25,7 @@ import DashboardHome from "./pages/account/DashboardHome.tsx";
 
 import DashboardArtist from "./pages/account/artist/DashboardArtist.tsx";
 import CreateSingle from "./pages/account/artist/CreateSingleRelease.tsx";
-import DashboardRecordLabel from "./pages/account/DashboardRecordLabel.tsx";
+import DashboardRecordLabel from "./pages/account/recordLabel/DashboardRecordLabel.tsx";
 import CreateSingleRelease2 from "./pages/account/artist/CreateSingleRelease2.tsx";
 import BalanceHistory from "./pages/account/artist/BalanceHistory.tsx";
 import SalesReport from "./pages/account/artist/SalesReport.tsx";
@@ -198,7 +198,14 @@ export const router = createBrowserRouter([
             },
             {
               path: "record-label",
-              element: <DashboardRecordLabel />
+              // element: <DashboardRecordLabel />,
+              children: [
+                {
+                  path: "",
+                  element: <DashboardRecordLabel />,
+                },
+
+              ]
             },
           ]
         },

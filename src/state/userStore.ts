@@ -10,6 +10,7 @@ const userEmptyData: userInterface = {
     email: "",
     password: "",
     balance: 0,
+    teamType: '',
     created_at: ""
 };
 

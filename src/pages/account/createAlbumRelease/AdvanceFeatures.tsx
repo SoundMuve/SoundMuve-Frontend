@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import * as yup from "yup";
 import { yupResolver } from '@hookform/resolvers/yup';
+import axios from 'axios';
 
 import SideNav from './SideNav';
 import Toolbar from '@mui/material/Toolbar';
@@ -28,6 +29,7 @@ import { createReleaseStore } from '@/state/createReleaseStore';
 
 import AccountWrapper from '@/components/AccountWrapper';
 import { customTextFieldTheme } from '@/util/mui';
+import { apiEndpoint } from '@/util/resources';
 
 const formSchema = yup.object({
     labelName: yup.string().trim().label("Label Name"),
@@ -43,8 +45,12 @@ function CreateAlbumReleaseAdvanceFeatures() {
     const darkTheme = useSettingStore((state) => state.darkTheme);
     const [soldWorldwide, setSoldWorldwide] = useState(""); // Yes
     const userData = useUserStore((state) => state.userData);
+    const accessToken = useUserStore((state) => state.accessToken);
+
     const albumReleaseAdvanceFeatures = createReleaseStore((state) => state.albumReleaseAdvanceFeatures);
     const _setAlbumReleaseAdvanceFeatures = createReleaseStore((state) => state._setAlbumReleaseAdvanceFeatures);
+    const completeAlbumData = createReleaseStore((state) => state.completeAlbumData);
+    const _setCompleteAlbumData = createReleaseStore((state) => state._setCompleteAlbumData);
     const _setToastNotification = useSettingStore((state) => state._setToastNotification);
 
     const [apiResponse, setApiResponse] = useState({
@@ -93,7 +99,7 @@ function CreateAlbumReleaseAdvanceFeatures() {
         }
 
 
-        const data2db = {
+        const formDetails = {
             email: userData.email,
             release_type: "Album",
 
@@ -104,8 +110,43 @@ function CreateAlbumReleaseAdvanceFeatures() {
         };
 
         // console.log(data2db);
-        _setAlbumReleaseAdvanceFeatures(data2db);
-        navigate("/account/artist/create-album-release-select-stores");
+        _setAlbumReleaseAdvanceFeatures(formDetails);
+
+        const data2db = {
+            label_name: formDetails.label_name,
+            recording_location: formDetails.recording_location,
+            upc_ean: formDetails.upc_ean,
+        }
+
+        try {
+            const response = (await axios.put(
+                `${apiEndpoint}/Album/update-album/${ completeAlbumData._id }/page2`,
+                data2db,  
+                {
+                    headers: {
+                        // 'Content-Type': 'multipart/form-data',
+                        Authorization: `Bearer ${accessToken}`
+                    },
+                }
+            )).data;
+            console.log(response);
+
+            _setCompleteAlbumData(response.updatedAlbum);
+
+            navigate("/account/artist/create-album-release-select-stores");
+        } catch (error: any) {
+            const err = error.response.data;
+            console.log(err);
+
+            setApiResponse({
+                display: true,
+                status: false,
+                message: err.message || "Oooops, failed to update details. please try again."
+            });
+        }
+
+        
+        // navigate("/account/artist/create-album-release-select-stores");
     }
 
 
@@ -306,7 +347,7 @@ function CreateAlbumReleaseAdvanceFeatures() {
                                                                     display: "inline-block"
                                                                 }}
                                                                 onClick={() => {
-                                                                    setValue("soldWorldwide", "Yes");
+                                                                    setValue("soldWorldwide", "Yes", {shouldDirty: true, shouldTouch: true, shouldValidate: true});
                                                                     setSoldWorldwide("Yes");
                                                                 }}
                                                             >
@@ -346,7 +387,7 @@ function CreateAlbumReleaseAdvanceFeatures() {
                                                                     display: "inline-block"
                                                                 }}
                                                                 onClick={() => {
-                                                                    setValue("soldWorldwide", "No");
+                                                                    setValue("soldWorldwide", "No", {shouldDirty: true, shouldTouch: true, shouldValidate: true});
                                                                     setSoldWorldwide("No");
                                                                 }}
                                                             >

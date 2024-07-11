@@ -310,8 +310,7 @@ export default function Home() {
 
                     <Box sx={{px: {xs: 2, md: 5, lg: 12}, my: 12}}>
                         <Grid container spacing={2} position="unset" >
-                            <Grid item
-                                xs={12} md={6}
+                            <Grid item xs={12} md={6}
                                 sx={{ 
                                     alignSelf: "center",
                                     order: {xs: 1, md: "unset"}
@@ -327,9 +326,7 @@ export default function Home() {
                                         // my: {xs: 1, md: 2.5}
                                         textAlign: {xs: "Justified", md: "Justified"}
                                     }}
-                                >
-                                    Tools built for your music
-                                </Typography>
+                                > Tools built for your music </Typography>
 
                                 <Typography sx={{
                                     fontWeight: "400",
