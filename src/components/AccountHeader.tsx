@@ -10,29 +10,34 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
-import MenuIcon from '@mui/icons-material/Menu';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 // import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
+import Tooltip from '@mui/material/Tooltip';
+import Avatar from '@mui/material/Avatar';
 
-import LanguageIcon from '@mui/icons-material/Language';
-import AccountCircleOutlined from '@mui/icons-material/AccountCircleOutlined';
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import MenuIcon from '@mui/icons-material/Menu';
 import CloseIcon from '@mui/icons-material/Close';
-import LightbulbOutlinedIcon from '@mui/icons-material/LightbulbOutlined';
-
+import LanguageIcon from '@mui/icons-material/Language';
 import SettingsPowerIcon from '@mui/icons-material/SettingsPower';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import LightbulbOutlinedIcon from '@mui/icons-material/LightbulbOutlined';
+import AccountCircleOutlined from '@mui/icons-material/AccountCircleOutlined';
+
+import HomeIcon from '@mui/icons-material/Home';
+import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
+import AssessmentOutlinedIcon from '@mui/icons-material/AssessmentOutlined';
+import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 
 import SoundMuve from "@/assets/images/SoundMuve.png";
 import SoundMuv from "@/assets/images/SoundMuv.png";
 import light_off from "@/assets/images/light_off.png";
 import { useSettingStore } from '../state/settingStore';
 import NewReleaseModalComponent from './account/NewReleaseModal';
-import Tooltip from '@mui/material/Tooltip';
 import { useUserStore } from '@/state/userStore';
 import { stringAvatar, stringToColor } from '@/util/resources';
-import Avatar from '@mui/material/Avatar';
+import ListItemIcon from '@mui/material/ListItemIcon';
 
 const drawerWidth = 240;
 
@@ -49,10 +54,48 @@ export default function AccountHeaderComponent() {
     const [openReleaseModal, setOpenReleaseModal] = useState(false);
     const closeReleaseModal = () => { setOpenReleaseModal(false) }
 
-
     const handleDrawerToggle = () => {
         setMobileOpen((prevState) => !prevState);
     };
+
+    const RLmenuItems = [
+        {
+            title: "Home",
+            link: "/account/record-label",
+            icon: HomeIcon,
+            active: pathname.startsWith('/account/record-label'),
+        },
+        {
+            title: "Sales report",
+            link: "/account",
+            icon: ReceiptLongIcon,
+            active: pathname.startsWith('/account/Sales report'),
+        },
+        {
+            title: "Balance history",
+            link: "/contact",
+            icon: AccountBalanceWalletIcon,
+            active: pathname.startsWith('/contact'),
+        },
+        {
+            title: "Reach",
+            link: "/faq",
+            icon: AssessmentOutlinedIcon,
+            active: pathname.startsWith('/faq'),
+        },
+        {
+            title: "Contact",
+            link: "/contact",
+            icon: '',
+            active: pathname.startsWith('/contact'),
+        },
+        {
+            title: "FAQ",
+            link: "/faq",
+            icon: '',
+            active: pathname.startsWith('/faq'),
+        }
+    ];
 
     const menuItems = [
         // {
@@ -62,8 +105,8 @@ export default function AccountHeaderComponent() {
         // },
         {
             title: "Dashboard",
-            link: "/account/artist",
-            active: pathname.startsWith('/account/artist'),
+            link: "/account",
+            active: pathname.startsWith('/account'),
         },
         {
             title: "Contact",
@@ -101,23 +144,42 @@ export default function AccountHeaderComponent() {
                 <Divider color='#c1c1c1' />
 
                 <List onClick={handleDrawerToggle}>
-                    {/* <Link to="/account/artist">
-                        <ListItem disablePadding sx={{bgcolor: pathname.endsWith('/artist') ? "#141414" : ''}}>
-                            <ListItemButton>
-                                <ListItemText primary="Dashboard" />
-                            </ListItemButton>
-                        </ListItem>
-                    </Link> */}
+                    {
+                        userData.teamType == "Artist" ? (
+                            menuItems.map((item) => (
+                                <Link key={item.title} to={item.link} style={{ color: "inherit" }}>
+                                    <ListItem disablePadding sx={{bgcolor: item.active ? darkTheme ? "#141414" : "#D9D9D9" : ''}}>
+                                        <ListItemButton>
+                                            <ListItemText primary={item.title} />
+                                        </ListItemButton>
+                                    </ListItem>
+                                </Link>
+                            ))
+                        ) : (
+                            RLmenuItems.map((item) => (
+                                <Link key={item.title} to={item.link} style={{ color: "inherit" }}>
+                                    <ListItem disablePadding sx={{bgcolor: item.active ? darkTheme ? "#141414" : "#D9D9D9" : ''}}>
+                                        <ListItemButton>
+                                            { item.icon && 
+                                                <ListItemIcon
+                                                    sx={{
+                                                        "&.MuiListItemIcon-root": {
+                                                            minWidth: '30px',
+                                                            pr: "5px",
+                                                        }
+                                                    }}
+                                                >
+                                                    <item.icon sx={{ color: "#666666" }}  />
+                                                </ListItemIcon>
+                                            }
 
-                    {menuItems.map((item) => (
-                        <Link key={item.title} to={item.link} style={{ color: "inherit" }}>
-                            <ListItem disablePadding sx={{bgcolor: item.active ? darkTheme ? "#141414" : "#D9D9D9" : ''}}>
-                                <ListItemButton>
-                                    <ListItemText primary={item.title} />
-                                </ListItemButton>
-                            </ListItem>
-                        </Link>
-                    ))}
+                                            <ListItemText primary={item.title} />
+                                        </ListItemButton>
+                                    </ListItem>
+                                </Link>
+                            ))
+                        )
+                    }
 
                     {/* <ListItem disablePadding onClick={() => _logOutUser() }>
                         <ListItemButton>
@@ -316,7 +378,7 @@ export default function AccountHeaderComponent() {
         <Box 
             sx={{ 
                 display: 'flex', 
-                // background: darkTheme ? "#000" : "#343434",
+                background: darkTheme ? "#000" : "#343434",
             }}
         >
             <CssBaseline />
@@ -461,11 +523,12 @@ export default function AccountHeaderComponent() {
                 </Drawer>
             </nav>
 
-
             <NewReleaseModalComponent 
                 openReleaseModal={openReleaseModal}
                 closeReleaseModal={closeReleaseModal}
             />
+
+            <Toolbar />
         </Box>
     );
 }

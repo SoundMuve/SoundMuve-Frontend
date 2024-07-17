@@ -107,7 +107,8 @@ function CreateAlbumReleaseSelectStores() {
 
         try {
             const response = (await axios.put(
-                `${apiEndpoint}/Album/update-album/${ completeAlbumData._id }/page3?Authorization=Bearer ${accessToken}`,
+                // `${apiEndpoint}/Album/update-album/${ completeAlbumData._id }/page3?Authorization=Bearer ${accessToken}`,
+                `${apiEndpoint}/songs/albums/${ completeAlbumData._id }/page3`,
                 data2db,  
                 {
                     headers: {
@@ -118,11 +119,13 @@ function CreateAlbumReleaseSelectStores() {
             )).data;
             console.log(response);
 
-            _setCompleteAlbumData(response.updatedAlbum);
+            // _setCompleteAlbumData(response.updatedAlbum);
+            _setCompleteAlbumData(response);
 
-            navigate("/account/artist/create-album-release-song-upload");
+            navigate("/account/create-album-release-song-upload");
 
         } catch (error: any) {
+            console.log(error);
             const err = error.response.data;
             console.log(err);
 
@@ -133,7 +136,7 @@ function CreateAlbumReleaseSelectStores() {
             });
         }
 
-        // navigate("/account/artist/create-album-release-song-upload");
+        // navigate("/account/create-album-release-song-upload");
     }
 
 
@@ -371,7 +374,7 @@ function CreateAlbumReleaseSelectStores() {
                                         <Stack direction="row" justifyContent="space-between" spacing="20px" alignItems="center">
                                             <Button variant="contained" 
                                                 fullWidth type='button'
-                                                onClick={() => navigate("/account/artist/create-album-release-advance-features")}
+                                                onClick={() => navigate("/account/create-album-release-advance-features")}
                                                 sx={{ 
                                                     bgcolor: darkTheme ? "#4C4C4C57" : "#9c9c9c",
                                                     maxWidth: "312px",

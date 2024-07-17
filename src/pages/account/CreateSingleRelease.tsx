@@ -332,7 +332,7 @@ function CreateSingleRelease() {
                 message: response.message
             });
 
-            navigate("/account/artist/create-single-release-continue");
+            navigate("/account/create-single-release-continue");
         } catch (error: any) {
             const err = error.response.data;
             console.log(err);

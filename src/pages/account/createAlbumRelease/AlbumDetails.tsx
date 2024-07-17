@@ -106,7 +106,7 @@ function AlbumDetails() {
         mode: 'onBlur',
         defaultValues: { 
             // explicitSongLyrics: explicitLyrics,
-            // releaseTimeHours: "00",
+            releaseTimeHours: "12",
             releaseTimeMinutes: "00",
             releaseTimeHourFormat: "AM",
             // language: "English",
@@ -268,7 +268,7 @@ function AlbumDetails() {
             secondary_genre: formData.secondaryGenre,
         
             releaseDate: formData.releaseDate,
-            release_time: `${ formData.releaseTimeHours } : ${ formData.releaseTimeMinutes } ${ formData.releaseTimeHourFormat }`,
+            release_time: `${ formData.releaseTimeHours || '12' } : ${ formData.releaseTimeMinutes } ${ formData.releaseTimeHourFormat }`,
 
             releaseTimeHours: formData.releaseTimeHours || '12',
             releaseTimeMinutes: formData.releaseTimeMinutes || '00',
@@ -296,8 +296,9 @@ function AlbumDetails() {
 
         try {
             const response = (await axios.post(
-                `${apiEndpoint}/Album/create-album`,
-                data2db,  
+                // `${apiEndpoint}/Album/create-album`,
+                `${apiEndpoint}/songs/albums`,
+                data2db,
                 {
                     headers: {
                         // 'Content-Type': 'multipart/form-data',
@@ -307,9 +308,10 @@ function AlbumDetails() {
             )).data;
             console.log(response);
 
-            _setCompleteAlbumData(response.savedAlbum);
+            _setCompleteAlbumData(response);
+            // _setCompleteAlbumData(response.savedAlbum);
             
-            navigate("/account/artist/create-album-release-advance-features");
+            navigate("/account/create-album-release-advance-features");
 
         } catch (error: any) {
             const err = error.response.data;

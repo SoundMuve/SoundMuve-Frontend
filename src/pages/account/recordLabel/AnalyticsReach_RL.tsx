@@ -16,62 +16,63 @@ import { axisClasses } from '@mui/x-charts/ChartsAxis';
 import IconButton from '@mui/material/IconButton';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import CircleIcon from '@mui/icons-material/Circle';
+import PersonIcon from '@mui/icons-material/Person';
 
 import AccountWrapper from '@/components/AccountWrapper';
 import { useSettingStore } from '@/state/settingStore';
 import ArtistAnalyticsNavComponent from '@/components/account/ArtistAnalyticsNav';
 
-import albumImage from '@/assets/images/album.png';
+// import albumImage from '@/assets/images/album.png';
 
 
 
-const moreInsights = [
-    {
-        title: "Good God",
-        percentage: "+ 200%",
-        status: true
-    },
-    {
-        title: "Good God",
-        percentage: "-40%",
-        status: false
-    },
-    {
-        title: "Good God",
-        percentage: "+ 200%",
-        status: true
-    },
-    {
-        title: "Good God",
-        percentage: "+ 200%",
-        status: false
-    },
-    {
-        title: "Good God",
-        percentage: "+ 200%",
-        status: true
-    },
-    {
-        title: "Good God",
-        percentage: "-40%",
-        status: true
-    },
-    {
-        title: "Good God",
-        percentage: "+ 200%",
-        status: true
-    },
-    {
-        title: "Good God",
-        percentage: "+ 200%",
-        status: true
-    },
-    {
-        title: "Good God",
-        percentage: "-40%",
-        status: false
-    },
-];
+// const moreInsights = [
+//     {
+//         title: "Good God",
+//         percentage: "+ 200%",
+//         status: true
+//     },
+//     {
+//         title: "Good God",
+//         percentage: "-40%",
+//         status: false
+//     },
+//     {
+//         title: "Good God",
+//         percentage: "+ 200%",
+//         status: true
+//     },
+//     {
+//         title: "Good God",
+//         percentage: "+ 200%",
+//         status: false
+//     },
+//     {
+//         title: "Good God",
+//         percentage: "+ 200%",
+//         status: true
+//     },
+//     {
+//         title: "Good God",
+//         percentage: "-40%",
+//         status: true
+//     },
+//     {
+//         title: "Good God",
+//         percentage: "+ 200%",
+//         status: true
+//     },
+//     {
+//         title: "Good God",
+//         percentage: "+ 200%",
+//         status: true
+//     },
+//     {
+//         title: "Good God",
+//         percentage: "-40%",
+//         status: false
+//     },
+// ];
 
 
 const dataset = [
@@ -127,7 +128,7 @@ const dataset = [
   
   
 
-function AnalyticsReach() {
+function AnalyticsReach_RL() {
     const navigate = useNavigate();
     const darkTheme = useSettingStore((state) => state.darkTheme);
     const mdDevice = useMediaQuery('(min-width:900px)');
@@ -204,7 +205,7 @@ function AnalyticsReach() {
                 </Stack>
 
                 <Box sx={{ display: "flex", justifyContent: "center", mt: "20px" }}>
-                    <ArtistAnalyticsNavComponent darkTheme={darkTheme} currentPage='analytics-reach' accountType='artist' />
+                    <ArtistAnalyticsNavComponent darkTheme={darkTheme} currentPage='analytics-reach' accountType='record-label' />
                 </Box>
 
 
@@ -802,82 +803,38 @@ function AnalyticsReach() {
                         </Grid>
                     </Grid>
 
-                    <Box mt={5}>
-                        <Typography
+                    <Stack mb={5} mt={10} justifyContent="center" alignItems="center">
+                        <Stack direction="row" alignItems="center" spacing="15px"
+                            onClick={() => navigate('/account/record-label/add-artist')}
                             sx={{
-                                fontWeight: "900",
-                                fontSize: "30px",
-                                lineHeight: "24px",
-                                color: "#797979",
-                                mb: 2
+                                color: darkTheme ? '#C8F452' : '#5B8E14',
+                                fontWeight: '400',
+                                fontSize: '13px',
+                                border: `1px solid ${ darkTheme ? '#C8F452' : '#5B8E14' }`,
+                                borderRadius: '6.09px',
+                                padding: 1,
+                                width: "130px",
+                                cursor: 'pointer'
                             }}
-                        >More insight</Typography>
+                        >
+                            <PersonIcon />
+                            <Typography>Add Artist</Typography>
+                        </Stack>
 
-                        <Grid container spacing="20px">
-                            {
-                                moreInsights.map((insight, index) => (
-                                    <Grid key={index} item xs={6} md={4}>
-                                        <Box 
-                                            sx={{ 
-                                                width: "95%",
-                                                // maxWidth: {xs: "196.38px", md: "345px"},
-                                                // mx: "auto"
-                                            }}
-                                            onClick={() => navigate("/account/artist/song-details")}
-                                        >
-                                            <Box
-                                                sx={{
-                                                    height: {xs: "152.99px", md: "268px"},
-                                                    borderRadius: {xs: "6.85px", md: "12px"},
-                                                    bgcolor: "#343434",
-                                                    textAlign: "center",
-                                                    display: "flex",
-                                                    justifyContent: "center",
-                                                    alignItems: "center"
-                                                }}
-                                            >
-                                                <Box 
-                                                    sx={{
-                                                        width: {xs: "124.48px", md: "218.06px"},
-                                                        height: {xs: "124.48px", md: "218.06px"}
-                                                    }}
-                                                >
-                                                    <img
-                                                        src={albumImage} alt='album image'
-                                                        style={{
-                                                            width: "100%",
-                                                            objectFit: "contain"
-                                                        }}
-                                                    />
-                                                </Box>
-                                            </Box>
+                        <Typography variant='body1'
+                            sx={{
+                                fontWeight: '400',
+                                fontSize: '24px',
+                                lineHeight: '41px',
+                                textAlign: 'center',
+                                color: darkTheme ? '#D9D9D9' : '#272727',
+                                mt: '25px'
+                            }}
+                        >
+                            Artists that are on you record label would be displayed here
+                        </Typography>
+                    </Stack>
 
-                                            <Stack direction={"row"} justifyContent={"space-between"} my="8px" spacing={"20px"} alignItems={"center"}>
-                                                <Typography
-                                                    sx={{
-                                                        fontWeight: "900",
-                                                        fontSize: {xs: "10.85px", md: "19px"},
-                                                        lineHeight: {xs: "13.7px", md: "24px"},
-                                                        letterSpacing: {xs: "-0.77px", md: "-1.34px"},
-                                                    }}
-                                                > { insight.title } </Typography>
-
-                                                <Typography
-                                                    sx={{
-                                                        fontWeight: "400",
-                                                        fontSize: {xs: "10.85px", md: "19px"},
-                                                        lineHeight: {xs: "13.7px", md: "24px"},
-                                                        letterSpacing: {xs: "-0.77px", md: "-1.34px"},
-                                                        color: insight.status ? darkTheme ? "#C8F452" : "#33500B" : "#CE2937"
-                                                    }}
-                                                > { insight.percentage } </Typography>
-                                            </Stack>
-                                        </Box>
-                                    </Grid>
-                                ))
-                            }
-                        </Grid>
-                    </Box>
                 </Box>
             </Box>
 
@@ -885,4 +842,4 @@ function AnalyticsReach() {
     )
 }
 
-export default AnalyticsReach;
+export default AnalyticsReach_RL;

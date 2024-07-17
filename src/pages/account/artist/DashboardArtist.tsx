@@ -17,7 +17,7 @@ import AlbumSongItem from '@/components/account/AlbumSongItem';
 import NewReleaseModalComponent from '@/components/account/NewReleaseModal';
 import PayoutModalComponent from '@/components/account/PayoutModal';
 import PayoutFlutterwaveModalComponent from '@/components/account/PayoutFlutterwaveModal';
-import PayoutBankModalComponent from '@/components/account/PayoutBankModal';
+// import PayoutBankModalComponent from '@/components/account/PayoutBankModal';
 
 import { useSettingStore } from '@/state/settingStore';
 import { useUserStore } from '@/state/userStore';
@@ -28,6 +28,7 @@ import ReleaseStatusComponent from '@/components/ReleaseStatus';
 import EmptyListComponent from '@/components/EmptyList';
 import LoadingDataComponent from '@/components/LoadingData';
 import { useReleaseStore } from '@/state/releaseStore';
+import FlutterwaveSetPayoutModalComponent from '@/components/account/PayoutSetFlutterwaveModal';
 
 
 const albumSongs = [
@@ -78,10 +79,7 @@ function DashboardArtist() {
     const closeReleaseModal = () => { setOpenReleaseModal(false) };
 
     const [openPayoutModal, setOpenPayoutModal] = useState(false);
-    const closePayoutModal = () => { setOpenPayoutModal(false) };
-
-    const [openPayoutBankModal, setOpenPayoutBankModal] = useState(false);
-    const closePayoutBankModal = () => { setOpenPayoutBankModal(false) };
+    const [openSetFlutterwaveModal, setOpenSetFlutterwaveModal] = useState(false);
 
     const [openPayoutFlutterwaveModal, setOpenPayoutFlutterwaveModal] = useState(false);
     const closePayoutFlutterwaveModal = () => { setOpenPayoutFlutterwaveModal(false) };
@@ -1125,15 +1123,20 @@ function DashboardArtist() {
 
             <PayoutModalComponent 
                 openModal={openPayoutModal}
-                closeModal={closePayoutModal}
+                closeModal={() => setOpenPayoutModal(false)}
                 
-                openBankPayoutModal={() => setOpenPayoutBankModal(true)}
-                openFlutterwavePayoutModal={() => setOpenPayoutFlutterwaveModal(true)}
+                openBankPayoutModal={() => setOpenSetFlutterwaveModal(true)}
+                openFlutterwavePayoutModal={() => setOpenSetFlutterwaveModal(true)}
             />
 
-            <PayoutBankModalComponent 
-                openModal={openPayoutBankModal}
-                closeModal={closePayoutBankModal}
+            <FlutterwaveSetPayoutModalComponent 
+                openModal={openSetFlutterwaveModal}
+                closeModal={() => setOpenSetFlutterwaveModal(false)}
+                changeMethod={() => {
+                    setOpenSetFlutterwaveModal(false);
+                    setOpenPayoutModal(true);
+                }}
+                confirmBtn={() => {}}
             />
 
             <PayoutFlutterwaveModalComponent 

@@ -428,7 +428,7 @@ const monthsBodyContent = [
 ];
 
 
-function SalesReport() {
+function SalesReport_RL() {
     const navigate = useNavigate();
     const darkTheme = useSettingStore((state) => state.darkTheme);
 
@@ -450,7 +450,7 @@ function SalesReport() {
                         <ChevronLeftIcon sx={{ display: {xs: "none", md: "block"} }} />
                     </IconButton>
 
-                    <ArtistAnalyticsNavComponent darkTheme={darkTheme} currentPage='sales-report' accountType='artist' />
+                    <ArtistAnalyticsNavComponent darkTheme={darkTheme} currentPage='sales-report' accountType='record-label' />
 
                     <Box></Box>
                 </Stack>
@@ -911,4 +911,4 @@ function SalesReport() {
     )
 }
 
-export default SalesReport;
+export default SalesReport_RL;

@@ -40,7 +40,7 @@ const albumSongs = [
 ]
 
   
-function AlbumDetails() {
+function AlbumDetails_RL() {
     const navigate = useNavigate();
     const darkTheme = useSettingStore((state) => state.darkTheme);
 
@@ -600,7 +600,7 @@ function AlbumDetails() {
                         >Songs on your album</Typography>
 
                         {albumSongs.map((item, index) => (
-                            <Box key={index} onClick={() => navigate("/account/artist/song-details")}>
+                            <Box key={index} onClick={() => navigate("/account/record-label/song-details")}>
                                 <AlbumSongItem 
                                     artistName={item.artistName}
                                     artworkImage={item.artworkImage}
@@ -621,4 +621,4 @@ function AlbumDetails() {
     )
 }
 
-export default AlbumDetails;
+export default AlbumDetails_RL;

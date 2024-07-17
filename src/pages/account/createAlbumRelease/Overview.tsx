@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import SideNav from './SideNav';
@@ -20,20 +20,24 @@ import AccountWrapper from '@/components/AccountWrapper';
 
 import SongPreviewComponent from '@/components/account/SongPreview';
 import SuccessModalComponent from '@/components/account/SuccessModal';
+import axios from 'axios';
+import { apiEndpoint } from '@/util/resources';
 
 
 function CreateAlbumReleaseOverview() {
     const navigate = useNavigate();
     const darkTheme = useSettingStore((state) => state.darkTheme);
     const userData = useUserStore((state) => state.userData);
-    const [openSuccessModal, setOpenSuccessModal] = useState(false);
-
+    const accessToken = useUserStore((state) => state.accessToken);
     const albumReleaseDetails = createReleaseStore((state) => state.albumReleaseDetails);
     const albumReleaseAdvanceFeatures = createReleaseStore((state) => state.albumReleaseAdvanceFeatures);
     const albumReleaseStores = createReleaseStore((state) => state.albumReleaseStores);
     const albumReleaseSongUpload = createReleaseStore((state) => state.albumReleaseSongUpload);
     const _removeAlbumReleaseSongUpload = createReleaseStore((state) => state._removeAlbumReleaseSongUpload);
     const albumReleaseAlbumArt = createReleaseStore((state) => state.albumReleaseAlbumArt);
+    const completeAlbumData = createReleaseStore((state) => state.completeAlbumData);
+
+    const [openSuccessModal, setOpenSuccessModal] = useState(false);
 
     const _setToastNotification = useSettingStore((state) => state._setToastNotification);
     const [apiResponse, setApiResponse] = useState({
@@ -77,7 +81,31 @@ function CreateAlbumReleaseOverview() {
         });
     }
 
-    const onSubmit = () => {
+    useEffect(() => {
+        getAlbumRelease();
+    }, [])
+    
+
+    const getAlbumRelease = async () => {
+        try {
+            const response = (await axios.get(
+                `${apiEndpoint}/Album/albums?email=${ userData.email }`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`
+                    },
+                }
+            )).data;
+            console.log(response);
+
+
+        } catch (error: any) {
+            const err = error.response.data;
+            console.log(err);
+        }
+    }
+
+    const onSubmit = async () => {
         setApiResponse({
             display: false,
             status: true,
@@ -100,24 +128,42 @@ function CreateAlbumReleaseOverview() {
             return;
         }
 
-
-        setOpenSuccessModal(true);
-        
-        setTimeout(() => {
-            setOpenSuccessModal(false);
-
-            navigate("/account/artist");
-        }, 1000);
-
         const data2db = new FormData();
-        data2db.append('email', userData.email);
-        data2db.append('release_type', "Single");
+        // data2db.append('email', userData.email);
+        // data2db.append('release_type', "Album");
+        data2db.append('song_cover_url', image);
 
-        data2db.append('cover_photo', image);
+        try {
+            const response = (await axios.put(
+                `${apiEndpoint}/Album/update-album/${ completeAlbumData._id }/page5`,
+                data2db,  
+                {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                        Authorization: `Bearer ${accessToken}`
+                    },
+                }
+            )).data;
+            console.log(response);
 
-        // console.log(data2db);
 
-        // navigate("/account/artist/create-single-release-continue");
+            setOpenSuccessModal(true);
+            setTimeout(() => {
+                setOpenSuccessModal(false);
+
+                navigate("/account");
+            }, 1000);
+
+        } catch (error: any) {
+            const err = error.response.data;
+            console.log(err);
+
+            setApiResponse({
+                display: true,
+                status: false,
+                message: err.message || "Oooops, failed to update details. please try again."
+            });
+        }
 
     }
 
@@ -194,7 +240,7 @@ function CreateAlbumReleaseOverview() {
                                         }}
                                     >Details</Typography>
 
-                                    <Typography onClick={() => navigate("/account/artist/create-album-release-details")}
+                                    <Typography onClick={() => navigate("/account/create-album-release-details")}
                                         sx={{
                                             fontWeight: "400",
                                             fontSize: {xs: "15px", sm: "20px"},
@@ -401,7 +447,7 @@ function CreateAlbumReleaseOverview() {
                                     >Selected Stores</Typography>
                                     
                                     <Typography 
-                                        onClick={() => navigate("/account/artist/create-album-release-select-stores")}
+                                        onClick={() => navigate("/account/create-album-release-select-stores")}
                                         sx={{
                                             fontWeight: "400",
                                             fontSize: {xs: "15px", sm: "20px"},
@@ -461,7 +507,7 @@ function CreateAlbumReleaseOverview() {
                                     >Social Platforms - Automatically Selected</Typography>
 
                                     <Typography
-                                        onClick={() => navigate("/account/artist/create-album-release-select-stores")}
+                                        onClick={() => navigate("/account/create-album-release-select-stores")}
                                         sx={{
                                             fontWeight: "400",
                                             fontSize: {xs: "15px", sm: "20px"},
@@ -540,7 +586,7 @@ function CreateAlbumReleaseOverview() {
                                     > Song </Typography>
                                      
                                     <Typography
-                                        onClick={() => navigate("/account/artist/create-album-release-song-upload")}
+                                        onClick={() => navigate("/account/create-album-release-song-upload")}
                                         sx={{
                                             fontWeight: "400",
                                             fontSize: {xs: "15px", sm: "20px"},

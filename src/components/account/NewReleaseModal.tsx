@@ -32,14 +32,16 @@ const NewReleaseModalComponent: React.FC<_Props> = ({
                     outline: "none"
                 }}
             >
-                <Box sx={{
-                    bgcolor: "#272727",
-                    maxWidth: {xs: "92%", sm: "85%", md: "846px"},
-                    maxHeight: "404px",
-                    borderRadius: "12px",
-                    p: "25px",
-                    color: "#fff"
-                }}>
+                <Box 
+                    sx={{
+                        bgcolor: "#272727",
+                        maxWidth: {xs: "92%", sm: "85%", md: "846px"},
+                        maxHeight: "404px",
+                        borderRadius: "12px",
+                        p: "25px",
+                        color: "#fff"
+                    }}
+                >
                     <Box sx={{textAlign: "right"}}>
                         <IconButton onClick={() => closeReleaseModal() }>
                             <CloseIcon 
@@ -71,7 +73,7 @@ const NewReleaseModalComponent: React.FC<_Props> = ({
                         }}
                     >
 
-                        <Link to="/account/artist/create-single-release" style={{
+                        <Link to="/account/create-single-release" style={{
                             textDecoration: "none",
                             color: "#000000",
                             border: "none",
@@ -98,7 +100,7 @@ const NewReleaseModalComponent: React.FC<_Props> = ({
                             </Box>
                         </Link>
 
-                        <Link to="/account/artist/create-album-release-details" style={{
+                        <Link to="/account/create-album-release-details" style={{
                             textDecoration: "none",
                             color: "#000000",
                             border: "none",

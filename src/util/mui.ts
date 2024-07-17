@@ -73,3 +73,43 @@ export const customTextFieldTheme = (outerTheme: Theme, darkTheme: boolean = tru
             },
         },
     });
+
+
+
+export const MuiTextFieldStyle = (darkTheme: boolean = true) =>{
+
+    return (
+        {
+            '& label.Mui-focused': {
+                color: 'var(--TextField-brandBorderFocusedColor)',
+            },
+            '& .MuiInputBase-input': { // Target input text
+                color: darkTheme ? '#fff' : "#000",
+                fontSize: '1rem',
+                fontWeight: '400',
+                lineHeight: 1.5
+            },
+            '& .MuiInputBase-placeholder': { // Target placeholder text
+                color: 'gray',
+                fontSize: '1rem',
+                fontWeight: '400',
+                lineHeight: 1.5
+            },
+            '& .MuiOutlinedInput-root': {
+                // bgcolor: darkTheme ? '#1C1B1F' : '#EFEFEF',
+                borderRadius: '13.79px',
+                // height: '42px',
+        
+                '& fieldset': {
+                    border: '1px solid #b9c1cd'
+                },
+                '&:hover fieldset': {
+                    border: '1px solid #434e5e'
+                },
+                '&.Mui-focused fieldset': {
+                    border: '1px solid #434e5e'
+                },
+            },
+        }
+    )
+}

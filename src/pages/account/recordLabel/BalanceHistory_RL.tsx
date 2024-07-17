@@ -116,7 +116,7 @@ const tBodyContent = [
 ]
 
 
-function BalanceHistory() {
+function BalanceHistory_RL() {
     const navigate = useNavigate();
     const darkTheme = useSettingStore((state) => state.darkTheme);
 
@@ -145,7 +145,7 @@ function BalanceHistory() {
                         <ChevronLeftIcon sx={{ display: {xs: "none", md: "block"} }} />
                     </IconButton>
 
-                    <ArtistAnalyticsNavComponent darkTheme={darkTheme} currentPage='balance-history' accountType='artist' />
+                    <ArtistAnalyticsNavComponent darkTheme={darkTheme} currentPage='balance-history' accountType='record-label' />
 
                     <Box></Box>
                 </Stack>
@@ -357,4 +357,4 @@ function BalanceHistory() {
     )
 }
 
-export default BalanceHistory;
+export default BalanceHistory_RL;

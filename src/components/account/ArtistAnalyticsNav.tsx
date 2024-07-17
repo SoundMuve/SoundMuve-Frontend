@@ -8,12 +8,13 @@ import Typography from '@mui/material/Typography';
 
 interface _Props {
     currentPage: string,
+    accountType: string,
     darkTheme: boolean,
 }
 
 
 const ArtistAnalyticsNavComponent: React.FC<_Props> = ({
-    currentPage, darkTheme
+    currentPage, darkTheme, accountType
 }) => {
     const navigate = useNavigate();
 
@@ -30,7 +31,7 @@ const ArtistAnalyticsNavComponent: React.FC<_Props> = ({
                         cursor: "pointer",
                         display: "inline-block"
                     }}
-                    onClick={() => navigate("/account/artist/balance-history") }
+                    onClick={() => navigate(`/account/${accountType}/balance-history`) }
                 >
                     <Typography 
                         sx={{
@@ -54,7 +55,7 @@ const ArtistAnalyticsNavComponent: React.FC<_Props> = ({
                         cursor: "pointer",
                         display: "inline-block"
                     }}
-                    onClick={() => navigate("/account/artist/sales-report") }
+                    onClick={() => navigate(`/account/${accountType}/sales-report`) }
                 >
                     <Typography 
                         sx={{
@@ -78,7 +79,7 @@ const ArtistAnalyticsNavComponent: React.FC<_Props> = ({
                         cursor: "pointer",
                         display: "inline-block"
                     }}
-                    onClick={() => navigate("/account/artist/analytics-reach") }
+                    onClick={() => navigate(`/account/${accountType}/analytics-reach`) }
                 >
                     <Typography 
                         sx={{

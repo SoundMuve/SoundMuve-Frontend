@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
@@ -15,8 +16,8 @@ import { createReleaseStore } from '@/state/createReleaseStore';
 import SideNav from './SideNav';
 import AccountWrapper from '@/components/AccountWrapper';
 import cloudUploadIconImg from "@/assets/images/cloudUploadIcon.png";
-import axios from 'axios';
 import { apiEndpoint } from '@/util/resources';
+import CircularProgress from '@mui/material/CircularProgress';
 
 
 function CreateAlbumReleaseAlbumArt() {
@@ -38,6 +39,7 @@ function CreateAlbumReleaseAlbumArt() {
     
     const [image, setImage] = useState<any>();
     const [imagePreview, setImagePreview] = useState<any>();
+    const [isBtnSubmitting, setIsBtnSubmitting] = useState(false);
 
     useEffect(() => {
         if (albumReleaseAlbumArt.image) {
@@ -110,10 +112,10 @@ function CreateAlbumReleaseAlbumArt() {
 
         _setAlbumReleaseAlbumArt({image, imagePreview});
 
-
         try {
+            setIsBtnSubmitting(true);
             const response = (await axios.put(
-                `${apiEndpoint}/Album/update-album/${ completeAlbumData._id }/page5`,
+                `${apiEndpoint}/songs/albums/${ completeAlbumData._id }/page5`,
                 data2db,  
                 {
                     headers: {
@@ -122,17 +124,20 @@ function CreateAlbumReleaseAlbumArt() {
                     },
                 }
             )).data;
-            console.log(response);
+            // console.log(response);
 
             const savedImage = response.updatedAlbum.song_cover_url;
 
-            _setCompleteAlbumData(response.updatedAlbum);
+            // _setCompleteAlbumData(response.updatedAlbum);
+            _setCompleteAlbumData(response);
             _setAlbumReleaseAlbumArt({image: savedImage, imagePreview: savedImage});
+            setIsBtnSubmitting(false);
 
-            navigate("/account/artist/create-album-release-overview");
+            navigate("/account/create-album-release-overview");
         } catch (error: any) {
             const err = error.response.data;
             console.log(err);
+            setIsBtnSubmitting(false);
 
             setApiResponse({
                 display: true,
@@ -141,7 +146,7 @@ function CreateAlbumReleaseAlbumArt() {
             });
         }
 
-        // navigate("/account/artist/create-album-release-overview");
+        // navigate("/account/create-album-release-overview");
     }
 
 
@@ -297,10 +302,9 @@ function CreateAlbumReleaseAlbumArt() {
                             }
 
                             <Stack justifyContent="center" alignItems="center">
-
                                 <Button variant="contained" fullWidth
                                     onClick={() => onSubmit()}
-                                    // disabled={ !isValid || isSubmitting } 
+                                    disabled={ isBtnSubmitting } 
                                     sx={{ 
                                         bgcolor: darkTheme ? "#fff" : "#644986",
                                         maxWidth: "312px",
@@ -325,7 +329,13 @@ function CreateAlbumReleaseAlbumArt() {
                                         letterSpacing: "-0.12px",
                                         textTransform: "none"
                                     }}
-                                > Save Release </Button>
+                                >
+                                    {
+                                        isBtnSubmitting ? 
+                                        <CircularProgress size={25} sx={{ color: "#8638E5", fontWeight: "bold", mx: 'auto' }} />
+                                        : <span>Save Release</span>
+                                    }
+                                </Button>
                             </Stack>
                         </Box>
                     </Box>

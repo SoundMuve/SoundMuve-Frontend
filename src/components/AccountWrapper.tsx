@@ -24,7 +24,7 @@ const AccountWrapper: React.FC<_Props> = ({ children }) => {
                     bgcolor: darkTheme ? "#000" : "#fff", 
                     color: darkTheme ? "#fff" : "#000", 
                     minHeight: "80vh", 
-                    pt: 5, 
+                    // pt: 5, 
                     position: "relative", 
                     overflow: "hidden"
                 }}

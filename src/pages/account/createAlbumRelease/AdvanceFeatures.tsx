@@ -120,7 +120,8 @@ function CreateAlbumReleaseAdvanceFeatures() {
 
         try {
             const response = (await axios.put(
-                `${apiEndpoint}/Album/update-album/${ completeAlbumData._id }/page2`,
+                // `${apiEndpoint}/Album/update-album/${ completeAlbumData._id }/page2`,
+                `${apiEndpoint}/songs/albums/${ completeAlbumData._id }/page2`,
                 data2db,  
                 {
                     headers: {
@@ -131,9 +132,10 @@ function CreateAlbumReleaseAdvanceFeatures() {
             )).data;
             console.log(response);
 
-            _setCompleteAlbumData(response.updatedAlbum);
+            // _setCompleteAlbumData(response.updatedAlbum);
+            _setCompleteAlbumData(response);
 
-            navigate("/account/artist/create-album-release-select-stores");
+            navigate("/account/create-album-release-select-stores");
         } catch (error: any) {
             const err = error.response.data;
             console.log(err);
@@ -493,7 +495,7 @@ function CreateAlbumReleaseAdvanceFeatures() {
                                         <Stack direction="row" justifyContent="space-between" spacing="20px" alignItems="center">
                                             <Button variant="contained" 
                                                 fullWidth type='button'
-                                                onClick={() => navigate("/account/artist/create-album-release-details")}
+                                                onClick={() => navigate("/account/create-album-release-details")}
                                                 sx={{ 
                                                     bgcolor: darkTheme ? "#4C4C4C57" : "#9c9c9c",
                                                     maxWidth: "312px",

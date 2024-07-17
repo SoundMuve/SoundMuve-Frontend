@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import * as yup from "yup";
 import { yupResolver } from '@hookform/resolvers/yup';
+import axios from 'axios';
 
 import SideNav from './SideNav';
 import Toolbar from '@mui/material/Toolbar';
@@ -35,6 +36,7 @@ import { customTextFieldTheme } from '@/util/mui';
 import { languages } from '@/util/languages';
 import { minutes, seconds, songArtistsCreativesRoles, pauseExecution } from '@/util/resources';
 import CopyrightOwnershipModalComponent from '@/components/account/CopyrightOwnershipModal';
+import { apiEndpoint } from '@/util/resources';
 
 
 const formSchema = yup.object({
@@ -68,11 +70,13 @@ function CreateAlbumReleaseSongUpload() {
     const outerTheme = useTheme();
     const darkTheme = useSettingStore((state) => state.darkTheme);
     const userData = useUserStore((state) => state.userData);
-    // const accessToken = useUserStore((state) => state.accessToken);
+    const accessToken = useUserStore((state) => state.accessToken);
     const albumReleaseSongUpload = createReleaseStore((state) => state.albumReleaseSongUpload);
     const _setAlbumReleaseSongUpload = createReleaseStore((state) => state._setAlbumReleaseSongUpload);
     const albumReleaseDetails = createReleaseStore((state) => state.albumReleaseDetails);
     const _removeAlbumReleaseSongUpload = createReleaseStore((state) => state._removeAlbumReleaseSongUpload);
+    const completeAlbumData = createReleaseStore((state) => state.completeAlbumData);
+
     const [openCopyrightOwnershipModal, setOpenCopyrightOwnershipModal] = useState(false);
 
     const _setToastNotification = useSettingStore((state) => state._setToastNotification);
@@ -95,9 +99,12 @@ function CreateAlbumReleaseSongUpload() {
     const [selectTiktokMinValue, setSelectTiktokMinValue] = useState('00');
     const [selectTiktokSecValue, setSelectTiktokSecValue] = useState('00');
 
+    const [isNextBtnSubmitting, setIsNextBtnSubmitting] = useState(false);
+
 
     const { 
-        handleSubmit, register, getValues, setError, setValue, resetField, setFocus, reset, formState: { errors, isSubmitting } 
+        handleSubmit, register, getValues, setError, setValue, resetField, setFocus, reset, 
+        formState: { errors, isSubmitting, isValid } 
     } = useForm({ 
         resolver: yupResolver(formSchema),
         mode: 'onBlur', reValidateMode: 'onChange', 
@@ -145,6 +152,10 @@ function CreateAlbumReleaseSongUpload() {
     }
 
     const handleAudioFileUpload = async (e: any) => {
+        setSongAudio(undefined);
+        setSongAudioPreview(undefined);
+        await pauseExecution(200);
+
         const file = e.target.files[0]; 
         setSongAudio(file);
 
@@ -157,11 +168,100 @@ function CreateAlbumReleaseSongUpload() {
         e.target.value = "";
     }
 
-    const handleNextBTN = () => {
+
+    const handleNextBTN = async () => {
 
         if (albumReleaseSongUpload.length) {
-            navigate("/account/artist/create-album-release-album-art");
-            
+            // navigate("/account/create-album-release-album-art");
+
+
+            // console.log(newSongData);
+
+            const data2db = new FormData();
+            // data2db.append('email', newSongData.email);
+
+            albumReleaseSongUpload.forEach(newSongData => {
+                data2db.append('song_mp3', newSongData.mp3_file);
+                // data2db.append('song_title', newSongData.song_title );
+                data2db.append('song_writer', newSongData.song_writer.toString() );
+    
+                data2db.append('song_artists', newSongData.songArtistsCreativeRole.map(item => item.creativeName).join(', '));
+                data2db.append('creative_role', newSongData.songArtistsCreativeRole.map(item => item.creativeRole).join(', '));
+    
+                // data2db.append('songArtistsCreativeRole', newSongData.songArtistsCreativeRole.toString());
+                data2db.append('explicitLyrics', newSongData.explicitLyrics);
+                // data2db.append('copyright_ownership', newSongData.copyright_ownership);
+                // data2db.append('copyright_ownership_permissions', newSongData.copyright_ownership_permissions);
+                // data2db.append('isrc_number', newSongData.isrc_number);
+                // data2db.append('language_of_lyrics', newSongData.language_lyrics);
+                // data2db.append('lyrics', newSongData.lyrics);
+                // data2db.append('ticktokClipStartTime', newSongData.tikTokClipStartTime);
+            });
+
+            try {
+                setIsNextBtnSubmitting(true);
+
+                const response = (await axios.put(
+                    `${apiEndpoint}/Album/update-album/${ completeAlbumData._id }/page4`,
+                    data2db,  
+                    {
+                        headers: {
+                            'Content-Type': 'multipart/form-data',
+                            Authorization: `Bearer ${accessToken}`
+                        },
+                    }
+                )).data;
+                console.log(response);
+
+                setIsNextBtnSubmitting(false);
+                // _setAlbumReleaseSongUpload(newSongData);
+                navigate("/account/create-album-release-album-art");
+
+
+
+                // setApiResponse({
+                //     display: true,
+                //     status: true,
+                //     message: response.message
+                // });
+                _setToastNotification({
+                    display: true,
+                    status: "success",
+                    message: response.message
+                });
+                // navigate("/auth/login", {replace: true});
+
+                // setFocus("songTitle", {shouldSelect: true});
+                // reset();
+                // setSongAudio(undefined);
+                // setSongAudioPreview(undefined);
+                // setCopyrightOwnership('');
+                // setCopyrightOwnershipPermission('');
+                // setSongWriters([]);
+                // setSongArtists_Creatives([]);
+                // setSelectRoleValue("Choose Roles");
+                // setValue("explicitSongLyrics", "");
+                // setExplicitLyrics("");
+                // setValue("songArtistsCreativeRole", "Choose Roles");
+                // setValue("tikTokClipStartTime_Minutes", "00");
+                // setValue("tikTokClipStartTime_Seconds", "00");
+                // setSelectTiktokMinValue("00");
+                // setSelectTiktokSecValue("00");
+
+            } catch (error: any) {
+                const err = error.response.data;
+                console.log(err);
+                setIsNextBtnSubmitting(false);
+
+                setApiResponse({
+                    display: true,
+                    status: false,
+                    message: err.message || "Oooops, failed to update details. please try again."
+                });
+            }
+
+
+
         } else {
             _setToastNotification({
                 display: true,
@@ -330,23 +430,29 @@ function CreateAlbumReleaseSongUpload() {
             tikTokClipStartTime: `${ formData.tikTokClipStartTime_Minutes }:${ formData.tikTokClipStartTime_Seconds }`,
         };
 
+        // console.log(newSongData);
+
         const data2db = new FormData();
         // data2db.append('email', newSongData.email);
         data2db.append('song_mp3', newSongData.mp3_file);
         data2db.append('song_title', newSongData.song_title );
         data2db.append('song_writer', newSongData.song_writer.toString());
-        data2db.append('songArtistsCreativeRole', newSongData.songArtistsCreativeRole.toString());
+
+        data2db.append('song_artists', newSongData.songArtistsCreativeRole.map(item => item.creativeName).join(', '));
+        data2db.append('creative_role', newSongData.songArtistsCreativeRole.map(item => item.creativeRole).join(', '));
+
+        // data2db.append('songArtistsCreativeRole', newSongData.songArtistsCreativeRole.toString());
         data2db.append('explicitLyrics', newSongData.explicitLyrics);
         data2db.append('copyright_ownership', newSongData.copyright_ownership);
         data2db.append('copyright_ownership_permissions', newSongData.copyright_ownership_permissions);
         data2db.append('isrc_number', newSongData.isrc_number);
         data2db.append('language_of_lyrics', newSongData.language_lyrics);
         data2db.append('lyrics', newSongData.lyrics);
-        data2db.append('tikTokClipStartTime', newSongData.tikTokClipStartTime);
+        data2db.append('ticktokClipStartTime', newSongData.tikTokClipStartTime);
 
-        // console.log(newSongData);
+
+
         _setAlbumReleaseSongUpload(newSongData);
-
 
         setFocus("songTitle", {shouldSelect: true});
         reset();
@@ -365,15 +471,12 @@ function CreateAlbumReleaseSongUpload() {
         setSelectTiktokMinValue("00");
         setSelectTiktokSecValue("00");
 
-        // navigate("/account/artist/create-album-release-album-art");
-
-        return;
 
 
 
         // try {
-        //     const response = (await axios.patch(
-        //         `${apiEndpoint}/Release/update-release`,
+        //     const response = (await axios.put(
+        //         `${apiEndpoint}/Album/update-album/${ completeAlbumData._id }/page4`,
         //         data2db,  
         //         {
         //             headers: {
@@ -384,19 +487,37 @@ function CreateAlbumReleaseSongUpload() {
         //     )).data;
         //     console.log(response);
 
-            
-        //     setApiResponse({
-        //         display: true,
-        //         status: true,
-        //         message: response.message
-        //     });
+        //     _setAlbumReleaseSongUpload(newSongData);
+
+        //     // setApiResponse({
+        //     //     display: true,
+        //     //     status: true,
+        //     //     message: response.message
+        //     // });
         //     _setToastNotification({
         //         display: true,
         //         status: "success",
         //         message: response.message
         //     });
-
         //     // navigate("/auth/login", {replace: true});
+
+        //     setFocus("songTitle", {shouldSelect: true});
+        //     reset();
+        //     setSongAudio(undefined);
+        //     setSongAudioPreview(undefined);
+        //     setCopyrightOwnership('');
+        //     setCopyrightOwnershipPermission('');
+        //     setSongWriters([]);
+        //     setSongArtists_Creatives([]);
+        //     setSelectRoleValue("Choose Roles");
+        //     setValue("explicitSongLyrics", "");
+        //     setExplicitLyrics("");
+        //     setValue("songArtistsCreativeRole", "Choose Roles");
+        //     setValue("tikTokClipStartTime_Minutes", "00");
+        //     setValue("tikTokClipStartTime_Seconds", "00");
+        //     setSelectTiktokMinValue("00");
+        //     setSelectTiktokSecValue("00");
+
         // } catch (error: any) {
         //     const err = error.response.data;
         //     console.log(err);
@@ -603,7 +724,6 @@ function CreateAlbumReleaseSongUpload() {
                                                     />
                                                 )
                                             }
-
 
                                             <Box sx={{my: "35px", width: "100%"}}>
                                                 <Typography
@@ -1747,7 +1867,7 @@ function CreateAlbumReleaseSongUpload() {
 
                                             <Button variant="text" 
                                                 type="submit" 
-                                                // disabled={ !isValid || isSubmitting } 
+                                                disabled={ !isValid || isSubmitting } 
                                                 sx={{ my: 3, p: 0 }}
                                             >
                                                 <Stack direction="row" justifyContent="space-between" alignItems="center"
@@ -1758,26 +1878,32 @@ function CreateAlbumReleaseSongUpload() {
                                                         bgcolor: darkTheme ? "#fff" : "#000",
                                                         color: darkTheme ? "#000" : "#fff",
                                                         // my: 3,
-                                                        cursor: "pointer"
                                                     }}
                                                 >
-                                                    <Typography
-                                                        sx={{
-                                                            fontWeight: "900",
-                                                            fontSize: "18px",
-                                                            lineHeight: "18px",
-                                                            letterSpacing: "-1.05px"
-                                                        }}
-                                                    >Add Song</Typography>
-
-                                                    <AddIcon sx={{pr: "14px", fontSize: "40px"}} />
+                                                    {
+                                                        isSubmitting ? (
+                                                            <>
+                                                                <CircularProgress size={25} sx={{ color: "#8638E5", fontWeight: "bold", mx: 'auto' }} />
+                                                            </>
+                                                        ) : (
+                                                            <>
+                                                                <Typography
+                                                                    sx={{
+                                                                        fontWeight: "900",
+                                                                        fontSize: "18px",
+                                                                        lineHeight: "18px",
+                                                                        letterSpacing: "-1.05px"
+                                                                    }}
+                                                                >Add Song</Typography>
+                                                                <AddIcon sx={{pr: "14px", fontSize: "40px"}} />
+                                                            </>
+                                                        )
+                                                    }
                                                 </Stack>
 
                                             </Button>
                                         </Box>
                                     </Box>
-
-
 
                                     {
                                         apiResponse.display && (
@@ -1791,7 +1917,7 @@ function CreateAlbumReleaseSongUpload() {
                                         <Stack direction="row" justifyContent="space-between" spacing="20px" alignItems="center">
                                             <Button variant="contained" 
                                                 fullWidth type='button'
-                                                onClick={() => navigate("/account/artist/create-album-release-select-stores")}
+                                                onClick={() => navigate("/account/create-album-release-select-stores")}
                                                 sx={{ 
                                                     bgcolor: darkTheme ? "#4C4C4C57" : "#9c9c9c",
                                                     maxWidth: "312px",
@@ -1818,43 +1944,43 @@ function CreateAlbumReleaseSongUpload() {
                                                 }}
                                             > Previous step </Button>
 
-
-                                            {/* <Box onClick={() => setSubmitBtnType('next')} maxWidth="312px" width="100%"> */}
-                                                <Button variant="contained" 
-                                                    fullWidth // type="submit" 
-                                                    // disabled={ (!albumReleaseSongUpload.length && !isValid) || isSubmitting } 
-                                                    disabled={ !albumReleaseSongUpload.length } 
-                                                    sx={{ 
+                                            <Button variant="contained" 
+                                                fullWidth // type="submit" 
+                                                // disabled={ (!albumReleaseSongUpload.length && !isValid) || isSubmitting } 
+                                                disabled={ !albumReleaseSongUpload.length || isNextBtnSubmitting } 
+                                                sx={{ 
+                                                    bgcolor: "#644986",
+                                                    maxWidth: "312px",
+                                                    "&.Mui-disabled": {
+                                                        background: "#9c9c9c",
+                                                        color: "#797979"
+                                                    },
+                                                    "&:hover": {
                                                         bgcolor: "#644986",
-                                                        maxWidth: "312px",
-                                                        "&.Mui-disabled": {
-                                                            background: "#9c9c9c",
-                                                            color: "#797979"
-                                                        },
-                                                        "&:hover": {
-                                                            bgcolor: "#644986",
-                                                        },
-                                                        "&:active": {
-                                                            bgcolor: "#644986",
-                                                        },
-                                                        "&:focus": {
-                                                            bgcolor: "#644986",
-                                                        },
-                                                        color: "#fff",
-                                                        borderRadius: "12px",
-                                                        // my: 3, 
-                                                        py: 1.5,
-                                                        fontSize: {md: "15.38px"},
-                                                        fontWeight: "900",
-                                                        letterSpacing: "-0.12px",
-                                                        textTransform: "none"
-                                                    }}
-                                                    onClick={() => handleNextBTN() }
-                                                >
-                                                    <span style={{ display: isSubmitting ? "none" : "initial" }}>Next</span>
-                                                    <CircularProgress size={25} sx={{ display: isSubmitting ? "initial" : "none", color: "#8638E5", fontWeight: "bold" }} />
-                                                </Button>
-                                            {/* </Box> */}
+                                                    },
+                                                    "&:active": {
+                                                        bgcolor: "#644986",
+                                                    },
+                                                    "&:focus": {
+                                                        bgcolor: "#644986",
+                                                    },
+                                                    color: "#fff",
+                                                    borderRadius: "12px",
+                                                    // my: 3, 
+                                                    py: 1.5,
+                                                    fontSize: {md: "15.38px"},
+                                                    fontWeight: "900",
+                                                    letterSpacing: "-0.12px",
+                                                    textTransform: "none"
+                                                }}
+                                                onClick={() => handleNextBTN() }
+                                            >
+                                                {
+                                                    isNextBtnSubmitting ? 
+                                                    <CircularProgress size={25} sx={{ color: "#8638E5", fontWeight: "bold", mx: 'auto' }} />
+                                                    : <span>Next</span>
+                                                }
+                                            </Button>
                                         </Stack>
                                     </Box>
 

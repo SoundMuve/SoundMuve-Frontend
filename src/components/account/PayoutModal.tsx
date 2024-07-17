@@ -97,7 +97,7 @@ const PayoutModalComponent: React.FC<_Props> = ({
                         >Choose payment method</Typography>
 
 
-                        <Stack direction={"row"} flexWrap={'wrap'} gap={"20px"} justifyContent={{xs: "center", md: "left"}}>
+                        <Stack direction={"row"} flexWrap={'wrap'} gap={"20px"} justifyContent={{xs: "center", md: "center"}}>
 
                             <Box
                                 sx={{

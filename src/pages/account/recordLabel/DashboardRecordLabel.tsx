@@ -1,6 +1,4 @@
-// import { useEffect, useState } from 'react';
-// import { Link, useNavigate } from 'react-router-dom';
-// import axios from 'axios';
+import { useState } from 'react';
 
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
@@ -8,7 +6,8 @@ import Typography from '@mui/material/Typography';
 import Avatar from '@mui/material/Avatar';
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
-
+import IconButton from '@mui/material/IconButton';
+import InputAdornment from '@mui/material/InputAdornment';
 // import AddIcon from '@mui/icons-material/Add';
 import SearchIcon from '@mui/icons-material/Search';
 import ClearIcon from '@mui/icons-material/Clear';
@@ -26,27 +25,12 @@ import albumCard6 from "@/assets/images/album/albumCard6.jpg";
 
 import AccountWrapper from '@/components/AccountWrapper';
 import { stringAvatar } from '@/util/resources';
-import InputAdornment from '@mui/material/InputAdornment';
 import { useSettingStore } from '@/state/settingStore';
-import IconButton from '@mui/material/IconButton';
-import { useState } from 'react';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import HomeIcon from '@mui/icons-material/Home';
-import ListItemText from '@mui/material/ListItemText';
-import CloseIcon from '@mui/icons-material/Close';
-import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
-import AssessmentOutlinedIcon from '@mui/icons-material/AssessmentOutlined';
-import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
-import PersonIcon from '@mui/icons-material/Person';
-import SettingsPowerIcon from '@mui/icons-material/SettingsPower';
+import RecordLabelBigSidebarComponent from '@/components/account/RecordLabelBigSidebar';
+import RecordLabelSmallSidebarComponent from '@/components/account/RecordLabelSmallSidebar';
 
 // import { useSettingStore } from '@/state/settingStore';
 // import { useUserStore } from '@/state/userStore';
-
-
 
 
 const albumPreview = [
@@ -77,12 +61,13 @@ const albumPreview = [
     },
 ];
 
-
 function DashboardRecordLabel() {
     // const navigate = useNavigate();
     const darkTheme = useSettingStore((state) => state.darkTheme);
     // const userData = useUserStore((state) => state.userData); 
     // const accessToken = useUserStore((state) => state.accessToken);
+
+    const [smallSideNav, setsmallSideNav] = useState(true);
 
     const [searchInputValue, setSearchInputValue] = useState('');
 
@@ -92,196 +77,49 @@ function DashboardRecordLabel() {
     }
     
 
-    // <Box sx={{px: {xs: 2, md: 5, lg: 12}, pb: 5, position: "relative", zIndex: 10, mt: {xs: 5, md: 10}  }}>
-
     return (
         <AccountWrapper>
 
             <Box sx={{ position: "relative", zIndex: 10 }}>
 
                 <Box sx={{ display: "flex" }}>
-                    <Box 
+
+                    <Box
                         sx={{
-                            maxWidth: "200px",
-                            bgcolor: '#EFEFEF',
-                            // height: "100%",
-                            width: '100%',
-                            pt: {xs: 5, md: 10},
-                            // alignSelf: "stretch",
-                            display: {xs: 'none', sm: 'initial'}
+                            bgcolor: darkTheme ? "#1C1B1F" : '#EFEFEF',
+                            borderRadius: '8.67px',
+                            display: {xs: 'none', sm: 'initial'},
+                            // overflow: 'auto',
+                            transition: '0.5s',
+                            transitionTimingFunction: 'ease-in-out',
                         }}
-                        >
-                        <Box
-                            sx={{
-                                height: '100vh',
-                                overflow: 'scroll',
-                            }}
-                        >
-                            <List>
-                                <ListItem disablePadding>
-                                    <ListItemButton>
-                                        <ListItemIcon
-                                            sx={{
-                                                "&.MuiListItemIcon-root": {
-                                                    minWidth: '0px',
-                                                    pr: "5px"
-                                                }
-                                            }}
-                                        >
-                                            <HomeIcon sx={{ color: "#1C1B1F" }}  />
-                                        </ListItemIcon>
+                    >
 
-
-                                        <ListItemText 
-                                            primary="Home"
-                                            sx={{ color: "#1C1B1F" }} 
-                                        />
-
-                                        <CloseIcon sx={{ color: "#1C1B1F", fontSize: '16px' }} />
-                                    </ListItemButton>
-                                </ListItem>
-
-                                <ListItem disablePadding sx={{ my: '40px' }}>
-                                    <ListItemButton>
-                                        <ListItemText 
-                                            primary="Analytics"
-                                            sx={{ 
-                                                color: "#C89FF5", 
-                                                "& .MuiListItemText-primary": {
-                                                    fontWeight: '900', 
-                                                    fontSize: '15px' ,
-                                                }
-                                            }} 
-                                        />
-                                    </ListItemButton>
-                                </ListItem>
-
-                                <ListItem disablePadding sx={{ mb: '40px' }}>
-                                    <ListItemButton>
-                                        <ListItemIcon
-                                            sx={{
-                                                "&.MuiListItemIcon-root": {
-                                                    minWidth: '0px',
-                                                    pr: "5px"
-                                                }
-                                            }}
-                                        >
-                                            <ReceiptLongIcon sx={{ color: "#666666" }}  />
-                                        </ListItemIcon>
-
-
-                                        <ListItemText 
-                                            primary="Sales report"
-                                            sx={{ color: "#666666" }} 
-                                        />
-
-                                    </ListItemButton>
-                                </ListItem>
-
-                                <ListItem disablePadding sx={{ mb: '40px' }}>
-                                    <ListItemButton>
-                                        <ListItemIcon
-                                            sx={{
-                                                "&.MuiListItemIcon-root": {
-                                                    minWidth: '0px',
-                                                    pr: "5px"
-                                                }
-                                            }}
-                                        >
-                                            <AccountBalanceWalletIcon sx={{ color: "#666666" }}  />
-                                        </ListItemIcon>
-
-
-                                        <ListItemText 
-                                            primary="Balance history"
-                                            sx={{ color: "#666666" }} 
-                                        />
-
-                                    </ListItemButton>
-                                </ListItem>
-
-                                <ListItem disablePadding sx={{ mb: '40px' }}>
-                                    <ListItemButton>
-                                        <ListItemIcon
-                                            sx={{
-                                                "&.MuiListItemIcon-root": {
-                                                    minWidth: '0px',
-                                                    pr: "5px"
-                                                }
-                                            }}
-                                        >
-                                            <AssessmentOutlinedIcon sx={{ color: "#666666" }}  />
-                                        </ListItemIcon>
-
-
-                                        <ListItemText 
-                                            primary="Reach"
-                                            sx={{ color: "#666666" }} 
-                                        />
-
-                                    </ListItemButton>
-                                </ListItem>
-                            </List>
-
-                            <Box my="auto">
-
-                                <Box p="8px 16px" mb="23px">
-                                    <Stack direction="row" alignItems="center" spacing="15px"
-                                        sx={{
-                                            color: '#5B8E14',
-                                            fontWeight: '400',
-                                            fontSize: '13px',
-                                            border: '1px solid #5B8E14',
-                                            borderRadius: '6.09px',
-                                            padding: 1,
-                                            width: "130px",
-                                            cursor: 'pointer'
-                                        }}
-                                    >
-                                        <PersonIcon />
-                                        <Typography>Add Artist</Typography>
-                                    </Stack>
-                                </Box>
-
-                                <Box p="8px 16px">
-                                    <Stack direction="row" alignItems="center" spacing="15px"
-                                        sx={{
-                                            color: '#666666',
-                                            fontWeight: '400',
-                                            fontSize: '13px',
-                                            // border: '1px solid #666666',
-                                            borderRadius: '6.09px',
-                                            padding: 1,
-                                            width: "130px",
-                                            bgcolor: '#34343459',
-                                            cursor: 'pointer'
-                                        }}
-                                    >
-                                        <SettingsPowerIcon />
-                                        <Typography>Log out</Typography>
-                                    </Stack>
-                                </Box>
-
-
-                            </Box>
-                        </Box>
-
+                        {
+                            smallSideNav ? 
+                            <RecordLabelSmallSidebarComponent setSideNav={setsmallSideNav} />
+                            :
+                            <RecordLabelBigSidebarComponent setSideNav={setsmallSideNav} />
+                        }
                     </Box>
 
                     <Box flexGrow={1}
                         sx={{
-                            height: '100vh',
-                            overflow: 'scroll'
+                            // height: '100dvh',
+                            overflow: 'auto',
+                            scrollBehavior: 'smooth',
+                            flex: 1
                         }}
                     >
                         <Box
                             sx={{
-                                mt: {xs: 5, md: 10},
+                                // mt: {xs: 5, md: 10},
+                                // pt: {xs: 5, md: 10},
+                                pt: 5,
                                 px: {xs: 2, md: 5, lg: 12},
                                 pb: 5,
                             }}
                         >
-
                             <Box>
                                 <TextField 
                                     variant="outlined" 
@@ -359,180 +197,198 @@ function DashboardRecordLabel() {
                                 }}
                             >
 
-                                <Stack direction="row" alignItems="center" position="absolute" spacing={{xs: "16px", md: "32px"}}>
+                                <Stack direction="row" alignItems="center" justifyContent="center" spacing={{xs: "16px", md: "32px"}}
+                                    sx={{
+                                        width: "100%",
+                                        position: "absolute",
+                                        px: "0px"
+                                    }}
+                                >
                                     <Box 
                                         sx={{
-                                            height: {xs: "143.35px", md: "242.49px"},
-                                            width: {xs: "157.61px", md: "432.55px"},
+                                            height: {xs: "143.35px", sm: '204.35px', md: "242.49px"},
+                                            // width: {xs: "157.61px", md: "432.55px"},
+                                            // width: {xs: "clamp(130px, 157.61px, 170px)", md: "clamp(350px, 80%,432.55px)"},
+
                                             borderRadius: {xs: "6.28px", md: "15.73px"},
                                             bgcolor: "#743339",
                                             border: "0.52px solid #DA606B",
-
                                             backgroundImage: `url(${albumCard5})`, // Replace with your image URL
                                             backgroundPosition: 'center',
                                             backgroundSize: 'cover',
                                             overflow: "hidden",
                                         }}
                                     >
-
+                                        <Box sx={{width: 10000, height: 10000, }}></Box>
                                     </Box>
 
                                     <Box
                                         sx={{
-                                            height: {xs: "143.35px", md: "242.49px"},
-                                            width: {xs: "157.61px", md: "432.55px"},
+                                            height: {xs: "143.35px", sm: '204.35px', md: "242.49px"},
+                                            // width: {xs: "clamp(130px, 157.61px, 170px)", md: "clamp(350px, 80%,432.55px)"},
+
                                             borderRadius: {xs: "6.28px", md: "15.73px"},
                                             bgcolor: "#743339",
                                             border: "0.52px solid #DA606B",
-
                                             backgroundImage: `url(${albumCard6})`, // Replace with your image URL
                                             backgroundPosition: 'center',
                                             backgroundSize: 'cover',
                                             overflow: "hidden",
                                         }}
                                     >
-
+                                        <Box sx={{width: 10000, height: 10000, }}></Box>
                                     </Box>
                                 </Stack>
 
-                                <Stack direction="row" alignItems="center" position="absolute" spacing={{xs: "-310px", md: "-340px"}}>
+                                <Stack direction="row" alignItems="center" justifyContent="center" spacing={1} // spacing={{xs: "-310px", md: "-340px"}}
+                                    sx={{
+                                        width: "100%",
+                                        position: "absolute",
+                                        px: {xs: '20px', sm: "25px", md: '30px'},
+                                    }}
+                                >
                                     <Box
                                         sx={{
-                                            height: {xs: '191.77px', md: "324.41px"},
-                                            width: {xs: "215.23px", md: "576.93px"},
+                                            height: {xs: '191.77px', sm: '273.38px', md: "324.41px"},
+                                            // width: {xs: "215.23px", md: "576.93px"},
+
                                             borderRadius: {xs: '8.4px', md: "21.04px"},
                                             bgcolor: "#69597A",
                                             border: "1.75px solid #C0A3E0",
-
                                             backgroundImage: `url(${albumCard3})`, // Replace with your image URL
                                             backgroundPosition: 'center',
                                             backgroundSize: 'cover',
                                             overflow: "hidden",
                                         }}
                                     >
-
+                                        <Box sx={{width: 10000, height: 10000, }}></Box>
                                     </Box>
 
                                     <Box
                                         sx={{
-                                            height: {xs: '191.77px', md: "324.41px"},
-                                            width: {xs: "215.23px", md: "576.93px"},
+                                            height: {xs: '191.77px', sm: '273.38px', md: "324.41px"},
+                                            // width: {xs: "215.23px", md: "576.93px"},
+                                            // height: {xs: '191.77px', md: "clamp(273.38px, 324.41px, 350px)"},
+
                                             borderRadius: {xs: '8.4px', md: "21.04px"},
                                             bgcolor: "#69597A",
                                             border: "1.75px solid #C0A3E0",
-                                            // borderImage: "5px solid linear-gradient(180deg, #C0A3E0 0%, #69597A 100%)",
-                                            // borderImageSource: "linear-gradient(180deg, #C0A3E0 0%, #69597A 100%)"
-                                            // borderImageSource: "linear-gradient(180deg, #C0A3E0 0%, #69597A 100%)"
-
                                             backgroundImage: `url(${albumCard4})`, // Replace with your image URL
                                             backgroundPosition: 'center',
                                             backgroundSize: 'cover',
                                             overflow: "hidden",
                                         }}
                                     >
-
+                                        <Box sx={{width: 10000, height: 10000, }}></Box>
                                     </Box>
                                 </Stack>
 
                                 <Box 
                                     sx={{
-                                        height: {xs: '241.31px', md: "408.21px"},
-                                        width: {xs: "275.28px", md: "727.43px"},
-                                        borderRadius: {xs: "10.64px", md: "26.66px"},
+                                        px: {xs: '40px', sm: "50px", md: "60px"},
                                         position: "absolute",
-                                        bgcolor: "#6E7B4E",
-                                        border: "2.22px solid #CAE18E",
-
-                                        backgroundImage: `url(${album5})`, // Replace with your image URL
-                                        backgroundPosition: 'center',
-                                        backgroundSize: 'cover',
-                                        overflow: "hidden",
+                                        width: '100%',
                                     }}
                                 >
-                                    <Box
+                                    <Box 
                                         sx={{
-                                            position: 'absolute',
-                                            top: 0,
-                                            left: 0,
-                                            width: '100%',
-                                            height: '100%',
-                                            // background: 'linear-gradient(180.1deg, rgba(0, 0, 0, 0) 0.08%, #000000 109.84%)',
-                                            background: "linear-gradient(6.13deg, #000000 -10.84%, rgba(0, 0, 0, 0) 92.27%)"
+                                            height: {xs: '241.31px', sm: '344px', md: "408.21px"},
+                                            // height: {xs: 'clamp(200px, 241.31px, 250px)', md: "clamp(344px, 408.21px, 410px)"},
 
-                                        }}
-                                    />
+                                            borderRadius: {xs: "10.64px", md: "26.66px"},
+                                            position: "relative",
+                                            bgcolor: "#6E7B4E",
+                                            border: "2.22px solid #CAE18E",
 
-                                    <Box p={{xs: "25px", md: "40px 60px"}} position="absolute"
-                                        sx={{
-                                            textAlign: 'center',
-                                            display: 'flex',
-                                            flexDirection: 'column',
-                                            // justifyContent: 'center',
-                                            // alignItems: 'center',
-                                            width: '100%',
-                                            height: '100%'
+                                            backgroundImage: `url(${album5})`, // Replace with your image URL
+                                            backgroundPosition: 'center',
+                                            backgroundSize: 'cover',
+                                            overflow: "hidden",
                                         }}
                                     >
-                                        <Typography variant='h1' component="h1" noWrap
+                                        <Box
                                             sx={{
-                                                fontWeight: "900",
-                                                fontSize: {xs: "28.41px", md: "71.2px"},
-                                                lineHeight: {xs: "30.21px", md: "75.71px"},
-                                                letterSpacing: {xs: "-0.64px", md: "-1.59px"},
+                                                position: 'absolute',
+                                                top: 0,
+                                                left: 0,
+                                                width: '100%',
+                                                height: '100%',
+                                                // background: 'linear-gradient(180.1deg, rgba(0, 0, 0, 0) 0.08%, #000000 109.84%)',
+                                                background: "linear-gradient(6.13deg, #000000 -10.84%, rgba(0, 0, 0, 0) 92.27%)"
+
+                                            }}
+                                        />
+
+                                        <Box p={{xs: "25px", md: "40px 60px"}} position="absolute"
+                                            sx={{
                                                 textAlign: 'center',
-                                                mt: {xs: "25px", md: '50px'}
+                                                display: 'flex',
+                                                flexDirection: 'column',
+                                                // justifyContent: 'center',
+                                                // alignItems: 'center',
+                                                width: '100%',
+                                                height: '100%'
                                             }}
                                         >
-                                            Welcome Mavin
-                                        </Typography>
+                                            <Typography variant='h1' component="h1" noWrap
+                                                sx={{
+                                                    fontWeight: "900",
+                                                    fontSize: {xs: "28.41px", md: "71.2px"},
+                                                    lineHeight: {xs: "30.21px", md: "75.71px"},
+                                                    letterSpacing: {xs: "-0.64px", md: "-1.59px"},
+                                                    textAlign: 'center',
+                                                    mt: {xs: "25px", md: '50px'}
+                                                }}
+                                            >
+                                                Welcome Mavin
+                                            </Typography>
 
-                                        <Stack direction="row" spacing="20px" justifyContent="space-between" mt="auto">
-                                            <Box>
-                                                <Typography variant='h4' component="h4" 
-                                                    sx={{
-                                                        fontWeight: '900',
-                                                        fontSize: {xs: "7.1px", md: '17.8px'},
-                                                        lineHeight: {xs: "5.68px", md: '14.24px'},
-                                                        letterSpacing: {xs: "-0.24px", md: '-0.59px'}
-                                                    }}
-                                                >Artists</Typography>
-                                                
-                                                <Typography variant='h3' component="h3" 
-                                                    sx={{
-                                                        fontWeight: '900',
-                                                        fontSize: {xs: "23.68px", md: '59.33px'},
-                                                        lineHeight: {xs: '14.21px', md: '35.6px'},
-                                                        letterSpacing: {xs: '-0.64px', md: '-1.59px'},
-                                                        mt: {xs: "13px", md: '21px'}
-                                                    }}
-                                                >5</Typography>
-                                            </Box>
+                                            <Stack direction="row" spacing="20px" justifyContent="space-between" mt="auto">
+                                                <Box>
+                                                    <Typography variant='h4' component="h4" 
+                                                        sx={{
+                                                            fontWeight: '900',
+                                                            fontSize: {xs: "7.1px", md: '17.8px'},
+                                                            lineHeight: {xs: "5.68px", md: '14.24px'},
+                                                            letterSpacing: {xs: "-0.24px", md: '-0.59px'}
+                                                        }}
+                                                    >Artists</Typography>
+                                                    
+                                                    <Typography variant='h3' component="h3" 
+                                                        sx={{
+                                                            fontWeight: '900',
+                                                            fontSize: {xs: "23.68px", md: '59.33px'},
+                                                            lineHeight: {xs: '14.21px', md: '35.6px'},
+                                                            letterSpacing: {xs: '-0.64px', md: '-1.59px'},
+                                                            mt: {xs: "13px", md: '21px'}
+                                                        }}
+                                                    >5</Typography>
+                                                </Box>
 
-                                            <Box>
-                                                <Typography variant='h4' component="h4" 
-                                                    sx={{
-                                                        fontWeight: '900',
-                                                        fontSize: {xs: "7.1px", md: '17.8px'},
-                                                        lineHeight: {xs: "5.68px", md: '14.24px'},
-                                                        letterSpacing: {xs: "-0.24px", md: '-0.59px'}
-                                                    }}
-                                                >Total Songs</Typography>
+                                                <Box>
+                                                    <Typography variant='h4' component="h4" 
+                                                        sx={{
+                                                            fontWeight: '900',
+                                                            fontSize: {xs: "7.1px", md: '17.8px'},
+                                                            lineHeight: {xs: "5.68px", md: '14.24px'},
+                                                            letterSpacing: {xs: "-0.24px", md: '-0.59px'}
+                                                        }}
+                                                    >Total Songs</Typography>
 
-                                                <Typography variant='h3' component="h3" 
-                                                    sx={{
-                                                        fontWeight: '900',
-                                                        fontSize: {xs: "23.68px", md: '59.33px'},
-                                                        lineHeight: {xs: '14.21px', md: '35.6px'},
-                                                        letterSpacing: {xs: '-0.64px', md: '-1.59px'},
-                                                        mt: {xs: "13px", md: '21px'}
-                                                    }}
-                                                >25</Typography>
-                                            </Box>
-                                        </Stack>
+                                                    <Typography variant='h3' component="h3" 
+                                                        sx={{
+                                                            fontWeight: '900',
+                                                            fontSize: {xs: "23.68px", md: '59.33px'},
+                                                            lineHeight: {xs: '14.21px', md: '35.6px'},
+                                                            letterSpacing: {xs: '-0.64px', md: '-1.59px'},
+                                                            mt: {xs: "13px", md: '21px'}
+                                                        }}
+                                                    >25</Typography>
+                                                </Box>
+                                            </Stack>
 
+                                        </Box>
                                     </Box>
-
-
                                 </Box>
 
                             </Stack>
@@ -602,9 +458,7 @@ function DashboardRecordLabel() {
                                 </Grid>
                             </Box>
                         </Box>
-
                     </Box>
-
                 </Box>
 
             </Box>

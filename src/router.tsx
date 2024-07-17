@@ -24,9 +24,9 @@ import AccountLayout from "./pages/account/AccountLayout.tsx";
 import DashboardHome from "./pages/account/DashboardHome.tsx";
 
 import DashboardArtist from "./pages/account/artist/DashboardArtist.tsx";
-import CreateSingle from "./pages/account/artist/CreateSingleRelease.tsx";
+import CreateSingle from "./pages/account/CreateSingleRelease.tsx";
 import DashboardRecordLabel from "./pages/account/recordLabel/DashboardRecordLabel.tsx";
-import CreateSingleRelease2 from "./pages/account/artist/CreateSingleRelease2.tsx";
+import CreateSingleRelease2 from "./pages/account/CreateSingleRelease2.tsx";
 import BalanceHistory from "./pages/account/artist/BalanceHistory.tsx";
 import SalesReport from "./pages/account/artist/SalesReport.tsx";
 import AnalyticsReach from "./pages/account/artist/AnalyticsReach.tsx";
@@ -39,6 +39,13 @@ import CreateAlbumReleaseSelectStores from "./pages/account/createAlbumRelease/S
 import CreateAlbumReleaseSongUpload from "./pages/account/createAlbumRelease/SongUpload.tsx";
 import CreateAlbumReleaseAlbumArt from "./pages/account/createAlbumRelease/AlbumArt.tsx";
 import CreateAlbumReleaseOverview from "./pages/account/createAlbumRelease/Overview.tsx";
+import AddArtistRecordLabel from "./pages/account/recordLabel/AddArtist.tsx";
+import BalanceHistory_RL from "./pages/account/recordLabel/BalanceHistory_RL.tsx";
+import SalesReport_RL from "./pages/account/recordLabel/SalesReport.tsx";
+import AnalyticsReach_RL from "./pages/account/recordLabel/AnalyticsReach_RL.tsx";
+import SongDetails_RL from "./pages/account/recordLabel/SongDetails.tsx";
+import AlbumDetails_RL from "./pages/account/recordLabel/AlbumDetails_RL.tsx";
+import AllMusic_RL from "./pages/account/recordLabel/AllMusic_RL.tsx";
 
 
 export const router = createBrowserRouter([
@@ -130,6 +137,40 @@ export const router = createBrowserRouter([
               path: "",
               element: <DashboardHome />
             },
+
+            {
+              path: "create-single-release",
+              element: <CreateSingle />
+            },
+            {
+              path: "create-single-release-continue",
+              element: <CreateSingleRelease2 />
+            },
+            {
+              path: "create-album-release-details",
+              element: <CreateAlbumReleaseDetails />
+            },
+            {
+              path: "create-album-release-advance-features",
+              element: <CreateAlbumReleaseAdvanceFeatures />
+            },
+            {
+              path: "create-album-release-select-stores",
+              element: <CreateAlbumReleaseSelectStores />
+            },
+            {
+              path: "create-album-release-song-upload",
+              element: <CreateAlbumReleaseSongUpload />
+            },
+            {
+              path: "create-album-release-album-art",
+              element: <CreateAlbumReleaseAlbumArt />
+            },
+            {
+              path: "create-album-release-overview",
+              element: <CreateAlbumReleaseOverview />
+            },
+
             {
               path: "artist",
               // element: <DashboardArtist />,
@@ -138,38 +179,38 @@ export const router = createBrowserRouter([
                   path: "",
                   element: <DashboardArtist />,
                 },
-                {
-                  path: "create-single-release",
-                  element: <CreateSingle />
-                },
-                {
-                  path: "create-single-release-continue",
-                  element: <CreateSingleRelease2 />
-                },
-                {
-                  path: "create-album-release-details",
-                  element: <CreateAlbumReleaseDetails />
-                },
-                {
-                  path: "create-album-release-advance-features",
-                  element: <CreateAlbumReleaseAdvanceFeatures />
-                },
-                {
-                  path: "create-album-release-select-stores",
-                  element: <CreateAlbumReleaseSelectStores />
-                },
-                {
-                  path: "create-album-release-song-upload",
-                  element: <CreateAlbumReleaseSongUpload />
-                },
-                {
-                  path: "create-album-release-album-art",
-                  element: <CreateAlbumReleaseAlbumArt />
-                },
-                {
-                  path: "create-album-release-overview",
-                  element: <CreateAlbumReleaseOverview />
-                },
+                // {
+                //   path: "create-single-release",
+                //   element: <CreateSingle />
+                // },
+                // {
+                //   path: "create-single-release-continue",
+                //   element: <CreateSingleRelease2 />
+                // },
+                // {
+                //   path: "create-album-release-details",
+                //   element: <CreateAlbumReleaseDetails />
+                // },
+                // {
+                //   path: "create-album-release-advance-features",
+                //   element: <CreateAlbumReleaseAdvanceFeatures />
+                // },
+                // {
+                //   path: "create-album-release-select-stores",
+                //   element: <CreateAlbumReleaseSelectStores />
+                // },
+                // {
+                //   path: "create-album-release-song-upload",
+                //   element: <CreateAlbumReleaseSongUpload />
+                // },
+                // {
+                //   path: "create-album-release-album-art",
+                //   element: <CreateAlbumReleaseAlbumArt />
+                // },
+                // {
+                //   path: "create-album-release-overview",
+                //   element: <CreateAlbumReleaseOverview />
+                // },
                 {
                   path: "balance-history",
                   element: <BalanceHistory />
@@ -203,6 +244,35 @@ export const router = createBrowserRouter([
                 {
                   path: "",
                   element: <DashboardRecordLabel />,
+                },
+                {
+                  path: "add-artist",
+                  element: <AddArtistRecordLabel />,
+                },
+
+                {
+                  path: "balance-history",
+                  element: <BalanceHistory_RL />
+                },
+                {
+                  path: "sales-report",
+                  element: <SalesReport_RL />
+                },
+                {
+                  path: "analytics-reach",
+                  element: <AnalyticsReach_RL />
+                },
+                {
+                  path: "song-details",
+                  element: <SongDetails_RL />
+                },
+                {
+                  path: "album-details",
+                  element: <AlbumDetails_RL />
+                },
+                {
+                  path: "all-music",
+                  element: <AllMusic_RL />
                 },
 
               ]

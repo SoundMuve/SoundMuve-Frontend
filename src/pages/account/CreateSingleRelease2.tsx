@@ -395,7 +395,7 @@ function CreateSingleRelease2() {
             setOpenSuccessModal(true);
 
             setTimeout(() => {
-                navigate("/account/artist");
+                navigate("/account");
                 setOpenSuccessModal(false);
             }, 1000);
         } catch (error: any) {
@@ -471,7 +471,7 @@ function CreateSingleRelease2() {
                                     }}
                                 >Details</Typography>
 
-                                <Typography onClick={() => navigate("/account/artist/create-single-release")}
+                                <Typography onClick={() => navigate("/account/create-single-release")}
                                     sx={{
                                         fontWeight: "400",
                                         fontSize: {xs: "15px", md: "20px"},
