@@ -16,3 +16,17 @@ a {
 a:hover {
   color: #c1c1c1;
 }
+
+
+/* .swiper-pagination-bullet {
+  background: #D9D9D9 !important;
+  opacity: 1 !important;
+} */
+
+.promotionalAdsActivePaginationSlide {
+  background: #8638E5 !important;
+  opacity: 1 !important;
+  /* color: red !important; */
+  width: 1.5rem !important;
+  border-radius: 12px !important;
+}

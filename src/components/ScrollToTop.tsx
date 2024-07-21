@@ -34,7 +34,7 @@ const ScrollToTop = () => {
         const refresh_token = getLocalStorage("refreshToken");
         const user_data = getLocalStorage("user");
 
-        setIsLoading(false);
+        // setIsLoading(false);
         if (!access_token || !refresh_token || !user_data ) {
             setIsLoading(false);
             return;
@@ -42,7 +42,6 @@ const ScrollToTop = () => {
 
 
         try {
-            // const response = 
             (await axios.get(`${apiEndpoint}/auth/maintainPersistence`, {
                 headers: {
                     Authorization: `Bearer ${access_token}`,

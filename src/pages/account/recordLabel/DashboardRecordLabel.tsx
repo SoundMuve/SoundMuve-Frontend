@@ -23,9 +23,10 @@ import albumCard4 from "@/assets/images/album/albumCard4.jpg";
 import albumCard5 from "@/assets/images/album/albumCard5.jpg";
 import albumCard6 from "@/assets/images/album/albumCard6.jpg";
 
-import AccountWrapper from '@/components/AccountWrapper';
 import { stringAvatar } from '@/util/resources';
 import { useSettingStore } from '@/state/settingStore';
+import AccountWrapper from '@/components/AccountWrapper';
+import PromotionalAdsComponent from '@/components/PromotionalAds';
 import RecordLabelBigSidebarComponent from '@/components/account/RecordLabelBigSidebar';
 import RecordLabelSmallSidebarComponent from '@/components/account/RecordLabelSmallSidebar';
 
@@ -68,12 +69,10 @@ function DashboardRecordLabel() {
     // const accessToken = useUserStore((state) => state.accessToken);
 
     const [smallSideNav, setsmallSideNav] = useState(true);
-
     const [searchInputValue, setSearchInputValue] = useState('');
 
     const handleSearchInputValue = (searchedWord: string) => {
         setSearchInputValue(searchedWord);
-
     }
     
 
@@ -404,9 +403,6 @@ function DashboardRecordLabel() {
                                     }}
                                 >Artist</Typography>
 
-                                <Stack direction="row" spacing="50px" justifyContent="space-between" flexWrap='wrap'>
-                                </Stack>
-
                                 <Grid container spacing={3}>
                                     {
                                         albumPreview.map((item, i) => (
@@ -457,6 +453,11 @@ function DashboardRecordLabel() {
                                     }
                                 </Grid>
                             </Box>
+
+                            <Box my={5}>
+                                <PromotionalAdsComponent />
+                            </Box>
+
                         </Box>
                     </Box>
                 </Box>

@@ -39,47 +39,47 @@ function CreateAlbumReleaseOverview() {
 
     const [openSuccessModal, setOpenSuccessModal] = useState(false);
 
-    const _setToastNotification = useSettingStore((state) => state._setToastNotification);
+    // const _setToastNotification = useSettingStore((state) => state._setToastNotification);
     const [apiResponse, setApiResponse] = useState({
         display: false,
         status: true,
         message: ""
     });
 
-    const [image, setImage] = useState(albumReleaseAlbumArt.image);
-    const [imagePreview, setImagePreview] = useState(albumReleaseAlbumArt.imagePreview);
+    // const [image, setImage] = useState(albumReleaseAlbumArt.image);
+    // const [imagePreview, setImagePreview] = useState(albumReleaseAlbumArt.imagePreview);
 
-    const handleFileUpload = async (e: any) => {
-        const file = e.target.files[0]; 
-        setImage(file);
+    // const handleFileUpload = async (e: any) => {
+    //     const file = e.target.files[0]; 
+    //     setImage(file);
 
-        const base64: any = await convertToBase64(file);
-        setImagePreview(base64);
+    //     const base64: any = await convertToBase64(file);
+    //     setImagePreview(base64);
     
-        e.target.value = "";
-    }
+    //     e.target.value = "";
+    // }
 
-    const convertToBase64 = (file: any) => {
-        return new Promise((resolve, reject) => {
-            const fileReader = new FileReader();
-            if (!file) {
-                // setToastNotification({
-                //     display: true,
-                //     message: "Please select an image!",
-                //     status: "info"
-                // })
-            } else {
-                fileReader.readAsDataURL(file);
-                fileReader.onload = () => {
-                    resolve(fileReader.result);
-                }
-            }
+    // const convertToBase64 = (file: any) => {
+    //     return new Promise((resolve, reject) => {
+    //         const fileReader = new FileReader();
+    //         if (!file) {
+    //             // setToastNotification({
+    //             //     display: true,
+    //             //     message: "Please select an image!",
+    //             //     status: "info"
+    //             // })
+    //         } else {
+    //             fileReader.readAsDataURL(file);
+    //             fileReader.onload = () => {
+    //                 resolve(fileReader.result);
+    //             }
+    //         }
 
-            fileReader.onerror = (error) => {
-                reject(error);
-            }
-        });
-    }
+    //         fileReader.onerror = (error) => {
+    //             reject(error);
+    //         }
+    //     });
+    // }
 
     useEffect(() => {
         getAlbumRelease();
@@ -89,7 +89,8 @@ function CreateAlbumReleaseOverview() {
     const getAlbumRelease = async () => {
         try {
             const response = (await axios.get(
-                `${apiEndpoint}/Album/albums?email=${ userData.email }`,
+                // `${apiEndpoint}/Album/albums?email=${ userData.email }`,
+                `${apiEndpoint}/songs/albums-songs-by-email/${ userData.email }?album_id=${completeAlbumData._id}`,
                 {
                     headers: {
                         Authorization: `Bearer ${accessToken}`
@@ -112,58 +113,12 @@ function CreateAlbumReleaseOverview() {
             message: ""
         });
 
-        if (!image) {
-            setApiResponse({
-                display: true,
-                status: false,
-                message: "Please upload song cover."
-            });
+        setOpenSuccessModal(true);
+        setTimeout(() => {
+            setOpenSuccessModal(false);
 
-            _setToastNotification({
-                display: true,
-                status: "error",
-                message: "Please upload song cover."
-            })
-
-            return;
-        }
-
-        const data2db = new FormData();
-        // data2db.append('email', userData.email);
-        // data2db.append('release_type', "Album");
-        data2db.append('song_cover_url', image);
-
-        try {
-            const response = (await axios.put(
-                `${apiEndpoint}/Album/update-album/${ completeAlbumData._id }/page5`,
-                data2db,  
-                {
-                    headers: {
-                        'Content-Type': 'multipart/form-data',
-                        Authorization: `Bearer ${accessToken}`
-                    },
-                }
-            )).data;
-            console.log(response);
-
-
-            setOpenSuccessModal(true);
-            setTimeout(() => {
-                setOpenSuccessModal(false);
-
-                navigate("/account");
-            }, 1000);
-
-        } catch (error: any) {
-            const err = error.response.data;
-            console.log(err);
-
-            setApiResponse({
-                display: true,
-                status: false,
-                message: err.message || "Oooops, failed to update details. please try again."
-            });
-        }
+            navigate("/account");
+        }, 1000);
 
     }
 
@@ -625,8 +580,112 @@ function CreateAlbumReleaseOverview() {
                                 </Box>
                             </Box>
 
+                            <Box
+                                sx={{
+                                    maxWidth: {xs: "330px", sm: "892px"},
+                                    border: {
+                                        xs: `0.45px solid ${ darkTheme ? "#fff" : "#272727" }`, 
+                                        sm: `1px solid ${ darkTheme ? "#fff" : "#272727" }`
+                                    },
+                                    borderRadius: {xs: "5.42px", sm: "12px"},
+                                    overflow: "hidden",
+                                    mt: "25px",
+                                    mx: "auto",
+                                }}
+                            >
+                                <Box
+                                    sx={{
+                                        height: {xs: "32.53px", sm: "72px"},
+                                        bgcolor: "#272727",
+                                        color: "#fff",
+                                        borderBottom: {xs: "0.45px solid #FFFFFF", sm: "1px solid #FFFFFF"},
+                                        px: {xs: "10px", sm: "25px"},
+                                        display: "flex",
+                                        flexDirection: "row",
+                                        gap: {xs: "10px", sm: "20px"},
+                                        justifyContent: "space-between",
+                                        alignItems: "center"
+                                    }}
+                                >
+                                    <Typography
+                                        sx={{
+                                            fontWeight: "400",
+                                            fontSize: {xs: "14px", sm: "20px"},
+                                            lineHeight: {xs: "20px", sm: "40px"},
+                                            letterSpacing: {xs: "-0.06px", sm: "-0.13px"}
+                                        }}
+                                    > Album art </Typography>
+                                     
+                                    <Typography
+                                        onClick={() => navigate("/account/create-album-release-album-art")}
+                                        sx={{
+                                            fontWeight: "400",
+                                            fontSize: {xs: "15px", sm: "20px"},
+                                            lineHeight: {xs: "20px", sm: "40px"},
+                                            letterSpacing: {xs: "-0.06px", sm: "-0.13px"},
+                                            cursor: "pointer"
+                                        }}
+                                    > Edit </Typography>
+                                </Box>
 
-                            <Stack direction="column" justifyContent="center" alignItems="center"
+
+                                <Box sx={{ width: {xs: "90%", sm: "347px"}, maxWidth: {xs: "330px", sm: "892px"}, mx: "auto" }}>
+                                    <Box
+                                        sx={{
+                                            display: "flex",
+                                            flexDirection: "column",
+                                            justifyContent: "end",
+                                            alignItems: "center",
+                                            bgcolor: "#272727",
+                                            borderRadius: "12px",
+                                            height: {xs: "146.55px", sm: "326px"},
+                                            // width: {xs: "128.45px", sm: "347px"},
+                                            // width: "100%",
+                                            my: {xs: "10px", sm: "20px"},
+                                            p: {xs: "5px 5px 10px 5px", sm: "5px 5px 25px 5px"},
+
+                                            backgroundImage: `url(${albumReleaseAlbumArt.imagePreview})`, // Replace with your image URL
+                                            backgroundPosition: 'center',
+                                            backgroundSize: 'cover',
+                                        }}
+                                    >
+                                        {/* <Box></Box>
+
+                                        <Box 
+                                            sx={{
+                                                p: {xs: "10.18px 19.68px", sm: "15px 29px"},
+                                                borderRadius: {xs: "8.14px", sm: "12px"},
+                                                // background: "#FFFFFF80",
+                                                background: "#c4c4c480",
+
+                                                color: "#000",
+                                                cursor: "pointer",
+                                                display: "inline-block",
+                                                mt: {xs: "7px", sm: "15px"},
+                                                position: "",
+                                                // bottom: 0
+                                            }}
+                                            onClick={() => {
+                                                document.getElementById("uploadSongCoverImage")?.click();
+                                            }}
+                                        >
+                                            <Typography 
+                                                sx={{
+                                                    fontWeight: '900',
+                                                    fontSize: {xs: "10.18px", sm: "15px"},
+                                                    lineHeight: {xs: "8.82px", sm: "13px"},
+                                                    letterSpacing: {xs: "-0.09px", sm: "-0.13px"},
+                                                    textAlign: 'center',
+                                                }}
+                                            > Edit </Typography>
+                                        </Box> */}
+                                    </Box>
+                                </Box>
+
+                            </Box>
+
+
+                            {/* <Stack direction="column" justifyContent="center" alignItems="center"
                                 sx={{ p: {xs: "10px", sm: "25px"} }}
                             >
                                 <Box sx={{ width: {xs: "90%", sm: "347px"}, maxWidth: {xs: "330px", sm: "892px"} }}>
@@ -692,7 +751,7 @@ function CreateAlbumReleaseOverview() {
                                         </Box>
                                     </Box>
                                 </Box>
-                            </Stack>
+                            </Stack> */}
 
                             {
                                 apiResponse.display && (
@@ -738,15 +797,6 @@ function CreateAlbumReleaseOverview() {
                 </Box>
             </Box>
 
-
-            <input 
-                type="file" 
-                id='uploadSongCoverImage' 
-                name="uploadSongCoverImage" 
-                accept='image/*' 
-                onChange={handleFileUpload}
-                style={{display: "none"}}
-            />
 
             <SuccessModalComponent 
                 openModal={openSuccessModal}

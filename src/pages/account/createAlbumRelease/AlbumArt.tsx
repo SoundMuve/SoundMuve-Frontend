@@ -124,9 +124,9 @@ function CreateAlbumReleaseAlbumArt() {
                     },
                 }
             )).data;
-            // console.log(response);
+            console.log(response);
 
-            const savedImage = response.updatedAlbum.song_cover_url;
+            const savedImage = response.song_cover_url;
 
             // _setCompleteAlbumData(response.updatedAlbum);
             _setCompleteAlbumData(response);
@@ -135,9 +135,11 @@ function CreateAlbumReleaseAlbumArt() {
 
             navigate("/account/create-album-release-overview");
         } catch (error: any) {
+            console.log(error);
+            
+            setIsBtnSubmitting(false);
             const err = error.response.data;
             console.log(err);
-            setIsBtnSubmitting(false);
 
             setApiResponse({
                 display: true,

@@ -99,7 +99,7 @@ function CreateAlbumReleaseSongUpload() {
     const [selectTiktokMinValue, setSelectTiktokMinValue] = useState('00');
     const [selectTiktokSecValue, setSelectTiktokSecValue] = useState('00');
 
-    const [isNextBtnSubmitting, setIsNextBtnSubmitting] = useState(false);
+    const [songEditId, setSongEditId] = useState('');
 
 
     const { 
@@ -148,6 +148,8 @@ function CreateAlbumReleaseSongUpload() {
         setSelectTiktokMinValue(tiktokTimer[0]);
         setSelectTiktokSecValue(tiktokTimer[1]);
 
+        setSongEditId(songData._id);
+
         _removeAlbumReleaseSongUpload(i);
     }
 
@@ -172,95 +174,97 @@ function CreateAlbumReleaseSongUpload() {
     const handleNextBTN = async () => {
 
         if (albumReleaseSongUpload.length) {
-            // navigate("/account/create-album-release-album-art");
-
-
+            navigate("/account/create-album-release-album-art");
             // console.log(newSongData);
+            
+            // const data2db: any = new FormData();
+            // // data2db.append('email', newSongData.email);
+            // data2db.append('email', userData.email);
 
-            const data2db = new FormData();
-            // data2db.append('email', newSongData.email);
-
-            albumReleaseSongUpload.forEach(newSongData => {
-                data2db.append('song_mp3', newSongData.mp3_file);
-                // data2db.append('song_title', newSongData.song_title );
-                data2db.append('song_writer', newSongData.song_writer.toString() );
+            // albumReleaseSongUpload.forEach(newSongData => {
+            //     data2db.append('song_mp3', newSongData.mp3_file);
+            //     data2db.append('song_title', newSongData.song_title );
+            //     // data2db.append('song_writer', newSongData.song_writer );
+            //     data2db.append('song_writer', `"${newSongData.song_writer.toString()}"` );
     
-                data2db.append('song_artists', newSongData.songArtistsCreativeRole.map(item => item.creativeName).join(', '));
-                data2db.append('creative_role', newSongData.songArtistsCreativeRole.map(item => item.creativeRole).join(', '));
+            //     data2db.append('song_artists', `"${newSongData.songArtistsCreativeRole.map(item => item.creativeName).toString()}"` );
+            //     data2db.append('creative_role', `"${newSongData.songArtistsCreativeRole.map(item => item.creativeRole).toString()}"` );
+            //     // data2db.append('song_artists', newSongData.songArtistsCreativeRole.map(item => item.creativeName).join(', ') );
+            //     // data2db.append('creative_role', newSongData.songArtistsCreativeRole.map(item => item.creativeRole).join(', ') );
     
-                // data2db.append('songArtistsCreativeRole', newSongData.songArtistsCreativeRole.toString());
-                data2db.append('explicitLyrics', newSongData.explicitLyrics);
-                // data2db.append('copyright_ownership', newSongData.copyright_ownership);
-                // data2db.append('copyright_ownership_permissions', newSongData.copyright_ownership_permissions);
-                // data2db.append('isrc_number', newSongData.isrc_number);
-                // data2db.append('language_of_lyrics', newSongData.language_lyrics);
-                // data2db.append('lyrics', newSongData.lyrics);
-                // data2db.append('ticktokClipStartTime', newSongData.tikTokClipStartTime);
-            });
+            //     // data2db.append('songArtistsCreativeRole', newSongData.songArtistsCreativeRole.toString());
+            //     data2db.append('explicitLyrics', newSongData.explicitLyrics);
+            //     data2db.append('copyright_ownership', newSongData.copyright_ownership);
+            //     data2db.append('copyright_ownership_permissions', newSongData.copyright_ownership_permissions);
+            //     data2db.append('isrc_number', newSongData.isrc_number);
+            //     data2db.append('language_of_lyrics', newSongData.language_lyrics);
+            //     data2db.append('lyrics', newSongData.lyrics);
+            //     data2db.append('ticktokClipStartTime', newSongData.tikTokClipStartTime);
+            // });
 
-            try {
-                setIsNextBtnSubmitting(true);
+            // try {
+            //     setIsNextBtnSubmitting(true);
 
-                const response = (await axios.put(
-                    `${apiEndpoint}/Album/update-album/${ completeAlbumData._id }/page4`,
-                    data2db,  
-                    {
-                        headers: {
-                            'Content-Type': 'multipart/form-data',
-                            Authorization: `Bearer ${accessToken}`
-                        },
-                    }
-                )).data;
-                console.log(response);
+            //     const response = (await axios.put(
+            //         // `${apiEndpoint}/Album/update-album/${ completeAlbumData._id }/page4`,
+            //         // `${apiEndpoint}/songs/albums/${ completeAlbumData._id }/page4`,
+            //         `${apiEndpoint}/songs/albums/66977731566946bc43b539c0/page4`,
+            //         data2db,  
+            //         {
+            //             headers: {
+            //                 'Content-Type': 'multipart/form-data',
+            //                 Authorization: `Bearer ${accessToken}`
+            //             },
+            //         }
+            //     )).data;
+            //     console.log(response);
 
-                setIsNextBtnSubmitting(false);
-                // _setAlbumReleaseSongUpload(newSongData);
-                navigate("/account/create-album-release-album-art");
-
-
-
-                // setApiResponse({
-                //     display: true,
-                //     status: true,
-                //     message: response.message
-                // });
-                _setToastNotification({
-                    display: true,
-                    status: "success",
-                    message: response.message
-                });
-                // navigate("/auth/login", {replace: true});
-
-                // setFocus("songTitle", {shouldSelect: true});
-                // reset();
-                // setSongAudio(undefined);
-                // setSongAudioPreview(undefined);
-                // setCopyrightOwnership('');
-                // setCopyrightOwnershipPermission('');
-                // setSongWriters([]);
-                // setSongArtists_Creatives([]);
-                // setSelectRoleValue("Choose Roles");
-                // setValue("explicitSongLyrics", "");
-                // setExplicitLyrics("");
-                // setValue("songArtistsCreativeRole", "Choose Roles");
-                // setValue("tikTokClipStartTime_Minutes", "00");
-                // setValue("tikTokClipStartTime_Seconds", "00");
-                // setSelectTiktokMinValue("00");
-                // setSelectTiktokSecValue("00");
-
-            } catch (error: any) {
-                const err = error.response.data;
-                console.log(err);
-                setIsNextBtnSubmitting(false);
-
-                setApiResponse({
-                    display: true,
-                    status: false,
-                    message: err.message || "Oooops, failed to update details. please try again."
-                });
-            }
+            //     setIsNextBtnSubmitting(false);
+            //     // _setAlbumReleaseSongUpload(newSongData);
+            //     navigate("/account/create-album-release-album-art");
 
 
+
+            //     // setApiResponse({
+            //     //     display: true,
+            //     //     status: true,
+            //     //     message: response.message
+            //     // });
+            //     _setToastNotification({
+            //         display: true,
+            //         status: "success",
+            //         message: response.message
+            //     });
+            //     // navigate("/auth/login", {replace: true});
+
+            //     // setFocus("songTitle", {shouldSelect: true});
+            //     // reset();
+            //     // setSongAudio(undefined);
+            //     // setSongAudioPreview(undefined);
+            //     // setCopyrightOwnership('');
+            //     // setCopyrightOwnershipPermission('');
+            //     // setSongWriters([]);
+            //     // setSongArtists_Creatives([]);
+            //     // setSelectRoleValue("Choose Roles");
+            //     // setValue("explicitSongLyrics", "");
+            //     // setExplicitLyrics("");
+            //     // setValue("songArtistsCreativeRole", "Choose Roles");
+            //     // setValue("tikTokClipStartTime_Minutes", "00");
+            //     // setValue("tikTokClipStartTime_Seconds", "00");
+            //     // setSelectTiktokMinValue("00");
+            //     // setSelectTiktokSecValue("00");
+
+            // } catch (error: any) {
+            //     const err = error.response.data;
+            //     console.log(err);
+            //     setIsNextBtnSubmitting(false);
+
+            //     setApiResponse({
+            //         display: true,
+            //         status: false,
+            //         message: err.message || "Oooops, failed to update details. please try again."
+            //     });
+            // }
 
         } else {
             _setToastNotification({
@@ -433,16 +437,16 @@ function CreateAlbumReleaseSongUpload() {
         // console.log(newSongData);
 
         const data2db = new FormData();
-        // data2db.append('email', newSongData.email);
+        data2db.append('album_id', completeAlbumData._id );
+        data2db.append('email', newSongData.email);
         data2db.append('song_mp3', newSongData.mp3_file);
         data2db.append('song_title', newSongData.song_title );
         data2db.append('song_writer', newSongData.song_writer.toString());
 
-        data2db.append('song_artists', newSongData.songArtistsCreativeRole.map(item => item.creativeName).join(', '));
+        data2db.append('creative_name', newSongData.songArtistsCreativeRole.map(item => item.creativeName).join(', '));
         data2db.append('creative_role', newSongData.songArtistsCreativeRole.map(item => item.creativeRole).join(', '));
 
-        // data2db.append('songArtistsCreativeRole', newSongData.songArtistsCreativeRole.toString());
-        data2db.append('explicitLyrics', newSongData.explicitLyrics);
+        data2db.append('explicit_lyrics', newSongData.explicitLyrics);
         data2db.append('copyright_ownership', newSongData.copyright_ownership);
         data2db.append('copyright_ownership_permissions', newSongData.copyright_ownership_permissions);
         data2db.append('isrc_number', newSongData.isrc_number);
@@ -451,83 +455,74 @@ function CreateAlbumReleaseSongUpload() {
         data2db.append('ticktokClipStartTime', newSongData.tikTokClipStartTime);
 
 
+        try {
 
-        _setAlbumReleaseSongUpload(newSongData);
+            const response = songEditId ? 
+                (await axios.put(
+                    `${apiEndpoint}/songs/editSong/${songEditId}`,
+                    data2db,
+                    {
+                        headers: {
+                            'Content-Type': 'multipart/form-data',
+                            Authorization: `Bearer ${accessToken}`
+                        },
+                    }
+                )).data 
+            : (await axios.post(
+                `${apiEndpoint}/songs/page4`,
+                data2db,
+                {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                        Authorization: `Bearer ${accessToken}`
+                    },
+                }
+            )).data;
+            console.log(response);
 
-        setFocus("songTitle", {shouldSelect: true});
-        reset();
-        setSongAudio(undefined);
-        setSongAudioPreview(undefined);
-        setCopyrightOwnership('');
-        setCopyrightOwnershipPermission('');
-        setSongWriters([]);
-        setSongArtists_Creatives([]);
-        setSelectRoleValue("Choose Roles");
-        setValue("explicitSongLyrics", "");
-        setExplicitLyrics("");
-        setValue("songArtistsCreativeRole", "Choose Roles");
-        setValue("tikTokClipStartTime_Minutes", "00");
-        setValue("tikTokClipStartTime_Seconds", "00");
-        setSelectTiktokMinValue("00");
-        setSelectTiktokSecValue("00");
+            _setAlbumReleaseSongUpload({...newSongData, _id: response.song._id});
+
+            // setApiResponse({
+            //     display: true,
+            //     status: true,
+            //     message: response.message
+            // });
+            _setToastNotification({
+                display: true,
+                status: "success",
+                message: response.message
+            });
+            // navigate("/auth/login", {replace: true});
+            setSongEditId('');
 
 
+            setFocus("songTitle", {shouldSelect: true});
+            reset();
+            setSongAudio(undefined);
+            setSongAudioPreview(undefined);
+            setCopyrightOwnership('');
+            setCopyrightOwnershipPermission('');
+            setSongWriters([]);
+            setSongArtists_Creatives([]);
+            setSelectRoleValue("Choose Roles");
+            setValue("explicitSongLyrics", "");
+            setExplicitLyrics("");
+            setValue("songArtistsCreativeRole", "Choose Roles");
+            setValue("tikTokClipStartTime_Minutes", "00");
+            setValue("tikTokClipStartTime_Seconds", "00");
+            setSelectTiktokMinValue("00");
+            setSelectTiktokSecValue("00");
 
+        } catch (error: any) {
+            const err = error.response.data;
+            console.log(err);
 
-        // try {
-        //     const response = (await axios.put(
-        //         `${apiEndpoint}/Album/update-album/${ completeAlbumData._id }/page4`,
-        //         data2db,  
-        //         {
-        //             headers: {
-        //                 'Content-Type': 'multipart/form-data',
-        //                 Authorization: `Bearer ${accessToken}`
-        //             },
-        //         }
-        //     )).data;
-        //     console.log(response);
-
-        //     _setAlbumReleaseSongUpload(newSongData);
-
-        //     // setApiResponse({
-        //     //     display: true,
-        //     //     status: true,
-        //     //     message: response.message
-        //     // });
-        //     _setToastNotification({
-        //         display: true,
-        //         status: "success",
-        //         message: response.message
-        //     });
-        //     // navigate("/auth/login", {replace: true});
-
-        //     setFocus("songTitle", {shouldSelect: true});
-        //     reset();
-        //     setSongAudio(undefined);
-        //     setSongAudioPreview(undefined);
-        //     setCopyrightOwnership('');
-        //     setCopyrightOwnershipPermission('');
-        //     setSongWriters([]);
-        //     setSongArtists_Creatives([]);
-        //     setSelectRoleValue("Choose Roles");
-        //     setValue("explicitSongLyrics", "");
-        //     setExplicitLyrics("");
-        //     setValue("songArtistsCreativeRole", "Choose Roles");
-        //     setValue("tikTokClipStartTime_Minutes", "00");
-        //     setValue("tikTokClipStartTime_Seconds", "00");
-        //     setSelectTiktokMinValue("00");
-        //     setSelectTiktokSecValue("00");
-
-        // } catch (error: any) {
-        //     const err = error.response.data;
-        //     console.log(err);
-
-        //     setApiResponse({
-        //         display: true,
-        //         status: false,
-        //         message: err.message || "Oooops, failed to update details. please try again."
-        //     });
-        // }
+            setApiResponse({
+                display: true,
+                status: false,
+                message: err.message || "Oooops, failed to update details. please try again."
+            });
+        }
 
     }
 
@@ -1947,7 +1942,7 @@ function CreateAlbumReleaseSongUpload() {
                                             <Button variant="contained" 
                                                 fullWidth // type="submit" 
                                                 // disabled={ (!albumReleaseSongUpload.length && !isValid) || isSubmitting } 
-                                                disabled={ !albumReleaseSongUpload.length || isNextBtnSubmitting } 
+                                                disabled={ !albumReleaseSongUpload.length } 
                                                 sx={{ 
                                                     bgcolor: "#644986",
                                                     maxWidth: "312px",
@@ -1974,12 +1969,12 @@ function CreateAlbumReleaseSongUpload() {
                                                     textTransform: "none"
                                                 }}
                                                 onClick={() => handleNextBTN() }
-                                            >
-                                                {
+                                            > Next
+                                                {/* {
                                                     isNextBtnSubmitting ? 
                                                     <CircularProgress size={25} sx={{ color: "#8638E5", fontWeight: "bold", mx: 'auto' }} />
                                                     : <span>Next</span>
-                                                }
+                                                } */}
                                             </Button>
                                         </Stack>
                                     </Box>

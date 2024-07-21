@@ -6,7 +6,6 @@ const AccountLayout = () => {
 
     // if (!isLoggedIn) return <Navigate replace to={"/auth/login"} />;
 
-
     return (
         <main>
             <Outlet />

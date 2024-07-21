@@ -243,9 +243,7 @@ export default function AccountHeaderComponent() {
                             cursor: "pointer"
                         }}
                     >
-                        <SettingsPowerIcon
-                            sx={{ fontSize: "20px" }}
-                        />
+                        <SettingsPowerIcon sx={{ fontSize: "20px" }} />
 
                         <Typography
                             sx={{
@@ -356,9 +354,7 @@ export default function AccountHeaderComponent() {
                     cursor: "pointer"
                 }}
             >
-                <SettingsPowerIcon
-                    sx={{ fontSize: "15px" }}
-                />
+                <SettingsPowerIcon sx={{ fontSize: "15px" }} />
 
                 <Typography
                     sx={{

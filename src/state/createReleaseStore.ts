@@ -130,6 +130,7 @@ interface creativeType {
     creativeRole: string,
 }
 const albumReleaseSongUpload = {
+    _id: '',
     email: '',
     mp3_file: <any> '',
     songAudioPreview: <any> '',
