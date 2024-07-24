@@ -3,12 +3,11 @@ import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as yup from "yup";
 import { yupResolver } from '@hookform/resolvers/yup';
-// import axios from 'axios';
+import axios from 'axios';
 
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
-import CircularProgress from '@mui/material/CircularProgress';
 import TextField from '@mui/material/TextField';
 import FormControl from '@mui/material/FormControl';
 import Stack from '@mui/material/Stack';
@@ -17,11 +16,13 @@ import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 
 import { getCountries, getUserLocation } from '@/util/location';
-// import { apiEndpoint } from '@/util/resources';
+import { apiEndpoint } from '@/util/resources';
 import { useUserStore } from '@/state/userStore';
 import { restCountries } from '@/util/countries';
 import { useSettingStore } from '@/state/settingStore';
 import { MuiTextFieldStyle } from '@/util/mui';
+import cloudUploadIconImg from "@/assets/images/cloudUploadIcon.png";
+import CircularProgressWithLabel from './CircularProgressWithLabel';
 
 
 const formSchema = yup.object({
@@ -45,17 +46,21 @@ function ArtistFormDetailsComponent() {
     const [userCountry, setUserCountry] = useState("");
     const userData = useUserStore((state) => state.userData);
     const darkTheme = useSettingStore((state) => state.darkTheme);
-             
+    const accessToken = useUserStore((state) => state.accessToken);
+    const [image, setImage] = useState<any>();
+    const [imagePreview, setImagePreview] = useState<any>();
+
     const [apiResponse, setApiResponse] = useState({
         display: false,
         status: true,
         message: ""
     });
     // const _setToastNotification = useSettingStore((state) => state._setToastNotification);
+    const [songUploadProgress, setSongUploadProgress] = useState(0);
     
     
     const { 
-        handleSubmit, register, setValue, formState: { errors, isValid, isSubmitting } 
+        handleSubmit, register, setValue, reset, formState: { errors, isValid, isSubmitting } 
     } = useForm({ resolver: yupResolver(formSchema), mode: 'onBlur', reValidateMode: 'onChange' });
 
     useEffect(() => {
@@ -79,6 +84,39 @@ function ArtistFormDetailsComponent() {
             })
         });
     }, []);
+
+
+    const handleFileUpload = async (e: any) => {
+        const file = e.target.files[0]; 
+        setImage(file);
+
+        const base64: any = await convertToBase64(file);
+        setImagePreview(base64);
+    
+        e.target.value = "";
+    }
+
+    const convertToBase64 = (file: any) => {
+        return new Promise((resolve, reject) => {
+            const fileReader = new FileReader();
+            if (!file) {
+                // setToastNotification({
+                //     display: true,
+                //     message: "Please select an image!",
+                //     status: "info"
+                // })
+            } else {
+                fileReader.readAsDataURL(file);
+                fileReader.onload = () => {
+                    resolve(fileReader.result);
+                }
+            }
+
+            fileReader.onerror = (error) => {
+                reject(error);
+            }
+        });
+    }
     
         
     const onSubmit = async (formData: typeof formSchema.__outputType) => {
@@ -89,43 +127,68 @@ function ArtistFormDetailsComponent() {
         });
         
         const data2db = {
-            email: userData.email,
-            teamType: "Artist",
-            ArtistName: formData.artistName,
+            email: formData.email,
+            recordLabelemail: userData.email,
+            artistName: formData.artistName,
             country: formData.country,
             phoneNumber: formData.phoneNumber,
             gender: formData.gender,
         };
-        console.log(data2db);
 
-        // try {
-        //     const response = (await axios.patch(`${apiEndpoint}/auth/updateTeam-details`, data2db )).data;
-        //     // console.log(response);
 
-        //     _signUpUser(response.singleUser);
+        const data_2db = new FormData();
+        data_2db.append('email', data2db.email);
+        data_2db.append('recordLabelemail', data2db.recordLabelemail);
+        data_2db.append('artistName', data2db.artistName);
+        data_2db.append('country', data2db.country);
+        data_2db.append('phoneNumber', data2db.phoneNumber);
+        data_2db.append('gender', data2db.gender);
+        data_2db.append('profile_picture', image);
+
+
+        try {
+            const response = (await axios.post(`${apiEndpoint}/recordLabel/artists`, data_2db,
+                {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                        Authorization: `Bearer ${accessToken}`
+                    },
+                    onUploadProgress: (progressEvent) => {
+                        const loaded = progressEvent.loaded;
+                        const total = progressEvent.total || 0;
+                        const percentage = Math.floor((loaded * 100) / total );
+
+                        if (percentage < 100) {
+                            setSongUploadProgress(percentage);
+                        }
+                    },
+                }
+             )).data;
+            // console.log(response);
             
-        //     setApiResponse({
-        //         display: true,
-        //         status: true,
-        //         message: response.message
-        //     });
-        //     _setToastNotification({
-        //         display: true,
-        //         status: "success",
-        //         message: response.message
-        //     });
+            setApiResponse({
+                display: true,
+                status: true,
+                message: response.message
+            });
+            // _setToastNotification({
+            //     display: true,
+            //     status: "success",
+            //     message: response.message
+            // });
 
-        //     navigate("/auth/login", {replace: true});
-        // } catch (error: any) {
-        //     const err = error.response.data;
-        //     console.log(err);
+            reset();
 
-        //     setApiResponse({
-        //         display: true,
-        //         status: false,
-        //         message: err.message || "Oooops, failed to update details. please try again."
-        //     });
-        // }
+        } catch (error: any) {
+            const err = error.response.data;
+            console.log(err);
+
+            setApiResponse({
+                display: true,
+                status: false,
+                message: err.message || "Oooops, failed to add new artists. please try again."
+            });
+        }
     }
 
 
@@ -351,6 +414,136 @@ function ArtistFormDetailsComponent() {
                 </Box>
 
 
+                <Box
+                    sx={{
+                        p: {xs: "10px", md: "25px"},
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "center",
+                        alignItems: "center"
+                    }}
+                >
+                    <Typography component={"h3"} variant='h3'
+                        sx={{
+                            fontWeight: "900",
+                            fontSize: {xs: "13px", md: "16px"},
+                            lineHeight: {xs: "25px", md: "32px"},
+                            letterSpacing: "-0.13px",
+                        }}
+                    > Profile Picture </Typography>
+
+
+                    { imagePreview ? (
+                        <Box
+                            sx={{
+                                display: "flex",
+                                flexDirection: "column",
+                                justifyContent: "end",
+                                alignItems: "center",
+                                bgcolor: darkTheme ? "#272727" : "#666666",
+                                borderRadius: "12px",
+                                height: {xs: "146.55px", md: "326px"},
+                                width: {xs: "128.45px", md: "347px"},
+                                my: {xs: "10px", md: "20px"},
+                                p: {xs: "5px 5px 10px 5px", md: "5px 5px 25px 5px"},
+
+                                backgroundImage: `url(${imagePreview})`, // Replace with your image URL
+                                backgroundPosition: 'center',
+                                backgroundSize: 'cover',
+                            }}
+                        >
+                            <Box></Box>
+
+                            <Box 
+                                sx={{
+                                    p: {xs: "10.18px 19.68px", md: "15px 29px"},
+                                    borderRadius: {xs: "8.14px", md: "12px"},
+                                    // background: "#FFFFFF80",
+                                    background: "#c4c4c480",
+
+                                    color: "#000",
+                                    cursor: "pointer",
+                                    display: "inline-block",
+                                    mt: {xs: "7px", md: "15px"},
+                                    position: "",
+                                    // bottom: 0
+                                }}
+                                onClick={() => {
+                                    document.getElementById("uploadSongCoverImage")?.click();
+                                }}
+                            >
+                                <Typography 
+                                    sx={{
+                                        fontWeight: '900',
+                                        fontSize: {xs: "10.18px", md: "15px"},
+                                        lineHeight: {xs: "8.82px", md: "13px"},
+                                        letterSpacing: {xs: "-0.09px", md: "-0.13px"},
+                                        textAlign: 'center',
+                                    }}
+                                > Edit </Typography>
+                            </Box>
+                        </Box>
+                    ) : (
+                        <Box
+                            sx={{
+                                display: "flex",
+                                flexDirection: "column",
+                                justifyContent: "end",
+                                alignItems: "center",
+                                bgcolor: darkTheme ? "#272727" : "#666666",
+                                borderRadius: "12px",
+                                height: {xs: "146.55px", md: "326px"},
+                                width: {xs: "128.45px", md: "347px"},
+                                my: {xs: "10px", md: "20px"},
+                                p: {xs: "5px 5px 10px 5px", md: "5px 5px 25px 5px"}
+                            }}
+                        >
+                            <Box
+                                sx={{
+                                    maxWidth: {xs: "71.29px", md: "160px"},
+                                    maxHeight: {xs: "71.93px", md: "160px"},
+                                    p: {xs: "10px", md: "25px"}
+                                }}
+                            >
+                                <img 
+                                    src={cloudUploadIconImg} alt='cloud upload icon image'
+                                    style={{
+                                        width: "100%",
+                                        objectFit: "contain",
+                                    }}
+                                />
+                            </Box>
+
+                            <Box 
+                                sx={{
+                                    p: {xs: "10.18px 19.68px 10.18px 19.68px", md: "15px 29px 15px 29px"},
+                                    borderRadius: {xs: "8.14px", md: "12px"},
+                                    background: "#fff",
+                                    color: "#000",
+                                    cursor: "pointer",
+                                    display: "inline-block",
+                                    mt: {xs: "7px", md: "15px"}
+                                }}
+                                onClick={() => {
+                                    document.getElementById("uploadSongCoverImage")?.click();
+                                }}
+                            >
+                                <Typography 
+                                    sx={{
+                                        fontWeight: '900',
+                                        fontSize: {xs: "10.18px", md: "15px"},
+                                        lineHeight: {xs: "8.82px", md: "13px"},
+                                        letterSpacing: {xs: "-0.09px", md: "-0.13px"},
+                                        textAlign: 'center',
+                                    }}
+                                > Upload </Typography>
+                            </Box>
+                        </Box>
+                    )}
+
+                </Box>
+
+
                 {
                     apiResponse.display && (
                         <Stack sx={{ width: '100%', mt: 5, mb: 2 }}>
@@ -387,9 +580,25 @@ function ArtistFormDetailsComponent() {
                     }}
                 >
                     <span style={{ display: isSubmitting ? "none" : "initial" }}>Continue</span>
-                    <CircularProgress size={25} sx={{ display: isSubmitting ? "initial" : "none", color: "#8638E5", fontWeight: "bold" }} />
+                    {
+                        isSubmitting && 
+                        <CircularProgressWithLabel 
+                            value={songUploadProgress} size={30} 
+                            sx={{ color: "#8638E5", fontWeight: "bold", mx: 'auto' }} 
+                        />
+                    }
+                    {/* <CircularProgress size={25} sx={{ display: isSubmitting ? "initial" : "none", color: "#8638E5", fontWeight: "bold" }} /> */}
                 </Button>
 
+
+                <input 
+                    type="file" 
+                    id='uploadSongCoverImage' 
+                    name="uploadSongCoverImage" 
+                    accept='image/*' 
+                    onChange={handleFileUpload}
+                    style={{display: "none"}}
+                />
             </form>
         </Box>
     )

@@ -13,7 +13,6 @@ import Stack from '@mui/material/Stack';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
-import InputAdornment from '@mui/material/InputAdornment';
 import Grid from '@mui/material/Grid';
 import Alert from '@mui/material/Alert';
 import Button from '@mui/material/Button';
@@ -24,24 +23,30 @@ import { ThemeProvider, useTheme } from '@mui/material/styles';
 
 import { useSettingStore } from '@/state/settingStore';
 
-import { banks } from '@/util/banks';
+import { allNgBanks } from '@/util/banks';
 import { restCountries } from '@/util/countries';
 import { getCountries, getUserLocation } from '@/util/location';
 import { customTextFieldTheme, MuiTextFieldStyle } from '@/util/mui';
 
 import FlutterwaveLogo2 from "@/assets/images/FlutterwaveLogo2.png";
+import { apiEndpoint } from '@/util/resources';
+import axios from 'axios';
+import { useUserStore } from '@/state/userStore';
+import CountryDialSelectComponent from './CountryDialSelect';
+import { flutterwavePaymentDetailsInterface } from '@/constants/typesInterface';
 
 
 const formSchema = yup.object({
     bank: yup.string().required().min(2, "Please enter a valid bank name").trim().label("Bank"),
     accountNumber: yup.string().required().min(10).max(10).trim().label("Account Number"),
-    accountName: yup.string().required().min(2).trim().label("Account Name"),
+    accountName: yup.string().trim().label("Account Name"),
 
     currency: yup.string().required().min(2).trim().label("Currency"),
 
     countryCode: yup.string().min(2).trim().label("country dial code"),
 
     verificationNumber: yup.string().required().min(7, "Incorrect phone number").max(15, "Incorrect phone number").trim().label("Phone Number"),
+    // verificationNumber: yup.string().trim().label("Phone Number"),
 });
 
 
@@ -49,7 +54,7 @@ interface _Props {
     openModal: boolean,
     closeModal: () => void;
     changeMethod: () => void;
-    confirmBtn: () => void;
+    confirmBtn: (data: flutterwavePaymentDetailsInterface) => void;
 }
 
 const currencyCodes = [
@@ -61,11 +66,13 @@ const PayoutSetFlutterwaveModalComponent: React.FC<_Props> = ({
     openModal, closeModal, changeMethod, confirmBtn
 }) => {
     // const [useEmail_n_PhoneNo, setUseEmail_n_PhoneNo] = useState(false);
+    const outerTheme = useTheme();
+    const darkTheme = useSettingStore((state) => state.darkTheme);
+    const accessToken = useUserStore((state) => state.accessToken);
     const [countries, setCountries] = useState(restCountries);
+    const [banks, setBanks] = useState(allNgBanks);
     const [selectCountryCode, setSelectCountryCode] = useState("");
 
-    const darkTheme = useSettingStore((state) => state.darkTheme);
-    const outerTheme = useTheme();
 
     const [apiResponse, setApiResponse] = useState({
         display: false,
@@ -74,6 +81,8 @@ const PayoutSetFlutterwaveModalComponent: React.FC<_Props> = ({
     });
     
     useEffect(() => {
+        getBanks();
+
         const sortedCountries = countries.sort((a: any, b: any) => {
             if (a.name.common < b.name.common) return -1;
             if (a.name.common > b.name.common) return 1;
@@ -100,8 +109,31 @@ const PayoutSetFlutterwaveModalComponent: React.FC<_Props> = ({
         handleSubmit, register, setValue, formState: { errors, isSubmitting, isValid } 
     } = useForm({ resolver: yupResolver(formSchema), mode: 'onBlur', reValidateMode: 'onChange' });
 
+    const getBanks = async () => {
+        try {
+            const response = (await axios.get(`${apiEndpoint}/payouts/banks/NG`, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`
+                }
+            })).data;
+            // console.log(response);
+            // setBanks(response.data);
+
+            const sortedBanks = response.data.sort((a: any, b: any) => {
+                if (a.name < b.name) return -1;
+                if (a.name > b.name) return 1;
+                return 0;
+            });
+            setBanks(sortedBanks);
+            
+        } catch (error: any) {
+            // const errorResponse = error.response.data;
+            console.error(error.response.data);
+        }
+    }
+
     const onSubmit = async (formData: typeof formSchema.__outputType) => {
-        console.log(formData);
+        // console.log(formData);
 
         setApiResponse({
             display: false,
@@ -110,7 +142,8 @@ const PayoutSetFlutterwaveModalComponent: React.FC<_Props> = ({
         });
 
 
-        confirmBtn();
+        // return;
+        confirmBtn({ accountName: '', countryCode: '', ...formData });
 
 
     }
@@ -378,13 +411,93 @@ const PayoutSetFlutterwaveModalComponent: React.FC<_Props> = ({
                                                 textAlign: "left"
                                             }}> Verification Number </Typography>
 
-                                            <TextField 
+
+
+                                            <Box 
+                                                sx={{ 
+                                                    display: 'flex', 
+                                                    alignItems: 'center',
+                                                    borderRadius: '13.79px',
+                                                    pl: 1,
+                                                    border: '1px solid #b9c1cd',
+                                                    '&:hover': {
+                                                        border: '1px solid #434e5e'
+                                                    },
+                                                    '&:focus': {
+                                                        border: '1px solid #434e5e'
+                                                    },
+                                                    "&:active": {
+                                                        border: '1px solid #434e5e'
+                                                    }
+                                                }}
+                                            >
+
+                                                <CountryDialSelectComponent 
+                                                    countries={countries}
+                                                    darkTheme={darkTheme}
+                                                    selectCountryCode={selectCountryCode}
+                                                    setSelectCountryCode={setSelectCountryCode}
+                                                />
+
+                                                <TextField 
+                                                    variant="outlined" 
+                                                    fullWidth 
+                                                    id='verificationNumber'
+                                                    type='tel'
+                                                    inputMode='tel'
+                                                    label=''
+                                                    defaultValue=""
+                                                    InputLabelProps={{
+                                                        style: { color: '#c1c1c1', fontWeight: "400" },
+                                                    }}
+                                                    InputProps={{
+                                                        sx: {
+                                                            borderRadius: "16px",
+                                                            p: 0
+                                                        }
+                                                    }}
+
+                                                    sx={{
+                                                        ...MuiTextFieldStyle(darkTheme),
+
+                                                        "& .MuiOutlinedInput-input": {
+                                                            pl: 0
+                                                        },
+                                                        '& .MuiOutlinedInput-root': {
+                                                            // pl: 0.5,
+                                                            // pr: 0,
+                                                            overflow: 'hidden',
+
+                                                            // bgcolor: darkTheme ? '#1C1B1F' : '#EFEFEF',
+                                                            // borderRadius: '13.79px',
+                                                            // height: '42px',
+                                                            border: 0,
+                                                    
+                                                            '& fieldset': {
+                                                                border: 0,
+                                                            },
+                                                            '&:hover fieldset': {
+                                                                border: 0,
+                                                            },
+                                                            '&.Mui-focused fieldset': {
+                                                                border: 0,
+                                                            },
+                                                        },
+                                                    }}
+                                                    
+                                                    error={ errors.verificationNumber ? true : false }
+                                                    { ...register('verificationNumber') }
+                                                />
+                                            </Box>
+
+
+                                            {/* <TextField 
                                                 variant="outlined" 
                                                 fullWidth 
                                                 id='verificationNumber'
                                                 type='tel'
-                                                label=''
                                                 inputMode='tel'
+                                                label=''
                                                 defaultValue=""
                                                 // placeholder='Used to inform you when transactions are being made on your account'
                                                 InputLabelProps={{
@@ -395,80 +508,12 @@ const PayoutSetFlutterwaveModalComponent: React.FC<_Props> = ({
                                                         borderRadius: "16px",
                                                     },
                                                     startAdornment: <InputAdornment position="start">
-                                                        <Select
-                                                            labelId="countryCode"
-                                                            id="countryCode-select"
-                                                            label=""
-                                                            // defaultValue=""
-                                                            value={selectCountryCode}
-
-                                                            sx={{
-                                                                color: darkTheme ? "white" : '#272727',
-                                                                // borderRadius: "13.79px",
-                                                                boxShadow: 'none !important',
-                                                                border: 0,
-
-                                                                "& .MuiSelect-select": { padding: "0px" },
-
-                                                                '.MuiOutlinedInput-notchedOutline': {
-                                                                    // borderColor: darkTheme ? 'gray' : 'gray',
-                                                                    border: "none !important",
-                                                                    // bgcolor: 'green'
-                                                                },
-                                                                '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                                                                    // borderColor: darkTheme ? '#fff' : '#272727', // '#434e5e',
-                                                                    border: "none",
-                                                                },
-                                                                '&:hover .MuiOutlinedInput-notchedOutline': {
-                                                                    // borderColor: darkTheme ? '#fff' : '#272727', // 'var(--TextField-brandBorderHoverColor)',
-                                                                    border: "none",
-                                                                },
-                                                                "& fieldset": {
-                                                                    border: "none",
-                                                                },
-                                                                '.MuiSvgIcon-root ': {
-                                                                    fill: `${darkTheme ? '#ccc' : 'black'} !important`,
-                                                                }
-                                                            }}
-                                                            
-                                                            // error={ errors.countryCode ? true : false }
-                                                            // { ...register('countryCode') }
-
-                                                            onChange={(event) => {
-                                                                const value: any = event.target.value;
-                                                                setSelectCountryCode(value);
-
-                                                                setValue(
-                                                                    "countryCode", 
-                                                                    value, 
-                                                                    {
-                                                                        shouldDirty: true,
-                                                                        shouldTouch: true,
-                                                                        shouldValidate: true
-                                                                    }
-                                                                );
-                                                            }}
-                                                        >
-                                                            { countries.map((country: any, index) => (
-                                                                <MenuItem key={index} value={country.idd.root + country.idd.suffixes[0]}>
-                                                                    <img src={country.flags.png} alt={country.flags.alt}
-                                                                        style={{
-                                                                            maxWidth: "18px",
-                                                                            marginRight: "5px"
-                                                                        }}
-                                                                    />
-                                                                    <Typography variant='body2'
-                                                                        sx={{
-                                                                            fontSize: '13px',
-                                                                            fontWeight: '400',
-                                                                            display: "inline"
-                                                                        }}
-                                                                    >
-                                                                        {country.idd.root + country.idd.suffixes[0]}
-                                                                    </Typography>
-                                                                </MenuItem>
-                                                            )) }
-                                                        </Select>
+                                                        <CountryDialSelectComponent 
+                                                            countries={countries}
+                                                            darkTheme={darkTheme}
+                                                            selectCountryCode={selectCountryCode}
+                                                            setSelectCountryCode={setSelectCountryCode}
+                                                        />
                                                     </InputAdornment>,
                                                 }}
 
@@ -484,8 +529,8 @@ const PayoutSetFlutterwaveModalComponent: React.FC<_Props> = ({
                                                 error={ errors.verificationNumber ? true : false }
                                                 { ...register('verificationNumber') }
                                             />
+                                            { errors.verificationNumber && <Box sx={{fontSize: 13, color: "red", textAlign: "left"}}>{ errors.verificationNumber?.message }</Box> } */}
 
-                                            { errors.verificationNumber && <Box sx={{fontSize: 13, color: "red", textAlign: "left"}}>{ errors.verificationNumber?.message }</Box> }
                                         </Box>
                                     </Grid>
                                 </Grid>

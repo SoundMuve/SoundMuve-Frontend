@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 import SideNav from './SideNav';
 import Toolbar from '@mui/material/Toolbar';
@@ -9,7 +10,6 @@ import Stack from '@mui/material/Stack';
 import Alert from '@mui/material/Alert';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
-
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 
 import { useUserStore } from '@/state/userStore';
@@ -17,11 +17,10 @@ import { useSettingStore } from '@/state/settingStore';
 import { createReleaseStore } from '@/state/createReleaseStore';
 
 import AccountWrapper from '@/components/AccountWrapper';
-
 import SongPreviewComponent from '@/components/account/SongPreview';
 import SuccessModalComponent from '@/components/account/SuccessModal';
-import axios from 'axios';
 import { apiEndpoint } from '@/util/resources';
+import { albumInterface } from '@/constants/typesInterface';
 
 
 function CreateAlbumReleaseOverview() {
@@ -38,48 +37,15 @@ function CreateAlbumReleaseOverview() {
     const completeAlbumData = createReleaseStore((state) => state.completeAlbumData);
 
     const [openSuccessModal, setOpenSuccessModal] = useState(false);
-
-    // const _setToastNotification = useSettingStore((state) => state._setToastNotification);
+    const _setToastNotification = useSettingStore((state) => state._setToastNotification);
     const [apiResponse, setApiResponse] = useState({
         display: false,
         status: true,
         message: ""
     });
+    const [releasedAlbum, setReleasedAlbum] = useState<albumInterface>();
 
-    // const [image, setImage] = useState(albumReleaseAlbumArt.image);
-    // const [imagePreview, setImagePreview] = useState(albumReleaseAlbumArt.imagePreview);
 
-    // const handleFileUpload = async (e: any) => {
-    //     const file = e.target.files[0]; 
-    //     setImage(file);
-
-    //     const base64: any = await convertToBase64(file);
-    //     setImagePreview(base64);
-    
-    //     e.target.value = "";
-    // }
-
-    // const convertToBase64 = (file: any) => {
-    //     return new Promise((resolve, reject) => {
-    //         const fileReader = new FileReader();
-    //         if (!file) {
-    //             // setToastNotification({
-    //             //     display: true,
-    //             //     message: "Please select an image!",
-    //             //     status: "info"
-    //             // })
-    //         } else {
-    //             fileReader.readAsDataURL(file);
-    //             fileReader.onload = () => {
-    //                 resolve(fileReader.result);
-    //             }
-    //         }
-
-    //         fileReader.onerror = (error) => {
-    //             reject(error);
-    //         }
-    //     });
-    // }
 
     useEffect(() => {
         getAlbumRelease();
@@ -99,10 +65,44 @@ function CreateAlbumReleaseOverview() {
             )).data;
             console.log(response);
 
+            setReleasedAlbum(response.albums[0]);
+
 
         } catch (error: any) {
             const err = error.response.data;
             console.log(err);
+        }
+    }
+
+    const deleteSong = async (index: number) => {
+        const song = albumReleaseSongUpload[index];
+
+        try {
+            const response = (await axios.delete(
+                `${apiEndpoint}/songs/songs/${song._id}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`
+                    },
+                }
+            )).data;
+            console.log(response);
+            _removeAlbumReleaseSongUpload(index);
+
+            _setToastNotification({
+                display: true,
+                status: "info",
+                message: response.message
+            });
+        } catch (error: any) {
+            const err = error.response.data;
+            console.log(err);
+
+            _setToastNotification({
+                display: true,
+                status: "error",
+                message: err.message
+            });
         }
     }
 
@@ -220,8 +220,7 @@ function CreateAlbumReleaseOverview() {
                                             lineHeight: {xs: "10.84px", sm: "24px"},
                                             letterSpacing: {xs: "-0.61px", sm: "-1.34px"},
                                         }}
-                                    > { albumReleaseDetails.album_title } : { albumReleaseDetails.artist_name } </Typography>
-                                    {/* >Good God: Joseph solomon</Typography> */}
+                                    > { releasedAlbum?.album_title || albumReleaseDetails.album_title } : { releasedAlbum?.artist_name || albumReleaseDetails.artist_name } </Typography>
 
                                     <Box sx={{ mt: {xs: "15px", sm: "30px"} }}>
                                         <Stack direction="row" spacing={"auto"} justifyContent="space-between" alignItems="center">
@@ -241,7 +240,7 @@ function CreateAlbumReleaseOverview() {
                                                     lineHeight: {xs: "25px", sm: "40px"},
                                                     letterSpacing: "-0.13px"
                                                 }}
-                                            > { albumReleaseDetails.releaseDate } </Typography>
+                                            > { releasedAlbum?.release_date || albumReleaseDetails.releaseDate } </Typography>
                                         </Stack>
                                         
                                         <Stack direction="row" spacing={"auto"} justifyContent="space-between" alignItems="center">
@@ -261,27 +260,7 @@ function CreateAlbumReleaseOverview() {
                                                     lineHeight: {xs: "25px", sm: "40px"},
                                                     letterSpacing: "-0.13px"
                                                 }}
-                                            > { albumReleaseAdvanceFeatures.label_name } </Typography>
-                                        </Stack>
-
-                                        <Stack direction="row" spacing={"auto"} justifyContent="space-between" alignItems="center">
-                                            <Typography
-                                                sx={{
-                                                    fontWeight: "400",
-                                                    fontSize: {xs: "13px", sm: "15px"},
-                                                    lineHeight: {xs: "25px", sm: "40px"},
-                                                    letterSpacing: "-0.13px"
-                                                }}
-                                            >ISRC</Typography>
-
-                                            <Typography
-                                                sx={{
-                                                    fontWeight: "400",
-                                                    fontSize: {xs: "13px", sm: "15px"},
-                                                    lineHeight: {xs: "25px", sm: "40px"},
-                                                    letterSpacing: "-0.13px"
-                                                }}
-                                            > </Typography>
+                                            > { releasedAlbum?.label_name || albumReleaseAdvanceFeatures.label_name } </Typography>
                                         </Stack>
 
                                         <Stack direction="row" spacing={"auto"} justifyContent="space-between" alignItems="center">
@@ -301,7 +280,7 @@ function CreateAlbumReleaseOverview() {
                                                     lineHeight: {xs: "25px", sm: "40px"},
                                                     letterSpacing: "-0.13px"
                                                 }}
-                                            > { albumReleaseAdvanceFeatures.upc_ean } </Typography>
+                                            > { releasedAlbum?.upc_ean || albumReleaseAdvanceFeatures.upc_ean } </Typography>
                                         </Stack>
 
                                         <Stack direction="row" spacing={"auto"} justifyContent="space-between" alignItems="center">
@@ -321,7 +300,7 @@ function CreateAlbumReleaseOverview() {
                                                     lineHeight: {xs: "25px", sm: "40px"},
                                                     letterSpacing: "-0.13px"
                                                 }}
-                                            > { albumReleaseDetails.primary_genre } </Typography>
+                                            > { releasedAlbum?.primary_genre || albumReleaseDetails.primary_genre } </Typography>
                                         </Stack>
 
                                         <Stack direction="row" spacing={"auto"} justifyContent="space-between" alignItems="center">
@@ -341,7 +320,7 @@ function CreateAlbumReleaseOverview() {
                                                     lineHeight: {xs: "25px", sm: "40px"},
                                                     letterSpacing: "-0.13px"
                                                 }}
-                                            > { albumReleaseDetails.secondary_genre } </Typography>
+                                            > { releasedAlbum?.secondary_genre || albumReleaseDetails.secondary_genre } </Typography>
                                         </Stack>
 
                                         <Stack direction="row" spacing={"auto"} justifyContent="space-between" alignItems="center">
@@ -361,7 +340,7 @@ function CreateAlbumReleaseOverview() {
                                                     lineHeight: {xs: "25px", sm: "40px"},
                                                     letterSpacing: "-0.13px"
                                                 }}
-                                            > { albumReleaseDetails.language } </Typography>
+                                            > { releasedAlbum?.language ||  albumReleaseDetails.language } </Typography>
                                         </Stack>
                                     </Box>
                                 </Box>
@@ -423,8 +402,7 @@ function CreateAlbumReleaseOverview() {
                                         alignItems: "center"
                                     }}
                                 >
-                                    { albumReleaseStores.stores }
-                                    
+                                    { releasedAlbum?.store || albumReleaseStores.stores }
                                 </Box>
                             </Box>
 
@@ -499,7 +477,7 @@ function CreateAlbumReleaseOverview() {
                                     </Typography>
 
                                     <Box mt={2}>
-                                        { albumReleaseStores.socialPlatforms }
+                                        { releasedAlbum?.social_platform || albumReleaseStores.socialPlatforms }
                                     </Box>
                                 </Box>
                             </Box>
@@ -563,14 +541,16 @@ function CreateAlbumReleaseOverview() {
                                     }}
                                 >
                                     {
-                                        albumReleaseSongUpload.map((item, i) => (
+                                        // albumReleaseSongUpload.map((item, i) => (
+                                            releasedAlbum?.songs.map((item, i) => (
                                             <Box key={i} width="100%">
                                                 {
                                                     <SongPreviewComponent key={i}
-                                                        songAudio={item.songAudioPreview} 
+                                                        // songAudio={item.songAudioPreview}
+                                                        songAudio={item.song_mp3} 
                                                         songTitle={item.song_title}
                                                         deleteSong={() => {
-                                                            _removeAlbumReleaseSongUpload(i);
+                                                            deleteSong(i);
                                                         }} 
                                                     />
                                                 }
@@ -644,42 +624,11 @@ function CreateAlbumReleaseOverview() {
                                             my: {xs: "10px", sm: "20px"},
                                             p: {xs: "5px 5px 10px 5px", sm: "5px 5px 25px 5px"},
 
-                                            backgroundImage: `url(${albumReleaseAlbumArt.imagePreview})`, // Replace with your image URL
+                                            backgroundImage: `url(${ releasedAlbum?.song_cover_url || albumReleaseAlbumArt.imagePreview})`, // Replace with your image URL
                                             backgroundPosition: 'center',
                                             backgroundSize: 'cover',
                                         }}
-                                    >
-                                        {/* <Box></Box>
-
-                                        <Box 
-                                            sx={{
-                                                p: {xs: "10.18px 19.68px", sm: "15px 29px"},
-                                                borderRadius: {xs: "8.14px", sm: "12px"},
-                                                // background: "#FFFFFF80",
-                                                background: "#c4c4c480",
-
-                                                color: "#000",
-                                                cursor: "pointer",
-                                                display: "inline-block",
-                                                mt: {xs: "7px", sm: "15px"},
-                                                position: "",
-                                                // bottom: 0
-                                            }}
-                                            onClick={() => {
-                                                document.getElementById("uploadSongCoverImage")?.click();
-                                            }}
-                                        >
-                                            <Typography 
-                                                sx={{
-                                                    fontWeight: '900',
-                                                    fontSize: {xs: "10.18px", sm: "15px"},
-                                                    lineHeight: {xs: "8.82px", sm: "13px"},
-                                                    letterSpacing: {xs: "-0.09px", sm: "-0.13px"},
-                                                    textAlign: 'center',
-                                                }}
-                                            > Edit </Typography>
-                                        </Box> */}
-                                    </Box>
+                                    ></Box>
                                 </Box>
 
                             </Box>

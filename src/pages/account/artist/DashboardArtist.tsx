@@ -15,9 +15,6 @@ import albumSampleArt from "@/assets/images/albumSampleArt.png";
 import AccountWrapper from '@/components/AccountWrapper';
 import AlbumSongItem from '@/components/account/AlbumSongItem';
 import NewReleaseModalComponent from '@/components/account/NewReleaseModal';
-import PayoutModalComponent from '@/components/account/PayoutModal';
-import PayoutFlutterwaveModalComponent from '@/components/account/PayoutFlutterwaveModal';
-// import PayoutBankModalComponent from '@/components/account/PayoutBankModal';
 
 import { useSettingStore } from '@/state/settingStore';
 import { useUserStore } from '@/state/userStore';
@@ -28,7 +25,7 @@ import ReleaseStatusComponent from '@/components/ReleaseStatus';
 import EmptyListComponent from '@/components/EmptyList';
 import LoadingDataComponent from '@/components/LoadingData';
 import { useReleaseStore } from '@/state/releaseStore';
-import FlutterwaveSetPayoutModalComponent from '@/components/account/PayoutSetFlutterwaveModal';
+import PaymentComponent from '@/components/account/PaymentComponent';
 
 
 const albumSongs = [
@@ -79,10 +76,8 @@ function DashboardArtist() {
     const closeReleaseModal = () => { setOpenReleaseModal(false) };
 
     const [openPayoutModal, setOpenPayoutModal] = useState(false);
-    const [openSetFlutterwaveModal, setOpenSetFlutterwaveModal] = useState(false);
+    const [withdrawlModal, setWithdrawlModal] = useState(false);
 
-    const [openPayoutFlutterwaveModal, setOpenPayoutFlutterwaveModal] = useState(false);
-    const closePayoutFlutterwaveModal = () => { setOpenPayoutFlutterwaveModal(false) };
 
     const handleGetSingleRelease = () => {
         setReleases(undefined);
@@ -303,7 +298,7 @@ function DashboardArtist() {
                                     }}
                                 >$0.00</Typography>
 
-                                <Box onClick={() => setOpenPayoutModal(true) }
+                                <Box onClick={() => setWithdrawlModal(true) }
                                     sx={{
                                         p: "10px 29px 10px 29px",
                                         borderRadius: "12px",
@@ -567,27 +562,21 @@ function DashboardArtist() {
                                     letterSpacing: "-0.07px",
                                 }}>$0.00</Typography>
 
-                                <Link to="/account/artist" style={{
-                                    textDecoration: "none",
-                                    color: "#000000",
-                                    border: "none",
-                                    outline: "none",
+                                <Box onClick={() => setWithdrawlModal(true) } sx={{
+                                    p: "8.97px 26px 8.97px 26px",
+                                    borderRadius: "10.76px",
+                                    background: "#fff",
+                                    cursor: 'pointer'
                                 }}>
-                                    <Box sx={{
-                                        p: "8.97px 26px 8.97px 26px",
-                                        borderRadius: "10.76px",
-                                        background: "#fff",
-                                    }}>
-                                        <Typography sx={{
-                                            fontWeight: '900',
-                                            fontSize: "13.45px",
-                                            lineHeight: "11.66px",
-                                            letterSpacing: "-0.12px",
-                                            textAlign: 'center',
-                                            color: "#000",
-                                        }}> Withdraw </Typography>
-                                    </Box>
-                                </Link>
+                                    <Typography sx={{
+                                        fontWeight: '900',
+                                        fontSize: "13.45px",
+                                        lineHeight: "11.66px",
+                                        letterSpacing: "-0.12px",
+                                        textAlign: 'center',
+                                        color: "#000",
+                                    }}> Withdraw </Typography>
+                                </Box>
                             </Box>
                         </Box>
 
@@ -1115,34 +1104,16 @@ function DashboardArtist() {
 
             </Box>
 
-
             <NewReleaseModalComponent 
                 openReleaseModal={openReleaseModal}
                 closeReleaseModal={closeReleaseModal}
             />
 
-            <PayoutModalComponent 
-                openModal={openPayoutModal}
-                closeModal={() => setOpenPayoutModal(false)}
-                
-                openBankPayoutModal={() => setOpenSetFlutterwaveModal(true)}
-                openFlutterwavePayoutModal={() => setOpenSetFlutterwaveModal(true)}
+            <PaymentComponent 
+                withdrawlModal={withdrawlModal} setWithdrawlModal={setWithdrawlModal} 
+                openPayoutModal={openPayoutModal} setOpenPayoutModal={setOpenPayoutModal}
             />
 
-            <FlutterwaveSetPayoutModalComponent 
-                openModal={openSetFlutterwaveModal}
-                closeModal={() => setOpenSetFlutterwaveModal(false)}
-                changeMethod={() => {
-                    setOpenSetFlutterwaveModal(false);
-                    setOpenPayoutModal(true);
-                }}
-                confirmBtn={() => {}}
-            />
-
-            <PayoutFlutterwaveModalComponent 
-                openModal={openPayoutFlutterwaveModal}
-                closeModal={closePayoutFlutterwaveModal}
-            />
         </AccountWrapper>
     )
 }

@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import Box from '@mui/material/Box';
@@ -21,11 +22,8 @@ import Typography from '@mui/material/Typography';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
-import WithdrawMoneyModalComponent from '@/components/account/WithdrawMoneyModal';
-import { useState } from 'react';
-import WithdrawMoneyReviewModalComponent from '@/components/account/WithdrawMoneyReviewModal';
-import WithdrawMoneyConfirmationModalComponent from '@/components/account/WithdrawMoneyConfirmationModal';
 import ArtistAnalyticsNavComponent from '@/components/account/ArtistAnalyticsNav';
+import PaymentComponent from '@/components/account/PaymentComponent';
 
   
 const headerTitle = [
@@ -120,14 +118,8 @@ function BalanceHistory_RL() {
     const navigate = useNavigate();
     const darkTheme = useSettingStore((state) => state.darkTheme);
 
-
-
-    const [openWithdrawMoneyModal, setOpenWithdrawMoneyModal] = useState(false);
-
-    const [openWithdrawMoneyReviewModal, setOpenWithdrawMoneyReviewModal] = useState(false);
-
-    const [openWithdrawMoneyConfirmationModal, setOpenWithdrawMoneyConfirmationModal] = useState(false);
-
+    const [openPayoutModal, setOpenPayoutModal] = useState(false);
+    const [withdrawlModal, setWithdrawlModal] = useState(false);
 
 
     return (
@@ -314,7 +306,7 @@ function BalanceHistory_RL() {
                                     // m: 2,
                                     width: "fit-content"
                                 }}
-                                onClick={() => setOpenWithdrawMoneyModal(true)}
+                                onClick={() => setWithdrawlModal(true)}
                             >
                                 <Typography 
                                     sx={{
@@ -332,25 +324,9 @@ function BalanceHistory_RL() {
             </Box>
 
 
-
-            <WithdrawMoneyModalComponent 
-                openModal={openWithdrawMoneyModal}
-                closeModal={() => { setOpenWithdrawMoneyModal(false) }}
-                
-                openWithdrawReviewModal={() => setOpenWithdrawMoneyReviewModal(true)}
-            />
-
-
-            <WithdrawMoneyReviewModalComponent 
-                openModal={openWithdrawMoneyReviewModal}
-                closeModal={() => { setOpenWithdrawMoneyReviewModal(false) }}
-
-                openWithdrawConfirmationModal={() => setOpenWithdrawMoneyConfirmationModal(true)}
-            />
-
-            <WithdrawMoneyConfirmationModalComponent 
-                openModal={openWithdrawMoneyConfirmationModal}
-                closeModal={() => { setOpenWithdrawMoneyConfirmationModal(false) }}
+            <PaymentComponent 
+                withdrawlModal={withdrawlModal} setWithdrawlModal={setWithdrawlModal} 
+                openPayoutModal={openPayoutModal} setOpenPayoutModal={setOpenPayoutModal}
             />
 
         </AccountWrapper>

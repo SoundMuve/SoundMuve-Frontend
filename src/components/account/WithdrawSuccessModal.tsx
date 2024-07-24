@@ -15,12 +15,10 @@ interface _Props {
     closeModal: () => void;
 }
 
-const WithdrawMoneyConfirmationModalComponent: React.FC<_Props> = ({
+const WithdrawSuccessModalComponent: React.FC<_Props> = ({
     openModal, closeModal
 }) => {
     const darkTheme = useSettingStore((state) => state.darkTheme);
-
-
 
 
     return (
@@ -199,4 +197,4 @@ const WithdrawMoneyConfirmationModalComponent: React.FC<_Props> = ({
     )
 }
 
-export default WithdrawMoneyConfirmationModalComponent;
+export default WithdrawSuccessModalComponent;

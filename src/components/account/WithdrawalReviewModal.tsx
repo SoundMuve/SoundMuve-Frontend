@@ -1,30 +1,83 @@
-import React from 'react';
+import React, { useState } from 'react';
+import axios from 'axios';
 
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import Modal from '@mui/material/Modal';
 import Typography from '@mui/material/Typography';
-import Stack from '@mui/material/Stack';
 import CloseIcon from '@mui/icons-material/Close';
+import Stack from '@mui/material/Stack';
+import Alert from '@mui/material/Alert';
 
+import { useUserStore } from '@/state/userStore';
 import { useSettingStore } from '@/state/settingStore';
+
+import { apiEndpoint } from '@/util/resources';
 
 
 interface _Props {
     openModal: boolean,
     closeModal: () => void;
-
-    openWithdrawConfirmationModal: () => void;
+    // changeMethod: () => void;
+    saveBtn: () => void;
+    formDetails: {amount: string}
 }
 
-const WithdrawMoneyReviewModalComponent: React.FC<_Props> = ({
-    openModal, closeModal, openWithdrawConfirmationModal
-}) => {
-    const darkTheme = useSettingStore((state) => state.darkTheme);
 
-    const handleConfirmRequest = () => {
-        closeModal();
-        openWithdrawConfirmationModal();
+const WithdrawalReviewModalComponent: React.FC<_Props> = ({
+    openModal, closeModal, saveBtn, formDetails
+}) => {
+    // const [useEmail_n_PhoneNo, setUseEmail_n_PhoneNo] = useState(false);
+    const darkTheme = useSettingStore((state) => state.darkTheme);
+    const accessToken = useUserStore((state) => state.accessToken);
+
+    const [apiResponse, setApiResponse] = useState({
+        display: false,
+        status: true,
+        message: ""
+    });
+
+    const onSubmit = async () => {
+
+        setApiResponse({
+            display: false,
+            status: true,
+            message: ""
+        });
+
+
+        saveBtn();
+
+        return;
+
+        try {
+            const response = (await axios.post(`${apiEndpoint}/payouts/banks/NG`, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`
+                }
+            })).data;
+            console.log(response);
+            // setBanks(response.data);
+
+            saveBtn();
+
+            
+        } catch (error: any) {
+            const errorResponse = error.response.data;
+            console.error(errorResponse);
+
+            setApiResponse({
+                display: true,
+                status: false,
+                message: errorResponse.message || "Ooops and error occurred!"
+            });
+
+            // _setToastNotification({
+            //     display: true,
+            //     status: "error",
+            //     message: errorResponse.message || "Ooops and error occurred!"
+            // });
+        }
 
 
     }
@@ -43,28 +96,32 @@ const WithdrawMoneyReviewModalComponent: React.FC<_Props> = ({
                     justifyContent: "center",
                     alignItems: "center",
                     height: "100%",
-                    outline: "none"
+                    outline: "none",
                 }}
             >
                 <Box 
                     sx={{
                         bgcolor: darkTheme ? "#272727" : "#fff",
+                        width: "100%",
                         maxWidth: {xs: "92%", sm: "496px"},
-                        maxHeight: "605px",
+                        // maxHeight: "605px",
+                        maxHeight: "95%",
                         borderRadius: "12px",
                         p: "25px",
-                        color: darkTheme ? "#fff" : "#000"
+                        color: darkTheme ? "#fff" : "#000",
+                        overflow: "scroll"
                     }}
                 >
-                    <Box sx={{textAlign: "right"}}>
-                        <IconButton onClick={() => closeModal() }>
-                            <CloseIcon 
-                                sx={{color: darkTheme ? "#fff" : "#000", fontSize: "30px"}} 
-                            />
-                        </IconButton>
-                    </Box>
+                    <Box  id="payout-modal-title">
+                        <Box sx={{textAlign: "right"}}>
+                            <IconButton onClick={() => closeModal() }>
+                                <CloseIcon 
+                                    sx={{color: darkTheme ? "#fff" : "#000", fontSize: "30px"}} 
+                                />
+                            </IconButton>
+                        </Box>
 
-                    <Box id="payout-modal-title">
+
                         <Typography variant="h6" component="h2"
                             sx={{
                                 fontWeight: "900",
@@ -72,17 +129,18 @@ const WithdrawMoneyReviewModalComponent: React.FC<_Props> = ({
                                 lineHeight: {xs: "20px", md: "24px"},
                                 letterSpacing: {xs: "-0.34px", md: "-1.34px"},
                                 textAlign: "center",
-                                mt: 2
+                                // mt: 2
                             }}
                         >
                             Payout Review
                         </Typography>
+
                     </Box>
 
+                    <Box id="payout-modal-description" sx={{mt: 5}}>
 
-                    <Box id="payout-modal-description">
                         <Box sx={{my: "35px"}}>
-                            <Typography
+                            <Typography variant='h4' component='h4'
                                 sx={{
                                     fontWeight: "700",
                                     fontSize: "14px",
@@ -90,11 +148,9 @@ const WithdrawMoneyReviewModalComponent: React.FC<_Props> = ({
                                     letterSpacing: "-1px",
                                     // color: "#797979"
                                 }}
-                            >
-                                Amount
-                            </Typography>
+                            > Amount </Typography>
 
-                            <Typography
+                            <Typography variant='h1' component='h1'
                                 sx={{
                                     fontWeight: "900",
                                     fontSize: "35px",
@@ -103,7 +159,7 @@ const WithdrawMoneyReviewModalComponent: React.FC<_Props> = ({
                                     mt: "25px"
                                 }}
                             >
-                                $200.00
+                                ${formDetails.amount}
                             </Typography>
                         </Box>
 
@@ -130,6 +186,16 @@ const WithdrawMoneyReviewModalComponent: React.FC<_Props> = ({
                             </Typography>
                         </Stack>
 
+
+                        {
+                            apiResponse.display && (
+                                <Stack sx={{ width: '100%', my: 2 }}>
+                                    <Alert severity={apiResponse.status ? "success" : "error"}>{apiResponse.message}</Alert>
+                                </Stack>
+                            )
+                        }
+                        
+
                         <Stack direction={"row"} spacing={"20px"} alignItems={"center"} justifyContent={"space-between"}>
                             <Box 
                                 sx={{
@@ -140,7 +206,7 @@ const WithdrawMoneyReviewModalComponent: React.FC<_Props> = ({
                                     cursor: "pointer",
                                     display: "inline-block"
                                 }}
-                                onClick={() => handleConfirmRequest()}
+                                onClick={() => onSubmit()}
                             >
                                 <Typography 
                                     sx={{
@@ -183,4 +249,4 @@ const WithdrawMoneyReviewModalComponent: React.FC<_Props> = ({
     )
 }
 
-export default WithdrawMoneyReviewModalComponent;
+export default WithdrawalReviewModalComponent;

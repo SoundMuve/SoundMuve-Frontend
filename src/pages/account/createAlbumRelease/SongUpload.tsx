@@ -12,7 +12,6 @@ import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Alert from '@mui/material/Alert';
 import Button from '@mui/material/Button';
-import CircularProgress from '@mui/material/CircularProgress';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
@@ -37,6 +36,7 @@ import { languages } from '@/util/languages';
 import { minutes, seconds, songArtistsCreativesRoles, pauseExecution } from '@/util/resources';
 import CopyrightOwnershipModalComponent from '@/components/account/CopyrightOwnershipModal';
 import { apiEndpoint } from '@/util/resources';
+import CircularProgressWithLabel from '@/components/CircularProgressWithLabel';
 
 
 const formSchema = yup.object({
@@ -100,6 +100,7 @@ function CreateAlbumReleaseSongUpload() {
     const [selectTiktokSecValue, setSelectTiktokSecValue] = useState('00');
 
     const [songEditId, setSongEditId] = useState('');
+    const [songUploadProgress, setSongUploadProgress] = useState(0);
 
 
     const { 
@@ -465,6 +466,15 @@ function CreateAlbumReleaseSongUpload() {
                         headers: {
                             'Content-Type': 'multipart/form-data',
                             Authorization: `Bearer ${accessToken}`
+                        },
+                        onUploadProgress: (progressEvent) => {
+                            const loaded = progressEvent.loaded;
+                            const total = progressEvent.total || 0;
+                            const percentage = Math.floor((loaded * 100) / total );
+
+                            if (percentage < 100) {
+                                setSongUploadProgress(percentage);
+                            }
                         },
                     }
                 )).data 
@@ -1878,7 +1888,11 @@ function CreateAlbumReleaseSongUpload() {
                                                     {
                                                         isSubmitting ? (
                                                             <>
-                                                                <CircularProgress size={25} sx={{ color: "#8638E5", fontWeight: "bold", mx: 'auto' }} />
+                                                                {/* <CircularProgress size={25} sx={{ color: "#8638E5", fontWeight: "bold", mx: 'auto' }} /> */}
+                                                                <CircularProgressWithLabel 
+                                                                    value={songUploadProgress} size={30} 
+                                                                    sx={{ color: "#8638E5", fontWeight: "bold", mx: 'auto' }} 
+                                                                />
                                                             </>
                                                         ) : (
                                                             <>

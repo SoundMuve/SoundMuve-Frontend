@@ -77,6 +77,7 @@ export const useUserStore = create<_typeInterface_>((set) => ({
         removeLocalStorageItem("user");
         removeLocalStorageItem("access_token");
         removeLocalStorageItem("refreshToken");
+        console.log("log out from state");
     
         set((_state) => {
             return {
