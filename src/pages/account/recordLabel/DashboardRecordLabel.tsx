@@ -1,16 +1,11 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import Avatar from '@mui/material/Avatar';
 import Grid from '@mui/material/Grid';
-import TextField from '@mui/material/TextField';
-import IconButton from '@mui/material/IconButton';
-import InputAdornment from '@mui/material/InputAdornment';
-// import AddIcon from '@mui/icons-material/Add';
-import SearchIcon from '@mui/icons-material/Search';
-import ClearIcon from '@mui/icons-material/Clear';
 
 import album1 from "@/assets/images/album/album1.jpeg";
 import album2 from "@/assets/images/album/album2.jpg";
@@ -29,6 +24,7 @@ import AccountWrapper from '@/components/AccountWrapper';
 import PromotionalAdsComponent from '@/components/PromotionalAds';
 import RecordLabelBigSidebarComponent from '@/components/account/RecordLabelBigSidebar';
 import RecordLabelSmallSidebarComponent from '@/components/account/RecordLabelSmallSidebar';
+import RecordLabelSearchComponent from '@/components/account/RecordLabelSearch';
 
 // import { useSettingStore } from '@/state/settingStore';
 // import { useUserStore } from '@/state/userStore';
@@ -63,18 +59,13 @@ const albumPreview = [
 ];
 
 function DashboardRecordLabel() {
-    // const navigate = useNavigate();
+    const navigate = useNavigate();
     const darkTheme = useSettingStore((state) => state.darkTheme);
     // const userData = useUserStore((state) => state.userData); 
     // const accessToken = useUserStore((state) => state.accessToken);
 
     const [smallSideNav, setsmallSideNav] = useState(true);
-    const [searchInputValue, setSearchInputValue] = useState('');
 
-    const handleSearchInputValue = (searchedWord: string) => {
-        setSearchInputValue(searchedWord);
-    }
-    
 
     return (
         <AccountWrapper>
@@ -93,7 +84,6 @@ function DashboardRecordLabel() {
                             transitionTimingFunction: 'ease-in-out',
                         }}
                     >
-
                         {
                             smallSideNav ? 
                             <RecordLabelSmallSidebarComponent setSideNav={setsmallSideNav} />
@@ -119,73 +109,7 @@ function DashboardRecordLabel() {
                                 pb: 5,
                             }}
                         >
-                            <Box>
-                                <TextField 
-                                    variant="outlined" 
-                                    fullWidth 
-                                    id='search'
-                                    type='text'
-                                    placeholder='Search for artist'
-                                    label=''
-                                    inputMode='search'
-                                    value={searchInputValue}
-                                    onChange={(e) => {
-                                        handleSearchInputValue(e.target.value)
-                                    }}
-                                    InputLabelProps={{
-                                        style: { color: '#c1c1c1', fontWeight: "400" },
-                                    }}
-                                    InputProps={{
-                                        startAdornment: (
-                                            <InputAdornment position="start">
-                                                <SearchIcon sx={{ color: "gray"}} />
-                                            </InputAdornment>
-                                        ),
-                                        endAdornment: searchInputValue && (
-                                            <IconButton
-                                            aria-label="toggle password visibility"
-                                            onClick={() => setSearchInputValue("")}
-                                            ><ClearIcon sx={{ color: "gray", fontSize: '16px'}} /></IconButton>
-                                        ),
-                                        sx: {
-                                            borderRadius: "16px",
-                                            color: 'gray'
-                                        },
-                                    }}
-                                    sx={{
-                                        '& label.Mui-focused': {
-                                            color: 'var(--TextField-brandBorderFocusedColor)',
-                                        },
-                                        '& .MuiInputBase-input': { // Target input text
-                                            color: darkTheme ? '#fff' : "#000", // Change to your desired text color
-                                        },
-                                        '& .MuiInputBase-placeholder': { // Target placeholder text
-                                            color: 'gray',
-                                        },
-
-                                        '& .MuiOutlinedInput-root': {
-                                            bgcolor: darkTheme ? '#1C1B1F' : '#EFEFEF',
-                                            borderRadius: '17.8px',
-                                            height: '42px',
-
-                                            '& fieldset': {
-                                                // borderColor: darkTheme ? "#c4c4c4" : "#272727", // '#E0E3E7',
-                                                border: 'none'
-                                            },
-                                            '&:hover fieldset': {
-                                                // borderColor: darkTheme ? "#fff" : "#272727", // '#B2BAC2',
-                                                border: 'none'
-                                            },
-                                            '&.Mui-focused fieldset': {
-                                                // borderColor: darkTheme ? '#fff' : '#272727', // '#6F7E8C',
-                                                // borderWidth: "2px",
-                                                border: 'none'
-                                            },
-                                        },
-
-                                    }}
-                                />
-                            </Box>
+                            <RecordLabelSearchComponent />
 
                             <Stack alignItems="center" justifyContent="center" 
                                 sx={{
@@ -393,15 +317,29 @@ function DashboardRecordLabel() {
                             </Stack>
 
                             <Box>
-                                <Typography variant='h3' component="h3"
-                                    sx={{
-                                        fontWeight: '900',
-                                        fontSize: '23.73px',
-                                        lineHeight: '14.24px',
-                                        letterSpacing: '-0.59px',
-                                        my: '50px'
-                                    }}
-                                >Artist</Typography>
+                                <Stack direction="row" alignItems="center" justifyContent="space-between" my="50px">
+                                    <Typography variant='h3' component="h3"
+                                        sx={{
+                                            fontWeight: '900',
+                                            fontSize: '23.73px',
+                                            lineHeight: '14.24px',
+                                            letterSpacing: '-0.59px',
+                                            // my: '50px'
+                                        }}
+                                    >Artist</Typography>
+
+                                    <Typography variant='h3' component="h3"
+                                        onClick={() => navigate("/account/record-label/artist")}
+                                        sx={{
+                                            fontWeight: '900',
+                                            fontSize: '23.73px',
+                                            lineHeight: '14.24px',
+                                            letterSpacing: '-0.59px',
+                                            // my: '50px',
+                                            cursor: 'pointer'
+                                        }}
+                                    >See all</Typography>
+                                </Stack>
 
                                 <Grid container spacing={3}>
                                     {

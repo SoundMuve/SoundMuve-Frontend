@@ -84,6 +84,140 @@ export function pauseExecution(ms: number) {
 }
 
 
+type respondsInterface = {
+  display: boolean,
+  status: boolean,
+  message: string
+}
+
+export const artWorkAllowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+
+export const validateImageArtWork = async (file: File): Promise<respondsInterface> => {
+  const img = new Image();
+  const objectUrl = URL.createObjectURL(file);
+  img.src = objectUrl;
+
+  return new Promise((resolve) => {
+    img.onload = async () => {
+      const { width, height } = img;
+      URL.revokeObjectURL(objectUrl);
+
+      console.log("width => ", width);
+      console.log("height => ", height);
+
+      // const allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+      const maxSize = 10 * 1024 * 1024; // 10MB
+
+        // Validate dimensions and size
+        if (file.size > maxSize) {
+          resolve({
+            display: true,
+            status: false,
+            message: "File size must be smaller than 10MB."
+          });
+        } else if (!artWorkAllowedTypes.includes(file.type)) {
+          resolve({
+            display: true,
+            status: false,
+            message: "Invalid file type. Only JPG, PNG, and GIF are allowed."
+          });
+        } else if (width !== height) {
+          resolve({
+            display: true,
+            status: false,
+            message: "Image must be a perfect square."
+          });
+        } else if (width < 1600 || height < 1600) {
+          // setError('Image dimensions must be at least 1600 x 1600 pixels.');
+          resolve({
+            display: true,
+            status: false,
+            message: "Image dimensions must be between 1600x1600 and 3000x3000 pixels."
+          });
+        } else if (width > 3000 || height > 3000) {
+            // setError('Image dimensions must be at most 3000 x 3000 pixels.');
+            resolve({
+              display: true,
+              status: false,
+              message: "Image dimensions must be between 1600x1600 and 3000x3000 pixels."
+            });
+        } else {
+            // Use sharp to check for blurriness, pixelation, and whitespace
+            // try {
+            //     const imgBuffer = await file.arrayBuffer();
+            //     const image = sharp(Buffer.from(imgBuffer));
+            //     const metadata = await image.metadata();
+    
+            //     // Add custom validation for blurriness, pixelation, and whitespace here
+            //     // Placeholder example (need more complex logic for actual validation)
+            //     if (metadata.width !== metadata.height) {
+            //         setError('Image must be a perfect square.');
+            //         resolve(false);
+            //     }
+    
+            //     setError('');
+            //     resolve(true);
+            // } catch (e) {
+            //     setError('Image validation failed.');
+            //     resolve(false);
+            // }
+
+          resolve({
+            display: false,
+            status: true,
+            message: ""
+          });
+        }
+    };
+
+    img.onerror = () => {
+      resolve({
+        display: true,
+        status: false,
+        message: "Error loading image."
+      });
+    };
+  });
+};
+
+
+type base64Interface = {
+  display: boolean,
+  status: boolean,
+  message: string,
+  result?: any,
+}
+
+export const convertToBase64 = (file: File): Promise<base64Interface> => {
+  return new Promise((resolve) => {
+    const fileReader = new FileReader();
+    if (!file) resolve({
+      display: false,
+      status: false,
+      message: ""
+    });
+
+    fileReader.readAsDataURL(file);
+    fileReader.onload = () => {
+      // resolve(fileReader.result);
+      resolve({
+        display: false,
+        status: true,
+        message: "",
+        result: fileReader.result
+      });
+    }
+
+    fileReader.onerror = (_error) => {
+      resolve({
+        display: true,
+        status: false,
+        message: "Error loading image."
+      });
+    }
+  });
+}
+
 export function maskPhoneNumber(phoneNumber: string) {
   // Remove any non-digit characters from the input
   const cleanedNumber = phoneNumber.replace(/\D/g, '');

@@ -46,6 +46,7 @@ import AnalyticsReach_RL from "./pages/account/recordLabel/AnalyticsReach_RL.tsx
 import SongDetails_RL from "./pages/account/recordLabel/SongDetails.tsx";
 import AlbumDetails_RL from "./pages/account/recordLabel/AlbumDetails_RL.tsx";
 import AllMusic_RL from "./pages/account/recordLabel/AllMusic_RL.tsx";
+import ArtistList_RL from "./pages/account/recordLabel/ArtistList.tsx";
 
 
 export const router = createBrowserRouter([
@@ -248,6 +249,10 @@ export const router = createBrowserRouter([
                 {
                   path: "add-artist",
                   element: <AddArtistRecordLabel />,
+                },
+                {
+                  path: "artist",
+                  element: <ArtistList_RL />,
                 },
 
                 {

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
@@ -16,8 +16,9 @@ import { createReleaseStore } from '@/state/createReleaseStore';
 import SideNav from './SideNav';
 import AccountWrapper from '@/components/AccountWrapper';
 import cloudUploadIconImg from "@/assets/images/cloudUploadIcon.png";
-import { apiEndpoint } from '@/util/resources';
+import { apiEndpoint, artWorkAllowedTypes, convertToBase64, validateImageArtWork } from '@/util/resources';
 import CircularProgress from '@mui/material/CircularProgress';
+import ArtWorkFileInfoComponent from '@/components/ArtWorkFileInfo';
 
 
 function CreateAlbumReleaseAlbumArt() {
@@ -37,8 +38,8 @@ function CreateAlbumReleaseAlbumArt() {
         message: ""
     });
     
-    const [image, setImage] = useState<any>();
-    const [imagePreview, setImagePreview] = useState<any>();
+    const [image, setImage] = useState<Blob | null>();
+    const [imagePreview, setImagePreview] = useState();
     const [isBtnSubmitting, setIsBtnSubmitting] = useState(false);
 
     useEffect(() => {
@@ -49,38 +50,33 @@ function CreateAlbumReleaseAlbumArt() {
     }, [albumReleaseAlbumArt]);
     
 
-    const handleFileUpload = async (e: any) => {
-        const file = e.target.files[0]; 
-        setImage(file);
+    const handleFileUpload = async (e: ChangeEvent<HTMLInputElement>) => {
+        setApiResponse({
+            display: false,
+            status: false,
+            message: ""
+        });
 
-        const base64: any = await convertToBase64(file);
-        setImagePreview(base64);
+        // const file = e.target.files[0]; 
+        const file = e.target.files?.[0];
+        if (!file) return;
+        
+        const validatgeResult = await validateImageArtWork(file);
+        setApiResponse(validatgeResult);
+        if (!validatgeResult.status) return;
+    
+        const base64 = await convertToBase64(file);
+        if (base64.status && base64.result) {
+            setImage(file);
+            setImagePreview(base64.result);
+        } else {
+            setImage(null);
+            setImagePreview(undefined);
+            setApiResponse(base64);
+        }
     
         e.target.value = "";
     }
-
-    const convertToBase64 = (file: any) => {
-        return new Promise((resolve, reject) => {
-            const fileReader = new FileReader();
-            if (!file) {
-                // setToastNotification({
-                //     display: true,
-                //     message: "Please select an image!",
-                //     status: "info"
-                // })
-            } else {
-                fileReader.readAsDataURL(file);
-                fileReader.onload = () => {
-                    resolve(fileReader.result);
-                }
-            }
-
-            fileReader.onerror = (error) => {
-                reject(error);
-            }
-        });
-    }
-    
 
     const onSubmit = async () => {
         setApiResponse({
@@ -175,14 +171,20 @@ function CreateAlbumReleaseAlbumArt() {
                                     alignItems: "center"
                                 }}
                             >
-                                <Typography component={"h3"} variant='h3'
-                                    sx={{
-                                        fontWeight: "900",
-                                        fontSize: {xs: "13px", md: "16px"},
-                                        lineHeight: {xs: "25px", md: "32px"},
-                                        letterSpacing: "-0.13px",
-                                    }}
-                                > Album art </Typography>
+
+                                <Stack direction="row" spacing={2} alignItems="center">
+                                    <Typography component={"h3"} variant='h3'
+                                        sx={{
+                                            fontWeight: "900",
+                                            fontSize: {xs: "13px", md: "16px"},
+                                            lineHeight: {xs: "25px", md: "32px"},
+                                            letterSpacing: "-0.13px",
+                                        }}
+                                    > Album art </Typography>
+
+                                    <ArtWorkFileInfoComponent />
+                                </Stack>
+
 
 
                                 { imagePreview ? (
@@ -350,7 +352,8 @@ function CreateAlbumReleaseAlbumArt() {
                 type="file" 
                 id='uploadSongCoverImage' 
                 name="uploadSongCoverImage" 
-                accept='image/*' 
+                // accept='image/*' 
+                accept={artWorkAllowedTypes.toString()}
                 onChange={handleFileUpload}
                 style={{display: "none"}}
             />

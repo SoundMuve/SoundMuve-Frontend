@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { ChangeEvent, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import * as yup from "yup";
@@ -10,7 +10,7 @@ import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Alert from '@mui/material/Alert';
 import Button from '@mui/material/Button';
-import CircularProgress from '@mui/material/CircularProgress';
+// import CircularProgress from '@mui/material/CircularProgress';
 import TextField from '@mui/material/TextField';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
@@ -26,13 +26,18 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import AccountWrapper from '@/components/AccountWrapper';
 import SongPreviewComponent from '@/components/account/SongPreview';
 import SuccessModalComponent from '@/components/account/SuccessModal';
+import ArtWorkFileInfoComponent from '@/components/ArtWorkFileInfo';
+import CircularProgressWithLabel from '@/components/CircularProgressWithLabel';
 import CopyrightOwnershipModalComponent from '@/components/account/CopyrightOwnershipModal';
 
 import { useSettingStore } from '@/state/settingStore';
 import { useUserStore } from '@/state/userStore';
 import { createReleaseStore } from '@/state/createReleaseStore';
 
-import { apiEndpoint, minutes, musicStores, seconds, socialPlatformStores, songArtistsCreativesRoles } from '@/util/resources';
+import { 
+    apiEndpoint, artWorkAllowedTypes, convertToBase64, minutes, musicStores, seconds, 
+    socialPlatformStores, songArtistsCreativesRoles, validateImageArtWork 
+} from '@/util/resources';
 import { languages } from '@/util/languages';
 
 import cloudUploadIconImg from "@/assets/images/cloudUploadIcon.png";
@@ -84,12 +89,13 @@ function CreateSingleRelease2() {
     const [copyrightOwnershipPermission, setCopyrightOwnershipPermission] = useState('');
     const [songWriters, setSongWriters] = useState<string[]>([]);
     const [songArtists_Creatives, setSongArtists_Creatives] = useState<creativeType[]>([]);
-    const [image, setImage] = useState();
+    const [image, setImage] = useState<Blob | null>(null);
     const [imagePreview, setImagePreview] = useState();
-    const [songAudio, setSongAudio] = useState();
+    const [songAudio, setSongAudio] = useState<Blob | null>(null);
     const [songAudioPreview, setSongAudioPreview] = useState<any>();
 
     const [selectCreativeRoleValue, setSelectCreativeRoleValue] = useState('Choose Roles');
+    const [songUploadProgress, setSongUploadProgress] = useState(0);
 
 
     const { 
@@ -107,8 +113,10 @@ function CreateSingleRelease2() {
     });
 
         
-    const handleAudioFileUpload = async (e: any) => {
-        const file = e.target.files[0]; 
+    const handleAudioFileUpload = async (e: ChangeEvent<HTMLInputElement>) => {
+        // const file = e.target.files[0]; 
+        const file = e.target.files?.[0];
+        if (!file) return;
         setSongAudio(file);
 
         const fileReader = new FileReader();
@@ -120,37 +128,32 @@ function CreateSingleRelease2() {
         e.target.value = "";
     }
         
-    const handleFileUpload = async (e: any) => {
-        const file = e.target.files[0]; 
-        setImage(file);
+    const handleImageFileUpload = async (e: ChangeEvent<HTMLInputElement>) => {
+        setApiResponse({
+            display: false,
+            status: false,
+            message: ""
+        });
 
-        const base64: any = await convertToBase64(file);
-        setImagePreview(base64);
+        // const file = e.target.files[0]; 
+        const file = e.target.files?.[0];
+        if (!file) return;
+        
+        const validateResult = await validateImageArtWork(file);
+        setApiResponse(validateResult);
+        if (!validateResult.status) return;
+    
+        const base64 = await convertToBase64(file);
+        if (base64.status && base64.result) {
+            setImage(file);
+            setImagePreview(base64.result);
+        } else {
+            setImage(null);
+            setImagePreview(undefined);
+            setApiResponse(base64);
+        }
     
         e.target.value = "";
-    }
-
-
-    const convertToBase64 = (file: any) => {
-        return new Promise((resolve, reject) => {
-            const fileReader = new FileReader();
-            if (!file) {
-                // setToastNotification({
-                //     display: true,
-                //     message: "Please select an image!",
-                //     status: "info"
-                // })
-            } else {
-                fileReader.readAsDataURL(file);
-                fileReader.onload = () => {
-                    resolve(fileReader.result);
-                }
-            }
-
-            fileReader.onerror = (error) => {
-                reject(error);
-            }
-        });
     }
 
     const onSubmit = async (formData: typeof formSchema.__outputType) => {
@@ -376,6 +379,15 @@ function CreateSingleRelease2() {
                     headers: {
                         'Content-Type': 'multipart/form-data',
                         Authorization: `Bearer ${accessToken}`
+                    },
+                    onUploadProgress: (progressEvent) => {
+                        const loaded = progressEvent.loaded;
+                        const total = progressEvent.total || 0;
+                        const percentage = Math.floor((loaded * 100) / total );
+
+                        if (percentage < 100) {
+                            setSongUploadProgress(percentage);
+                        }
                     },
                 }
             )).data;
@@ -926,16 +938,14 @@ function CreateSingleRelease2() {
 
                                 {
                                     songAudioPreview && (
-
                                         <SongPreviewComponent
                                             songTitle='Audio'
                                             songAudio={songAudioPreview}
                                             deleteSong={() => {
-                                                setSongAudio(undefined);
+                                                setSongAudio(null);
                                                 setSongAudioPreview(undefined);
                                             }}
                                         />
-                                        
                                     )
                                 }
 
@@ -1864,14 +1874,18 @@ function CreateSingleRelease2() {
                                             alignItems: "center"
                                         }}
                                     >
-                                        <Typography component={"h3"} variant='h3'
-                                            sx={{
-                                                fontWeight: "900",
-                                                fontSize: {xs: "15px", md: "20px"},
-                                                lineHeight: {xs: "25px", md: "40px"},
-                                                letterSpacing: "-0.13px"
-                                            }}
-                                        >Upload Song Cover</Typography>
+                                        <Stack direction="row" spacing={2} alignItems="center">
+                                            <Typography component={"h3"} variant='h3'
+                                                sx={{
+                                                    fontWeight: "900",
+                                                    fontSize: {xs: "15px", md: "20px"},
+                                                    lineHeight: {xs: "25px", md: "40px"},
+                                                    letterSpacing: "-0.13px"
+                                                }}
+                                            >Upload Song Cover</Typography>
+
+                                            <ArtWorkFileInfoComponent iconColor="#fff" />
+                                        </Stack>
 
                                         <Box
                                             sx={{
@@ -1940,10 +1954,9 @@ function CreateSingleRelease2() {
                                                     }}
                                                 > { imagePreview ? "Choose an Image" : "Upload" } </Typography>
                                             </Box>
-
                                         </Box>
 
-
+                                        {/* { errors.songWriter && <Box sx={{fontSize: 13, color: "red", textAlign: "left"}}>{ errors.songWriter?.message }</Box> } */}
                                     </Box>
                                 </Stack>
                             </Box>
@@ -1988,8 +2001,18 @@ function CreateSingleRelease2() {
                                 textTransform: "none"
                             }}
                         >
-                            <span style={{ display: isSubmitting ? "none" : "initial" }}>Save Release</span>
-                            <CircularProgress size={25} sx={{ display: isSubmitting ? "initial" : "none", color: "#8638E5", fontWeight: "bold" }} />
+
+                            {
+                                isSubmitting ? (
+                                    <CircularProgressWithLabel 
+                                        value={songUploadProgress} size={30} 
+                                        sx={{ color: "#8638E5", fontWeight: "bold", mx: 'auto' }} 
+                                    />
+                                ) : <span>Save Release</span>
+                            }
+
+                            {/* <span style={{ display: isSubmitting ? "none" : "initial" }}>Save Release</span>
+                            <CircularProgress size={25} sx={{ display: isSubmitting ? "initial" : "none", color: "#8638E5", fontWeight: "bold" }} /> */}
                         </Button>
                     </Stack>
                 </form>
@@ -2010,8 +2033,9 @@ function CreateSingleRelease2() {
                 type="file" 
                 id='uploadSongCoverImage' 
                 name="uploadSongCoverImage" 
-                accept='image/*' 
-                onChange={handleFileUpload}
+                // accept='image/*' 
+                accept={artWorkAllowedTypes.toString()}
+                onChange={handleImageFileUpload}
                 style={{display: "none"}}
             />
 

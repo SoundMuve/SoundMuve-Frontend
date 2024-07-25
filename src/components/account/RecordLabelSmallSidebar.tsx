@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Box from '@mui/material/Box';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -13,9 +13,11 @@ import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import PersonIcon from '@mui/icons-material/Person';
 import SettingsPowerIcon from '@mui/icons-material/SettingsPower';
 import IconButton from '@mui/material/IconButton';
+import AccountBalanceOutlinedIcon from '@mui/icons-material/AccountBalanceOutlined';
 
 import { useSettingStore } from '@/state/settingStore';
 import { useUserStore } from '@/state/userStore';
+import PaymentComponent from './PaymentComponent';
 
 
 interface _Props {
@@ -28,13 +30,15 @@ const RecordLabelSmallSidebarComponent: React.FC<_Props> = ({setSideNav}) => {
     const darkTheme = useSettingStore((state) => state.darkTheme);
     const _logOutUser = useUserStore((state) => state._logOutUser);
 
+    const [openPayoutModal, setOpenPayoutModal] = useState(false);
+    const [withdrawlModal, setWithdrawlModal] = useState(false);
 
     return (
         <Box onMouseEnter={() => setSideNav(false)} onMouseLeave={() => setSideNav(true)}
             sx={{
                 // position: 'relative'
                 height: '100%',
-                maxHeight: "100vh",
+                // maxHeight: "100vh",
                 position: 'sticky',
                 top: 0
             }}
@@ -48,11 +52,10 @@ const RecordLabelSmallSidebarComponent: React.FC<_Props> = ({setSideNav}) => {
             >
                 <List>
                     <ListItem disablePadding sx={{ color: darkTheme ? "#FBFBFB" : "#1C1B1F" }} >
-                        <ListItemButton>
+                        <ListItemButton onClick={() => navigate('/account/record-label')}>
                             <IconButton>
                                 <HomeIcon sx={{ color: darkTheme ? "#FBFBFB" : "#1C1B1F" }} />
                             </IconButton>
-
 
                             {/* <CloseIcon sx={{ fontSize: '16px' }} /> */}
                         </ListItemButton>
@@ -71,7 +74,7 @@ const RecordLabelSmallSidebarComponent: React.FC<_Props> = ({setSideNav}) => {
                             color: "#666666"
                         }}
                     >
-                        <ListItemButton>
+                        <ListItemButton onClick={() => navigate('/account/record-label/sales-report')}>
                             <IconButton>
                                 <ReceiptLongIcon sx={{ color: "#666666" }}  />
                             </IconButton>
@@ -79,12 +82,9 @@ const RecordLabelSmallSidebarComponent: React.FC<_Props> = ({setSideNav}) => {
                     </ListItem>
 
                     <ListItem disablePadding
-                        sx={{ 
-                            mb: '35px',
-                            color: "#666666"
-                        }}
+                        sx={{ mb: '35px', color: "#666666" }}
                     >
-                        <ListItemButton>
+                        <ListItemButton onClick={() => navigate('/account/record-label/balance-history')}>
                             <IconButton>
                                 <AccountBalanceWalletIcon sx={{ color: "#666666" }}  />
                             </IconButton>
@@ -97,9 +97,22 @@ const RecordLabelSmallSidebarComponent: React.FC<_Props> = ({setSideNav}) => {
                             color: "#666666"
                         }}
                     >
-                        <ListItemButton>
+                        <ListItemButton onClick={() => navigate('/account/record-label/analytics-reach')}>
                             <IconButton>
                                 <AssessmentOutlinedIcon sx={{ color: "#666666" }}  />
+                            </IconButton>
+                        </ListItemButton>
+                    </ListItem>
+
+                    <ListItem disablePadding
+                        sx={{ 
+                            mb: '35px',
+                            color: "#666666"
+                        }}
+                    >
+                        <ListItemButton onClick={() => setWithdrawlModal(true)}>
+                            <IconButton>
+                                <AccountBalanceOutlinedIcon sx={{ color: "#666666" }}  />
                             </IconButton>
                         </ListItemButton>
                     </ListItem>
@@ -140,6 +153,12 @@ const RecordLabelSmallSidebarComponent: React.FC<_Props> = ({setSideNav}) => {
                     </ListItem>
                 </List>
             </Box>
+
+
+            <PaymentComponent 
+                withdrawlModal={withdrawlModal} setWithdrawlModal={setWithdrawlModal} 
+                openPayoutModal={openPayoutModal} setOpenPayoutModal={setOpenPayoutModal}
+            />
 
         </Box>
     )

@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
@@ -18,9 +18,11 @@ import PersonIcon from '@mui/icons-material/Person';
 import SettingsPowerIcon from '@mui/icons-material/SettingsPower';
 import CloseIcon from '@mui/icons-material/Close';
 import IconButton from '@mui/material/IconButton';
+import AccountBalanceOutlinedIcon from '@mui/icons-material/AccountBalanceOutlined';
 
 import { useSettingStore } from '@/state/settingStore';
 import { useUserStore } from '@/state/userStore';
+import PaymentComponent from './PaymentComponent';
 
 
 
@@ -34,12 +36,15 @@ const RecordLabelBigSidebarComponent: React.FC<_Props> = ({setSideNav}) => {
     const darkTheme = useSettingStore((state) => state.darkTheme);
     const _logOutUser = useUserStore((state) => state._logOutUser);
 
+    const [openPayoutModal, setOpenPayoutModal] = useState(false);
+    const [withdrawlModal, setWithdrawlModal] = useState(false);
 
     return (
         <Box onMouseEnter={() => setSideNav(false)} onMouseLeave={() => setSideNav(true)}
             sx={{
                 maxWidth: "200px",
                 width: '100%',
+                height: "100%"
             }}
         >
             <Box
@@ -157,6 +162,28 @@ const RecordLabelBigSidebarComponent: React.FC<_Props> = ({setSideNav}) => {
                             <ListItemText primary="Reach" />
                         </ListItemButton>
                     </ListItem>
+
+                    <ListItem disablePadding
+                        sx={{ 
+                            mb: '40px',
+                            color: "#666666"
+                        }}
+                    >
+                        <ListItemButton onClick={() => setWithdrawlModal(true)}>
+                            <ListItemIcon
+                                sx={{
+                                    "&.MuiListItemIcon-root": {
+                                        minWidth: '0px',
+                                        pr: "5px"
+                                    }
+                                }}
+                            >
+                                <AccountBalanceOutlinedIcon sx={{ color: "#666666" }}  />
+                            </ListItemIcon>
+
+                            <ListItemText primary="Withdraw" />
+                        </ListItemButton>
+                    </ListItem>
                 </List>
 
                 <Box my="auto">
@@ -200,6 +227,12 @@ const RecordLabelBigSidebarComponent: React.FC<_Props> = ({setSideNav}) => {
                     </Box>
                 </Box>
             </Box>
+
+
+            <PaymentComponent 
+                withdrawlModal={withdrawlModal} setWithdrawlModal={setWithdrawlModal} 
+                openPayoutModal={openPayoutModal} setOpenPayoutModal={setOpenPayoutModal}
+            />
 
         </Box>
     )
