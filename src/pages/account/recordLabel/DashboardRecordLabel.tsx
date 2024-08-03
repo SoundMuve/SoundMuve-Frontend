@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import Box from '@mui/material/Box';
@@ -7,10 +7,10 @@ import Typography from '@mui/material/Typography';
 import Avatar from '@mui/material/Avatar';
 import Grid from '@mui/material/Grid';
 
-import album1 from "@/assets/images/album/album1.jpeg";
-import album2 from "@/assets/images/album/album2.jpg";
-import album3 from "@/assets/images/album/album3.jpeg";
-import album4 from "@/assets/images/album/album4.jpg";
+// import album1 from "@/assets/images/album/album1.jpeg";
+// import album2 from "@/assets/images/album/album2.jpg";
+// import album3 from "@/assets/images/album/album3.jpeg";
+// import album4 from "@/assets/images/album/album4.jpg";
 import album5 from "@/assets/images/album/album5.jpg";
 
 import albumCard3 from "@/assets/images/album/albumCard3.jpg";
@@ -18,53 +18,117 @@ import albumCard4 from "@/assets/images/album/albumCard4.jpg";
 import albumCard5 from "@/assets/images/album/albumCard5.jpg";
 import albumCard6 from "@/assets/images/album/albumCard6.jpg";
 
-import { stringAvatar } from '@/util/resources';
+import { apiEndpoint, stringAvatar } from '@/util/resources';
 import { useSettingStore } from '@/state/settingStore';
 import AccountWrapper from '@/components/AccountWrapper';
 import PromotionalAdsComponent from '@/components/PromotionalAds';
 import RecordLabelBigSidebarComponent from '@/components/account/RecordLabelBigSidebar';
 import RecordLabelSmallSidebarComponent from '@/components/account/RecordLabelSmallSidebar';
 import RecordLabelSearchComponent from '@/components/account/RecordLabelSearch';
+import axios from 'axios';
 
 // import { useSettingStore } from '@/state/settingStore';
-// import { useUserStore } from '@/state/userStore';
+import { useUserStore } from '@/state/userStore';
+import { recordLabelArtistInterface } from '@/constants/typesInterface';
 
 
-const albumPreview = [
-    {
-        image: album1,
-        title: 'David',
-        subtitle: '5 Songs'
-    },
-    {
-        image: album2,
-        title: 'John',
-        subtitle: '5 Songs'
-    },
-    {
-        image: album3,
-        title: 'Mavi',
-        subtitle: '5 Songs'
-    },
-    {
-        image: album4,
-        title: 'Portable',
-        subtitle: '5 Songs'
-    },
-    {
-        image: album5,
-        title: 'Limo',
-        subtitle: '5 Songs'
-    },
-];
+// const albumPreview = [
+//     {
+//         image: album1,
+//         title: 'David',
+//         subtitle: '5 Songs'
+//     },
+//     {
+//         image: album2,
+//         title: 'John',
+//         subtitle: '5 Songs'
+//     },
+//     {
+//         image: album3,
+//         title: 'Mavi',
+//         subtitle: '5 Songs'
+//     },
+//     {
+//         image: album4,
+//         title: 'Portable',
+//         subtitle: '5 Songs'
+//     },
+//     {
+//         image: album5,
+//         title: 'Limo',
+//         subtitle: '5 Songs'
+//     },
+// ];
 
 function DashboardRecordLabel() {
     const navigate = useNavigate();
     const darkTheme = useSettingStore((state) => state.darkTheme);
-    // const userData = useUserStore((state) => state.userData); 
-    // const accessToken = useUserStore((state) => state.accessToken);
+    const userData = useUserStore((state) => state.userData); 
+    const accessToken = useUserStore((state) => state.accessToken);
 
     const [smallSideNav, setsmallSideNav] = useState(true);
+
+    const [totalArtists, setTotalArtists] = useState('');
+    const [totalSongs, setTotalSongs] = useState('');
+    const [recordLabelArtist, setRecordLabelArtist] = useState<recordLabelArtistInterface[]>();
+
+
+    useEffect(() => {
+        getTotalNumberOfArtist();
+        getAllRecordLabelArtist();
+        getRecordLabelTotalSongs();
+    }, []);
+
+    
+    const getTotalNumberOfArtist = async () => {
+        try {
+            const response = (await axios.get(`${apiEndpoint}/recordLabel/artistsList/count?recordLabelemail=${ userData.email }`, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`
+                }
+            })).data;
+            console.log(response);
+
+            setTotalArtists(response.count);
+
+        } catch (error: any) {
+            const errorResponse = error.response.data;
+            console.error(errorResponse);
+        }
+    }
+    
+    const getAllRecordLabelArtist = async () => {
+        try {
+            const response = (await axios.get(`${apiEndpoint}/recordLabel/artistsList?recordLabelemail=${ userData.email }`, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`
+                }
+            })).data;
+            console.log(response);
+
+            setRecordLabelArtist(response);
+        } catch (error: any) {
+            const errorResponse = error.response.data;
+            console.error(errorResponse);
+            setRecordLabelArtist([]);
+        }
+    }
+    
+    const getRecordLabelTotalSongs = async () => {
+        try {
+            const response = (await axios.get(`${apiEndpoint}/recordLabel/songs/count?email=${ userData.email }`, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`
+                }
+            })).data;
+            console.log(response);
+
+            setTotalSongs(response.count);
+        } catch (error: any) {
+            const errorResponse = error.response.data;
+            console.error(errorResponse);
+        }
+    }
 
 
     return (
@@ -262,9 +326,7 @@ function DashboardRecordLabel() {
                                                     textAlign: 'center',
                                                     mt: {xs: "25px", md: '50px'}
                                                 }}
-                                            >
-                                                Welcome Mavin
-                                            </Typography>
+                                            > Welcome { userData.recordLabelName } </Typography>
 
                                             <Stack direction="row" spacing="20px" justifyContent="space-between" mt="auto">
                                                 <Box>
@@ -285,7 +347,7 @@ function DashboardRecordLabel() {
                                                             letterSpacing: {xs: '-0.64px', md: '-1.59px'},
                                                             mt: {xs: "13px", md: '21px'}
                                                         }}
-                                                    >5</Typography>
+                                                    >{ totalArtists }</Typography>
                                                 </Box>
 
                                                 <Box>
@@ -306,7 +368,7 @@ function DashboardRecordLabel() {
                                                             letterSpacing: {xs: '-0.64px', md: '-1.59px'},
                                                             mt: {xs: "13px", md: '21px'}
                                                         }}
-                                                    >25</Typography>
+                                                    >{ totalSongs }</Typography>
                                                 </Box>
                                             </Stack>
 
@@ -343,14 +405,14 @@ function DashboardRecordLabel() {
 
                                 <Grid container spacing={3}>
                                     {
-                                        albumPreview.map((item, i) => (
+                                        recordLabelArtist?.slice(0, 6).map((item, i) => (
                                             <Grid item xs={6} sm={4} md={3} lg={2} key={i}>
                                                 <Stack alignItems="center">
                                                     <Avatar
-                                                        alt={`${item.title} icon`}
-                                                        src={item.image}
+                                                        alt={`${item.artistName} image`}
+                                                        src={item.artistAvatarUrl}
                                                         // variant="rounded"
-                                                        aria-label={item.title}
+                                                        aria-label={item.artistName}
                                                         sx={{ 
                                                             boxShadow: "0px 4px 8px -1px rgba(0, 0, 0, 0.1)",
                                                             // bgcolor: stringToColor(project.title),
@@ -362,7 +424,7 @@ function DashboardRecordLabel() {
                                                         children={<Typography sx={{
                                                             fontSize: "15px",
                                                             fontWeight: "bold"
-                                                        }}>{stringAvatar(item.title)}</Typography>}
+                                                        }}>{stringAvatar(item.artistName)}</Typography>}
                                                     />
                             
                                                     <Typography variant='h4' component="h4"
@@ -373,7 +435,7 @@ function DashboardRecordLabel() {
                                                             letterSpacing: '-0.59px',
                                                             mt: '26px'
                                                         }}
-                                                    >{item.title}</Typography>
+                                                    >{item.artistName}</Typography>
 
                                                     <Typography variant='body2'
                                                         sx={{
@@ -384,7 +446,8 @@ function DashboardRecordLabel() {
                                                             color: '#666666',
                                                             mt: '13px'
                                                         }}
-                                                    >{item.subtitle}</Typography>
+                                                    >{ '0' }</Typography>
+                                                    {/* >{item.subtitle }</Typography> */}
                                                 </Stack>
                                             </Grid>
                                         ))

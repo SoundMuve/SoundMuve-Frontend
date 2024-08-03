@@ -22,6 +22,7 @@ import { useUserStore } from '@/state/userStore';
 
 import { apiEndpoint } from '@/util/resources';
 import { getLocalStorage, setLocalStorage } from '@/util/storage';
+import { useReleaseStore } from '@/state/releaseStore';
 
 // type status = "Live" | "Pending" | "Incomplete" | "Complete" | "Failed";
 
@@ -108,7 +109,9 @@ function AllMusic() {
     const userData = useUserStore((state) => state.userData);
     const accessToken = useUserStore((state) => state.accessToken);
     const [singleRelease, setSingleRelease] = useState<any[]>();
+    const _setSongDetails = useReleaseStore((state) => state._setSongDetails);
 
+    
     const _setToastNotification = useSettingStore((state) => state._setToastNotification);
     const [apiResponse, setApiResponse] = useState({
         display: false,
@@ -168,7 +171,25 @@ function AllMusic() {
 
     const songView = (song: any, index: number) => (
         <Grid item xs={6} md={4} key={index}>
-            <Box sx={{ width: "95%" }}>
+            <Box sx={{ width: "95%" }}
+                onClick={() => {
+                    navigate(`/account/artist/${albumType == "Album" ? "album-details" : "song-details"}`);
+
+                    _setSongDetails({
+                        artist_name: song.artist_name,
+                        cover_photo: song.song_cover,
+                        email: song.email,
+                        label_name: song.label_name,
+                        primary_genre: song.primary_genre,
+                        secondary_genre: song.secondary_genre,
+                        song_title: song.song_title,
+                        stream_time: '',
+                        streams: "",
+                        total_revenue: "",
+                        upc_ean: song.upc_ean
+                    });
+                }}
+            >
                 <Box
                     sx={{
                         height: {xs: "152.99px", md: "268px"},

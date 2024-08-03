@@ -44,6 +44,8 @@ import SearchArtistModalComponent from '@/components/account/SearchArtistModal';
 import AppleSportifyCheckmark from '@/components/AppleSportifyCheckmark';
 
 import albumSampleArt from "@/assets/images/albumSampleArt.png"
+import { restCountries } from '@/util/countries';
+import LongSelectList from '@/components/LongSelectList';
 
 
 const formSchema = yup.object({
@@ -68,6 +70,8 @@ const formSchema = yup.object({
     UPC_EANcode: yup.string().trim().label("UPC/EAN Code"),
 });
 
+const contriesss = restCountries.map(item => item.name.common);
+contriesss.unshift("All");
 
 function CreateSingleRelease() {
     const navigate = useNavigate();
@@ -102,6 +106,7 @@ function CreateSingleRelease() {
 
     const [openSearchArtistModal, setOpenSearchArtistModal] = useState(false);
     const [selectArtistName, setSelectArtistName] = useState<any>();
+    const [selectSoldCountries, setSelectSoldCountries] = useState<string[]>(contriesss);
 
 
     useEffect(() => {
@@ -185,7 +190,12 @@ function CreateSingleRelease() {
         );
     }
 
-            
+    const handleSoldCountriesSelect = (selected: string[]) => {
+        setSelectSoldCountries(selected);
+        setValue("soldWorldwide", selected.toString(), {shouldDirty: true, shouldTouch: true, shouldValidate: true});
+    }
+
+
     const onSubmit = async (formData: typeof formSchema.__outputType) => {
         // console.log(formData);
 
@@ -305,6 +315,7 @@ function CreateSingleRelease() {
             upc_ean: formData.UPC_EANcode || '',
         };
         // console.log(data2db);
+        _setSingleRelease1(data2db);
 
         try {
             const response = (await axios.post(
@@ -1204,15 +1215,20 @@ function CreateSingleRelease() {
                                                 sx={{ mb: 2, alignItems: 'flex-start' }}
                                                 onChange={(event) => {
                                                     const eValue: any = event.target;
-                                                    // console.log(eValue.checked);
 
-                                                    if (eValue.checked == true) {
-                                                        setValue("listenerTimezone", eValue.checked, {shouldDirty: true, shouldTouch: true, shouldValidate: true});
-                                                        setSelectListenerTimezoneValue(eValue.checked);
+                                                    setValue("listenerTimezone", eValue.checked, {shouldDirty: true, shouldTouch: true, shouldValidate: true});
+                                                    setSelectListenerTimezoneValue(eValue.checked);
 
-                                                        setValue("generalTimezone", false, {shouldDirty: true, shouldTouch: true, shouldValidate: true} );
-                                                        setSelectGeneralTimezoneValue(false);
-                                                    }
+                                                    setValue("generalTimezone", !eValue.checked, {shouldDirty: true, shouldTouch: true, shouldValidate: true} );
+                                                    setSelectGeneralTimezoneValue(!eValue.checked);
+
+                                                    // if (eValue.checked == true) {
+                                                    //     setValue("listenerTimezone", eValue.checked, {shouldDirty: true, shouldTouch: true, shouldValidate: true});
+                                                    //     setSelectListenerTimezoneValue(eValue.checked);
+
+                                                    //     setValue("generalTimezone", !eValue.checked, {shouldDirty: true, shouldTouch: true, shouldValidate: true} );
+                                                    //     setSelectGeneralTimezoneValue(!eValue.checked);
+                                                    // }
                                                 }}
                                             />
 
@@ -1242,13 +1258,19 @@ function CreateSingleRelease() {
                                                 onChange={(event) => {
                                                     const eValue: any = event.target;
                                                     // console.log(eValue.checked);
-                                                    if (eValue.checked == true) {
-                                                        setValue("generalTimezone", eValue.checked, {shouldDirty: true, shouldTouch: true, shouldValidate: true} );
-                                                        setSelectGeneralTimezoneValue(eValue.checked);
+                                                    setValue("generalTimezone", eValue.checked, {shouldDirty: true, shouldTouch: true, shouldValidate: true} );
+                                                    setSelectGeneralTimezoneValue(eValue.checked);
+                                                    
+                                                    setValue("listenerTimezone", !eValue.checked, {shouldDirty: true, shouldTouch: true, shouldValidate: true} );
+                                                    setSelectListenerTimezoneValue(!eValue.checked);
+
+                                                    // if (eValue.checked == true) {
+                                                    //     setValue("generalTimezone", eValue.checked, {shouldDirty: true, shouldTouch: true, shouldValidate: true} );
+                                                    //     setSelectGeneralTimezoneValue(eValue.checked);
                                                         
-                                                        setValue("listenerTimezone", false, {shouldDirty: true, shouldTouch: true, shouldValidate: true} );
-                                                        setSelectListenerTimezoneValue(false);
-                                                    }
+                                                    //     setValue("listenerTimezone", false, {shouldDirty: true, shouldTouch: true, shouldValidate: true} );
+                                                    //     setSelectListenerTimezoneValue(false);
+                                                    // }
                                                 }}
                                             />
                                         </FormGroup>
@@ -1465,8 +1487,8 @@ function CreateSingleRelease() {
                                                             p: {xs: "10.18px 19.68px 10.18px 19.68px", md: "15px 29px 15px 29px"},
                                                             borderRadius: {xs: "8.14px", md: "12px"},
 
-                                                            background: getValues("soldWorldwide") == "No" ? "#644986" : darkTheme ? "#fff" : "#272727",
-                                                            color: getValues("soldWorldwide") == "No" ? "#fff" : darkTheme ? "#000" : "#fff",
+                                                            background: soldWorldwide == "No" ? "#644986" : darkTheme ? "#fff" : "#272727",
+                                                            color: soldWorldwide == "No" ? "#fff" : darkTheme ? "#000" : "#fff",
 
                                                             cursor: "pointer",
                                                             display: "inline-block"
@@ -1495,6 +1517,25 @@ function CreateSingleRelease() {
                                                     }
                                                 </Box>
                                             </Box>
+
+
+                                            { soldWorldwide == "No" ? 
+                                                <FormControl fullWidth sx={{mt: 2}}>
+
+                                                    <Typography id="soldCountriesSelect" sx={{color: "grey"}}>
+                                                        Where would you like your music to be sold
+                                                    </Typography>
+
+                                                    <LongSelectList 
+                                                        options={contriesss}
+                                                        darkTheme={darkTheme}
+                                                        handleSelected={handleSoldCountriesSelect}
+                                                        selectedValue={selectSoldCountries}
+                                                        error={ errors.soldWorldwide ? true : false }
+                                                    />
+                                                </FormControl>
+                                                : <></>
+                                            }
 
                                             { errors.soldWorldwide && <Box sx={{fontSize: 13, color: "red", textAlign: "left"}}>{ errors.soldWorldwide?.message }</Box> }
                                         </Box>

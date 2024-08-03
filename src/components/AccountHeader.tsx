@@ -19,11 +19,12 @@ import Avatar from '@mui/material/Avatar';
 
 import MenuIcon from '@mui/icons-material/Menu';
 import CloseIcon from '@mui/icons-material/Close';
-import LanguageIcon from '@mui/icons-material/Language';
 import SettingsPowerIcon from '@mui/icons-material/SettingsPower';
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+// import LanguageIcon from '@mui/icons-material/Language';
+// import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import LightbulbOutlinedIcon from '@mui/icons-material/LightbulbOutlined';
 import AccountCircleOutlined from '@mui/icons-material/AccountCircleOutlined';
+import ClickAwayListener from '@mui/material/ClickAwayListener';
 
 import HomeIcon from '@mui/icons-material/Home';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
@@ -38,6 +39,7 @@ import NewReleaseModalComponent from './account/NewReleaseModal';
 import { useUserStore } from '@/state/userStore';
 import { stringAvatar, stringToColor } from '@/util/resources';
 import ListItemIcon from '@mui/material/ListItemIcon';
+import LanguageTranslate from './LanguageTranslate';
 
 const drawerWidth = 240;
 
@@ -50,9 +52,30 @@ export default function AccountHeaderComponent() {
     const _setTheme = useSettingStore((state) => state._setTheme);
     const userData = useUserStore((state) => state.userData);
     const _logOutUser = useUserStore((state) => state._logOutUser);
+    // const isLoggedIn = useUserStore((state) => state.isLoggedIn);
+    const [openAccountProfile, setOpenAccountProfile] = useState(false);
 
     const [openReleaseModal, setOpenReleaseModal] = useState(false);
     const closeReleaseModal = () => { setOpenReleaseModal(false) }
+
+    const logOutFunc = () => {
+        _logOutUser();
+        // console.log("hello");
+        
+
+        // const intervalId = setInterval(() => {
+        //     console.log(isLoggedIn);
+        //     _logOutUser();
+        // }, 500);
+        
+        // if (!isLoggedIn) {
+        //     console.log(isLoggedIn);
+        //     clearInterval(intervalId);
+        // }
+        // else {
+        //     _logOutUser();
+        // }
+    }
 
     const handleDrawerToggle = () => {
         setMobileOpen((prevState) => !prevState);
@@ -181,7 +204,7 @@ export default function AccountHeaderComponent() {
                         )
                     }
 
-                    {/* <ListItem disablePadding onClick={() => _logOutUser() }>
+                    {/* <ListItem disablePadding onClick={() => logOutFunc() }>
                         <ListItemButton>
                             <ListItemText primary="Log out" />
                         </ListItemButton>
@@ -232,7 +255,7 @@ export default function AccountHeaderComponent() {
                     </Stack>
 
                     <Stack direction="row" alignItems='center' spacing="10px"
-                        onClick={() => _logOutUser() }
+                        onClick={() => logOutFunc() }
                         sx={{
                             width: "fit-content",
                             bgcolor: darkTheme ? "#FBFBFB" : "#272727",
@@ -269,9 +292,7 @@ export default function AccountHeaderComponent() {
                             borderRadius: 3,
                         }}
                     >
-                        <LanguageIcon />
-                        <Typography>Eng</Typography>
-                        <ArrowDropDownIcon />
+                        <LanguageTranslate />
                     </Box>
 
                     <IconButton 
@@ -343,7 +364,7 @@ export default function AccountHeaderComponent() {
             </Stack>
 
             <Stack direction="row" alignItems='center' spacing="10px"
-                onClick={() => _logOutUser() }
+                onClick={() => logOutFunc() }
                 sx={{
                     width: "fit-content",
                     bgcolor: "#FBFBFB",
@@ -461,26 +482,39 @@ export default function AccountHeaderComponent() {
 
                             <Box sx={{ display: { xs: 'none', sm: 'block' }, alignSelf: "center" }}>
                                 <Box sx={{display: "flex", flexDirection: "row", gap: 0, color: "#FFF"}}>
-                                    <LanguageIcon />
-                                    <Typography sx={{color: "#FFF"}}>Eng</Typography>
-                                    <ArrowDropDownIcon />
+                                    <LanguageTranslate />
                                 </Box>
                             </Box>
 
                             <Box sx={{ display: { xs: 'none', sm: 'block' }, alignSelf: "center" }}>
-                                <Tooltip title={accountProfile} arrow color='primary' placement="bottom-start" 
-                                    slotProps={{
-                                        tooltip: {
-                                            sx: {
-                                                backgroundColor: darkTheme ? "#272727" : "#D9D9D9",
-                                            },
-                                        },
-                                    }}
-                                >
-                                    <IconButton sx={{color: "#fff"}}>
-                                        <AccountCircleOutlined />
-                                    </IconButton>
-                                </Tooltip>
+                                <ClickAwayListener onClickAway={() => setOpenAccountProfile(false)}>
+                                    <div>
+                                        <Tooltip title={accountProfile} arrow color='primary' placement="bottom-start" 
+
+                                            disableFocusListener
+                                            disableHoverListener
+                                            disableTouchListener
+                                            PopperProps={{
+                                                disablePortal: true,
+                                            }}
+                                            onClose={() => setOpenAccountProfile(false)}
+                                            open={openAccountProfile}
+
+                                            slotProps={{
+                                                tooltip: {
+                                                    sx: {
+                                                        backgroundColor: darkTheme ? "#272727" : "#D9D9D9",
+                                                    },
+                                                },
+                                            }}
+                                        >
+                                            <IconButton sx={{color: "#fff"}} onClick={() => setOpenAccountProfile(true) }>
+                                                <AccountCircleOutlined />
+                                            </IconButton>
+                                        </Tooltip>
+                                    </div>
+                                </ClickAwayListener>
+
                             </Box>
                         </Stack>
 

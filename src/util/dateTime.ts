@@ -1,3 +1,38 @@
+export function getDateRange(days: number) {
+    const today = new Date();
+    const endDate = new Date(today);
+    endDate.setDate(today.getDate() + days);
+  
+    const formatDate = (date: Date) => {
+        const options: any = { month: 'short', day: 'numeric' };
+        return date.toLocaleDateString('en-US', options);
+    };
+  
+    const startDateStr = formatDate(today);
+    const endDateStr = formatDate(endDate);
+  
+    return `${startDateStr} - ${endDateStr}`;
+}
+
+export function getFormattedDateRange(days: number) {
+    const today = new Date();
+    const endDate = new Date(today);
+    endDate.setDate(today.getDate() + days);
+  
+    const formatDate = (date: Date) => {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    };
+  
+    const startDateStr = formatDate(today);
+    const endDateStr = formatDate(endDate);
+  
+    return { startDate: startDateStr, endDate: endDateStr };
+} 
+
+
 export function getCurrentDateTime() {
     const now = new Date();
   
@@ -17,17 +52,18 @@ export function getCurrentDateTime() {
     return dateTimeString;
 }
   
-export function chatDateFormat(dateString: string) {
+export function formatTransactionDate(dateString: string) {
     // Create a Date object from the string
     const date = new Date(dateString);
   
     // Extract day, month, and year components
     const day = date.getDate().toString().padStart(2, "0");
-    const month = date.toLocaleDateString("en-US", { month: "short" });
+    // const month = date.toLocaleDateString("en-US", { month: "short" });
+    const month = date.getMonth() + 1;
     const year = date.getFullYear();
   
     // Format the date in the desired format
-    return `${day} ${month} ${year}`;
+    return `${day}/${month}/${year}`;
 }
 
 export function chatTimeFormat(dateString: string) {

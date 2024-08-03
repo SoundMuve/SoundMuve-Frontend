@@ -435,6 +435,8 @@ function CreateAlbumReleaseSongUpload() {
             tikTokClipStartTime: `${ formData.tikTokClipStartTime_Minutes }:${ formData.tikTokClipStartTime_Seconds }`,
         };
 
+        _setAlbumReleaseSongUpload({...newSongData, _id: ''});
+        
         // console.log(newSongData);
 
         const data2db = new FormData();

@@ -15,13 +15,14 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 // import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
-import LanguageIcon from '@mui/icons-material/Language';
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+// import LanguageIcon from '@mui/icons-material/Language';
+// import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import CloseIcon from '@mui/icons-material/Close';
 
 import SoundMuve from "./../assets/images/SoundMuve.png";
 import { useUserStore } from '../state/userStore';
 import { AccountCircleOutlined } from '@mui/icons-material';
+import LanguageTranslate from './LanguageTranslate';
 
 const drawerWidth = 240;
 
@@ -92,15 +93,13 @@ export default function HeaderComponent() {
             </Box>
 
             <Box sx={{mt: "auto"}}>
-                <Box onClick={handleDrawerToggle} sx={{
+                <Box sx={{
                     display: "flex", flexDirection: "row", gap: 0, color: "#FFF", 
                     border: "1px solid #fff",
                     p: 1, width: "90px",
                     borderRadius: 3,
                 }}>
-                    <LanguageIcon />
-                    <Typography sx={{color: "#FFF"}}>Eng</Typography>
-                    <ArrowDropDownIcon />
+                    <LanguageTranslate />
                 </Box>
             </Box>
         </Box>
@@ -136,9 +135,7 @@ export default function HeaderComponent() {
                         <Stack spacing={2} direction="row" alignItems="center" >
                             <Box sx={{ display: { xs: 'none', sm: 'block' }, alignSelf: "center" }}>
                                 <Box sx={{display: "flex", flexDirection: "row", gap: 0, color: "#FFF"}}>
-                                    <LanguageIcon />
-                                    <Typography sx={{color: "#FFF"}}>Eng</Typography>
-                                    <ArrowDropDownIcon />
+                                    <LanguageTranslate />
                                 </Box>
                             </Box>
 

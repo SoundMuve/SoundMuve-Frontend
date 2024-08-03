@@ -1,5 +1,11 @@
+import { getLocalStorage, removeLocalStorageItem, setLocalStorage } from "@/util/storage";
 import { create } from "zustand";
 
+
+interface creativeType {
+    creativeName: string,
+    creativeRole: string,
+}
 
 const singleRelease1 = {
     email: "",
@@ -35,10 +41,10 @@ const singleRelease2 = {
     store: '',
     social_platform: "",
 
-    mp3_file: '',
-    song_writer: [],
+    mp3_file: <any> '',
+    song_writer:<string[]> [],
 
-    songArtistsCreativeRole: [],
+    songArtistsCreativeRole:<creativeType[]> [],
 
     copyright_ownership: '',
     copyright_ownership_permissions: '',
@@ -47,7 +53,7 @@ const singleRelease2 = {
     language_lyrics: '',
     lyrics: '',
     tikTokClipStartTime: '',
-    cover_photo: ''
+    cover_photo: <any> ''
 }
 
 const albumReleaseDetails = {
@@ -124,11 +130,6 @@ const completeAlbumData = {
     // "__v": 0
 }
 
-
-interface creativeType {
-    creativeName: string,
-    creativeRole: string,
-}
 const albumReleaseSongUpload = {
     _id: '',
     email: '',
@@ -175,6 +176,10 @@ type _typeInterface_ = {
     _setSingleRelease1: (release: typeof singleRelease1) => void;
     _setSingleRelease2: (release: typeof singleRelease2) => void;
 
+    _clearAlbumRelease: () => void;
+    _clearSingleRelease: () => void;
+    _restoreAllRelease: () => void;
+
     // _setCreateAlbum_details: (release: typeof singleRelease2) => void;
 
     // updatePlayerAsync: () => Promise<void>;
@@ -196,6 +201,7 @@ export const createReleaseStore = create<_typeInterface_>((set) => ({
   
     _setSingleRelease1: (release) => {
         // setLocalStorage("user", user);
+        setLocalStorage("singleRelease1", release);
 
         set((_state) => {
             return {
@@ -206,6 +212,8 @@ export const createReleaseStore = create<_typeInterface_>((set) => ({
   
     _setSingleRelease2: (release) => {
         // setLocalStorage("user", user);
+        const releaData = { ...release, mp3_file: '', songAudioPreview: '', cover_photo: '', imagePreview: '' };
+        setLocalStorage("singleRelease2", releaData);
 
         set((_state) => {
             return {
@@ -216,6 +224,7 @@ export const createReleaseStore = create<_typeInterface_>((set) => ({
   
     _setCompleteAlbumData: (data) => {
         // setLocalStorage("user", user);
+        setLocalStorage("completeAlbumData", data);
 
         set((_state) => {
             return {
@@ -235,6 +244,8 @@ export const createReleaseStore = create<_typeInterface_>((set) => ({
     // },
   
     _setAlbumReleaseDetails: (details) => {
+        setLocalStorage("albumReleaseDetails", details);
+
         set((_state) => {
             return {
                 albumReleaseDetails: details,
@@ -243,6 +254,8 @@ export const createReleaseStore = create<_typeInterface_>((set) => ({
     },
   
     _setAlbumReleaseAdvanceFeatures: (details) => {
+        setLocalStorage("albumReleaseAdvanceFeatures", details);
+
         set((_state) => {
             return {
                 albumReleaseAdvanceFeatures: details,
@@ -251,6 +264,8 @@ export const createReleaseStore = create<_typeInterface_>((set) => ({
     },
   
     _setAlbumReleaseStores: (details) => {
+        setLocalStorage("albumReleaseStores", details);
+
         set((_state) => {
             return {
                 albumReleaseStores: details,
@@ -259,18 +274,36 @@ export const createReleaseStore = create<_typeInterface_>((set) => ({
     },
   
     _setAlbumReleaseSongUpload: (details) => {
+        const albumReleaseSongUpload = getLocalStorage('albumReleaseSongUpload');
+        const newDetail = { ...details, mp3_file: '', songAudioPreview: '' };
+        if (albumReleaseSongUpload.length) {
+            setLocalStorage("albumReleaseSongUpload", [ ...albumReleaseSongUpload, newDetail ]);
+        } else {
+            setLocalStorage("albumReleaseSongUpload", [ newDetail ]);
+        }
+
         set((state) => {
+            const songUpload = [ ...state.albumReleaseSongUpload, details ];
+            // setLocalStorage("albumReleaseSongUpload", songUpload);
+
             return {
-                albumReleaseSongUpload: [ ...state.albumReleaseSongUpload, details ],
+                albumReleaseSongUpload: songUpload,
             };
         });
     },
   
     _removeAlbumReleaseSongUpload: (index) => {
+        const albumReleaseSongUpload = getLocalStorage('albumReleaseSongUpload');
+        if (albumReleaseSongUpload.length) {
+            const result = albumReleaseSongUpload.filter((_: any, i: number) => i !== index);
+            setLocalStorage("albumReleaseSongUpload", result);
+        }
+        
+        
         set((state) => {
             // const remainingFruits = state.albumReleaseSongUpload.filter((_, i) => i !== index).concat([]);
-
             const result = state.albumReleaseSongUpload.filter((_, i) => i !== index);
+            // setLocalStorage("albumReleaseSongUpload", result);
 
             return {
                 albumReleaseSongUpload: result,
@@ -278,13 +311,74 @@ export const createReleaseStore = create<_typeInterface_>((set) => ({
         });
     },
 
-    _setAlbumReleaseAlbumArt : (details) => {
+    _setAlbumReleaseAlbumArt: (details) => {
+        // setLocalStorage("albumReleaseAlbumArt", { ...details, image: '' });
+
         set((_state) => {
             return {
                 albumReleaseAlbumArt: details,
             };
         });
     },
+
+    _clearAlbumRelease: () => {
+        removeLocalStorageItem("completeAlbumData");
+        removeLocalStorageItem("albumReleaseDetails");
+        removeLocalStorageItem("albumReleaseAdvanceFeatures");
+        removeLocalStorageItem("albumReleaseStores");
+        removeLocalStorageItem("albumReleaseSongUpload");
+
+        set((_state) => {
+            return {
+                albumReleaseDetails: albumReleaseDetails,
+                albumReleaseAdvanceFeatures: albumReleaseAdvanceFeatures,
+                albumReleaseStores: albumReleaseStores,
+                albumReleaseSongUpload: [],
+                albumReleaseAlbumArt: albumReleaseAlbumArt,
+            };
+        });
+    },
+
+    _clearSingleRelease: () => {
+        removeLocalStorageItem("singleRelease1");
+        removeLocalStorageItem("singleRelease2");
+
+        set((_state) => {
+            return {
+                singleRelease1: singleRelease1,
+                singleRelease2: singleRelease2,
+            };
+        });
+    },
+
+    _restoreAllRelease: () => {
+        const singleRelease1_LS = getLocalStorage("singleRelease1");
+        const singleRelease2_LS = getLocalStorage("singleRelease2");
+
+        const completeAlbumData_LS = getLocalStorage("completeAlbumData");
+
+        const albumReleaseDetails_LS = getLocalStorage("albumReleaseDetails");
+        const albumReleaseAdvanceFeatures_LS = getLocalStorage("albumReleaseAdvanceFeatures");
+        const albumReleaseStores_LS = getLocalStorage("albumReleaseStores");
+        const albumReleaseSongUpload_LS = getLocalStorage("albumReleaseSongUpload");
+        const albumReleaseAlbumArt_LS = getLocalStorage("albumReleaseAlbumArt");
+
+
+        set((_state) => {
+            return {
+                singleRelease1: singleRelease1_LS ? singleRelease1_LS : singleRelease1,
+                singleRelease2: singleRelease2_LS ? singleRelease2_LS : singleRelease2,
+
+                completeAlbumData: completeAlbumData_LS ? completeAlbumData_LS : completeAlbumData,
+
+                albumReleaseDetails: albumReleaseDetails_LS ? albumReleaseDetails_LS : albumReleaseDetails,
+                albumReleaseAdvanceFeatures: albumReleaseAdvanceFeatures_LS ? albumReleaseAdvanceFeatures_LS : albumReleaseAdvanceFeatures,
+                albumReleaseStores: albumReleaseStores_LS ? albumReleaseStores_LS : albumReleaseStores,
+                albumReleaseSongUpload: albumReleaseSongUpload_LS ? albumReleaseSongUpload_LS : [],
+                albumReleaseAlbumArt: albumReleaseAlbumArt_LS ? albumReleaseAlbumArt_LS : albumReleaseAlbumArt,
+            };
+        });
+    }
 
 
 }));

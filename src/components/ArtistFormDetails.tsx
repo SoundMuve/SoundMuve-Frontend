@@ -136,6 +136,17 @@ function ArtistFormDetailsComponent() {
         };
 
 
+        if (!image) {
+            setApiResponse({
+                display: true,
+                status: false,
+                message: "Artist profile picture is required."
+            });
+
+            return;
+        }
+
+
         const data_2db = new FormData();
         data_2db.append('email', data2db.email);
         data_2db.append('recordLabelemail', data2db.recordLabelemail);
@@ -143,8 +154,7 @@ function ArtistFormDetailsComponent() {
         data_2db.append('country', data2db.country);
         data_2db.append('phoneNumber', data2db.phoneNumber);
         data_2db.append('gender', data2db.gender);
-        data_2db.append('profile_picture', image);
-
+        data_2db.append('artistAvatar', image);
 
         try {
             const response = (await axios.post(`${apiEndpoint}/recordLabel/artists`, data_2db,

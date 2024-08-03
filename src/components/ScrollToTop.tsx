@@ -9,9 +9,6 @@ import SnackbarToast from './ToastNotification';
 import { useSettingStore } from '../state/settingStore';
 
 const ScrollToTop = () => {
-    // const accessToken = useUserStore((state) => state.accessToken);
-    // const refreshToken = useUserStore((state) => state.refreshToken);
-    // const userData = useUserStore((state) => state.userData);
     const _autoLogin = useUserStore((state) => state._autoLogin);
 
     const toastNotification = useSettingStore((state) => state.toastNotification);
@@ -34,7 +31,7 @@ const ScrollToTop = () => {
         const refresh_token = getLocalStorage("refreshToken");
         const user_data = getLocalStorage("user");
 
-        // setIsLoading(false);
+        setIsLoading(false);
         if (!access_token || !refresh_token || !user_data ) {
             setIsLoading(false);
             return;

@@ -37,11 +37,16 @@ export const secondaryGenre = [
 ];
 
 export const socialPlatformStores = [
-  "All", "TikTok", "Instagram", "Youtube", "Facebook"
+  "All", "Youtube", "TikTok/TikTok Music/Resso", "Facebook/Instagram/Reels", "Capcut"
+  //  "Snapchat",
 ];
 
 export const musicStores = [
-  "All", "Apple Music", "Spotify", "SoundCloud", "AudioMack",
+  "All",
+  "ITunes", "Apple Music", "Spotify", "Amazon Music", "Pandora", "Deezer",
+  "iHeartRadio", "Wynk/Hungama", "Qobuz", "Peloton", "Douyin Streaming/Qishi Yinyue",
+  "MediaNet", "Tidal", "Gracenote", "YouSee Musik/Telmore Musik", "Napster", "Tencent",
+  "Snapchat/ 7digital", "BOOM", "NetEase", "Gaana", "Joox", "TIM", "Boomplay Music"
 ];
 
 export const hours = [...Array(13).keys()].map((num) => num.toString().padStart(2, '0'));
@@ -302,6 +307,11 @@ export const stringAvatar = (name: string) => {
   }
   return newName;
 };
+
+export function formatedNumber(number: number, locales = 'en-US', options = {}) {
+  return new Intl.NumberFormat(locales, options).format(number);
+}
+
 
 export const currencyDisplay = (amount: number) => {
   const formattedAmount = amount.toLocaleString("en-US", {

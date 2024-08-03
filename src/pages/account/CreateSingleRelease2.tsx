@@ -1,4 +1,4 @@
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import * as yup from "yup";
@@ -41,6 +41,7 @@ import {
 import { languages } from '@/util/languages';
 
 import cloudUploadIconImg from "@/assets/images/cloudUploadIcon.png";
+import MultipleSelectCheckmarks from '@/components/MultipleSelectCheckmarks';
 
 
 const formSchema = yup.object({
@@ -73,7 +74,10 @@ function CreateSingleRelease2() {
     const userData = useUserStore((state) => state.userData);
     const accessToken = useUserStore((state) => state.accessToken);
     const singleRelease1 = createReleaseStore((state) => state.singleRelease1);
-    // const _setSingleRelease2 = createReleaseStore((state) => state._setSingleRelease2);
+    const singleRelease2 = createReleaseStore((state) => state.singleRelease2);
+    const _setSingleRelease2 = createReleaseStore((state) => state._setSingleRelease2);
+    const _clearSingleRelease = createReleaseStore((state) => state._clearSingleRelease);
+    const _restoreAllRelease = createReleaseStore((state) => state._restoreAllRelease);
     const [openCopyrightOwnershipModal, setOpenCopyrightOwnershipModal] = useState(false);
 
     const [openSuccessModal, setOpenSuccessModal] = useState(false);
@@ -93,10 +97,42 @@ function CreateSingleRelease2() {
     const [imagePreview, setImagePreview] = useState();
     const [songAudio, setSongAudio] = useState<Blob | null>(null);
     const [songAudioPreview, setSongAudioPreview] = useState<any>();
-
+    const [selectStores, setSelectStores] = useState<string[]>(musicStores);
+    const [selectSocialStores, setSelectSocialStores] = useState<string[]>(socialPlatformStores);
+    
     const [selectCreativeRoleValue, setSelectCreativeRoleValue] = useState('Choose Roles');
     const [songUploadProgress, setSongUploadProgress] = useState(0);
 
+
+    useEffect(() => {
+        if (!singleRelease1.song_title) {
+            _restoreAllRelease();
+        }
+    }, [singleRelease1]);
+
+    useEffect(() => {
+        if (singleRelease2.mp3_file) {
+            setCopyrightOwnership(singleRelease2.copyright_ownership);
+            setValue("copyrightOwnership", singleRelease2.copyright_ownership, {shouldDirty: true, shouldTouch: true, shouldValidate: true});
+            
+            setCopyrightOwnershipPermission(singleRelease2.copyright_ownership_permissions);
+            setValue("copyrightOwnershipPermission", singleRelease2.copyright_ownership_permissions, {shouldDirty: true, shouldTouch: true, shouldValidate: true});
+    
+            setSongWriters(singleRelease2.song_writer);
+            setSongArtists_Creatives(singleRelease2.songArtistsCreativeRole);
+            setImage(singleRelease2.cover_photo);
+            // setImagePreview(singleRelease2.imagePreview);
+            setSongAudio(singleRelease2.mp3_file);
+            // setSongAudioPreview(singleRelease2.songAudioPreview);
+    
+            setSelectStores(singleRelease2.store.split(','));
+            setSelectSocialStores(singleRelease2.social_platform.split(','));
+    
+            setValue("ISRC_Number", singleRelease2.isrc_number, {shouldDirty: true, shouldTouch: true, shouldValidate: true});
+            setValue("lyricsLanguage", singleRelease2.language_lyrics, {shouldDirty: true, shouldTouch: true, shouldValidate: true});
+            setValue("songLyrics", singleRelease2.lyrics, {shouldDirty: true, shouldTouch: true, shouldValidate: true});
+        }
+    }, [singleRelease2]);
 
     const { 
         handleSubmit, register, getValues, setError, setValue, resetField, formState: { errors, isValid, isSubmitting } 
@@ -154,6 +190,16 @@ function CreateSingleRelease2() {
         }
     
         e.target.value = "";
+    }
+
+    const handleStoreSelect = (selected: string[]) => {
+        setSelectStores(selected);
+        setValue("store", selected.toString(), {shouldDirty: true, shouldTouch: true, shouldValidate: true});
+    }
+
+    const handleSocialStoreSelect = (selected: string[]) => {
+        setSelectSocialStores(selected);
+        setValue("socialPlatform", selected.toString(), {shouldDirty: true, shouldTouch: true, shouldValidate: true});
     }
 
     const onSubmit = async (formData: typeof formSchema.__outputType) => {
@@ -313,43 +359,47 @@ function CreateSingleRelease2() {
             return;
         }
 
-        if (!image) {
-            setApiResponse({
-                display: true,
-                status: false,
-                message: "Please upload song cover."
-            });
+        // if (!image) {
+        //     setApiResponse({
+        //         display: true,
+        //         status: false,
+        //         message: "Please upload song cover."
+        //     });
 
-            _setToastNotification({
-                display: true,
-                status: "error",
-                message: "Please upload song cover."
-            })
+        //     _setToastNotification({
+        //         display: true,
+        //         status: "error",
+        //         message: "Please upload song cover."
+        //     })
 
-            return;
+        //     return;
+        // }
+
+        const release2data = {
+            email: userData.email,
+            release_type: 'Single',
+            store: formData.store || '',
+            social_platform: formData.socialPlatform || '',
+
+            mp3_file: songAudio,
+            song_writer: songWriters,
+        
+            songArtistsCreativeRole: songArtists_Creatives,
+        
+            copyright_ownership: copyrightOwnership,
+            copyright_ownership_permissions: copyrightOwnershipPermission,
+        
+            isrc_number: formData.ISRC_Number || '',
+            language_lyrics: formData.lyricsLanguage || '',
+            lyrics: formData.songLyrics || '',
+            tikTokClipStartTime: `${ formData.tikTokClipStartTime_Minutes }:${ formData.tikTokClipStartTime_Seconds }`,
+            cover_photo: image,
+
+            imagePreview: imagePreview,
+            songAudioPreview: songAudioPreview,
         }
 
-
-        // const data2bg = {
-        //     email: userData.email,
-        //     release_type: 'Single',
-        //     store: 'All',
-        //     social_platform: "All",
-
-        //     mp3_file: songAudio,
-        //     song_writer: songWriters,
-        
-        //     songArtistsCreativeRole: songArtists_Creatives,
-        
-        //     copyright_ownership: copyrightOwnership,
-        //     copyright_ownership_permissions: copyrightOwnershipPermission,
-        
-        //     isrc_number: formData.ISRC_Number,
-        //     language_lyrics: formData.lyricsLanguage,
-        //     lyrics: formData.songLyrics,
-        //     tikTokClipStartTime: `${ formData.tikTokClipStartTime_Minutes }:${ formData.tikTokClipStartTime_Seconds }`,
-        //     cover_photo: image
-        // }
+        _setSingleRelease2(release2data);
 
         const data2db = new FormData();
         data2db.append('email', userData.email);
@@ -366,10 +416,9 @@ function CreateSingleRelease2() {
         data2db.append('language_lyrics', formData.lyricsLanguage || '');
         data2db.append('lyrics', formData.songLyrics || '');
         data2db.append('tikTokClipStartTime', `${ formData.tikTokClipStartTime_Minutes }:${ formData.tikTokClipStartTime_Seconds }`);
-        data2db.append('cover_photo', image);
+        data2db.append('cover_photo', image || '');
 
         // console.log(data2db);
-        // _setSingleRelease2(data2db);
 
         try {
             const response = (await axios.patch(
@@ -409,6 +458,7 @@ function CreateSingleRelease2() {
             setTimeout(() => {
                 navigate("/account");
                 setOpenSuccessModal(false);
+                _clearSingleRelease();
             }, 1000);
         } catch (error: any) {
             const err = error.response.data;
@@ -694,54 +744,24 @@ function CreateSingleRelease2() {
                                     bgcolor: darkTheme ? "#000" : "#797979",
 
                                     display: "flex",
+                                    flexDirection: 'column',
                                     justifyItems: "center",
                                     alignItems: "center"
                                 }}
                             >
+
                                 <FormControl fullWidth sx={{ mx: "auto", my: {xs: "20px", md: "50px"}, maxWidth: {xs: "200px", md: "391px"} }}>
-                                    <Select
-                                        labelId="Store"
-                                        id="Store-select"
-                                        label=""
-                                        defaultValue="Select"
-                                        placeholder='Select'
-
-                                        sx={{
-                                            color: darkTheme ? "#000" : "#000",
-                                            borderRadius: {xs: "7.19px", md: "16px"},
-                                            bgcolor: darkTheme ? "#fff" : "#fff",
-                                            
-                                            '.MuiOutlinedInput-notchedOutline': {
-                                                borderColor: darkTheme ? '#fff' : "#fff",
-                                            },
-                                            '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                                                borderColor: darkTheme ? '#fff' : "#fff",
-                                            },
-                                            '&:hover .MuiOutlinedInput-notchedOutline': {
-                                                borderColor: darkTheme ? '#fff' : "#fff",
-                                            },
-                                            '.MuiSvgIcon-root ': {
-                                                // fill: "#797979 !important",
-                                                fill: darkTheme ? "#797979" : "#797979",
-                                            }
-                                        }}
-                                        
+                                    <MultipleSelectCheckmarks 
+                                        options={musicStores}
+                                        darkTheme={darkTheme}
+                                        handleSelected={handleStoreSelect}
+                                        selectedValue={selectStores}
                                         error={ errors.store ? true : false }
-                                        { ...register('store') }
-                                    >
-                                        <MenuItem value="Select" disabled selected>
-                                            Select
-                                        </MenuItem>
-
-                                        { musicStores.map((item: any, index) => (
-                                            <MenuItem key={index} value={item}>
-                                                {item}
-                                            </MenuItem>
-                                        )) }
-                                    </Select>
+                                    />
 
                                     { errors.store && <Box sx={{fontSize: 13, color: "red", textAlign: "left"}}>{ errors.store?.message }</Box> }
                                 </FormControl>
+
                             </Box>
                         </Box>
 
@@ -804,48 +824,15 @@ function CreateSingleRelease2() {
                                     <b> Click 'Edit' to remove a social platform. </b>
                                 </Typography>
 
-                                <FormControl fullWidth sx={{ mx: "auto", my: {xs: "15px", md: "30px"}, maxWidth: "391px" }}>
-                                    <Select
-                                        labelId="socialPlatform"
-                                        id="socialPlatform-select"
-                                        label=""
-                                        defaultValue="Select"
-                                        placeholder='Select'
-
-                                        sx={{
-                                            color: darkTheme ? "#000" : "#000",
-                                            borderRadius: "16px",
-                                            bgcolor: darkTheme ? "#fff" : "#fff",
-                                            
-                                            '.MuiOutlinedInput-notchedOutline': {
-                                                borderColor: darkTheme ? '#fff' : "#fff",
-                                            },
-                                            '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                                                borderColor: darkTheme ? '#fff' : "#fff",
-                                            },
-                                            '&:hover .MuiOutlinedInput-notchedOutline': {
-                                                borderColor: darkTheme ? '#fff' : "#fff",
-                                            },
-                                            '.MuiSvgIcon-root ': {
-                                                // fill: "#797979 !important",
-                                                fill: darkTheme ? "#797979" : "#797979",
-                                            }
-                                        }}
-                                        
+                                <FormControl fullWidth sx={{ mx: "auto", my: {xs: "20px", md: "50px"}, maxWidth: {xs: "200px", md: "391px"} }}>
+                                    <MultipleSelectCheckmarks 
+                                        options={socialPlatformStores}
+                                        darkTheme={darkTheme}
+                                        handleSelected={handleSocialStoreSelect}
+                                        selectedValue={selectSocialStores}
                                         error={ errors.socialPlatform ? true : false }
-                                        { ...register('socialPlatform') }
-                                    >
-                                        <MenuItem value="Select" disabled selected>
-                                            Select
-                                        </MenuItem>
+                                    />
 
-                                        { socialPlatformStores.map((langItem: any, index) => (
-                                            <MenuItem key={index} value={langItem}>
-                                                {langItem}
-                                            </MenuItem>
-                                        )) }
-                                    </Select>
-                                
                                     { errors.socialPlatform && <Box sx={{fontSize: 13, color: "red", textAlign: "left"}}>{ errors.socialPlatform?.message }</Box> }
                                 </FormControl>
                             </Box>
