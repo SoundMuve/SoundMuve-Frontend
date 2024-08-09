@@ -110,6 +110,43 @@ export const MuiTextFieldStyle = (darkTheme: boolean = true) =>{
                     border: '1px solid #434e5e'
                 },
             },
+
+
+
+            "& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button": {
+                display: "none",
+            },
+            
+            "& input[type=number]": {
+                MozAppearance: "textfield",
+            },
+        }
+    )
+}
+
+export const MuiSelectFieldStyle = (darkTheme: boolean = true) =>{
+
+    return (
+        {
+            color: darkTheme ?  "#fff" : "#000",
+            borderRadius: "16px",
+            // bgcolor: darkTheme ? "#fff" : "#272727",
+
+            '.MuiOutlinedInput-notchedOutline': {
+                borderColor: darkTheme ? '#fff' : "#b9c1cd",
+                borderWidth: 1
+            },
+            '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                borderColor: '#434e5e', // 'rgba(228, 219, 233, 0.25)',
+                borderWidth: 1
+            },
+            '&:hover .MuiOutlinedInput-notchedOutline': {
+                borderColor: '#434e5e', // 'var(--TextField-brandBorderHoverColor)', // 'rgba(228, 219, 233, 0.25)',
+                borderWidth: 1
+            },
+            '.MuiSvgIcon-root ': {
+                fill: darkTheme ? "#fff" : "#797979",
+            }
         }
     )
 }

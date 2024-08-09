@@ -12,6 +12,10 @@ const singleRelease1 = {
     release_type: "",
     song_title: "",
     artist_name: "",
+
+    appleMusicUrl: '',
+    spotifyMusicUrl: '',
+
     selectedArtistName: <any> {},
 
     explicitLyrics: "",
@@ -61,6 +65,10 @@ const albumReleaseDetails = {
     release_type: '',
     album_title: '',
     artist_name: '',
+
+    appleMusicUrl: '',
+    spotifyMusicUrl: '',
+    
     selectedArtistName: <any> {},
     // explicitLyrics: '',
     language: 'Select Language',

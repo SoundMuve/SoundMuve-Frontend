@@ -58,24 +58,6 @@ export default function AccountHeaderComponent() {
     const [openReleaseModal, setOpenReleaseModal] = useState(false);
     const closeReleaseModal = () => { setOpenReleaseModal(false) }
 
-    const logOutFunc = () => {
-        _logOutUser();
-        // console.log("hello");
-        
-
-        // const intervalId = setInterval(() => {
-        //     console.log(isLoggedIn);
-        //     _logOutUser();
-        // }, 500);
-        
-        // if (!isLoggedIn) {
-        //     console.log(isLoggedIn);
-        //     clearInterval(intervalId);
-        // }
-        // else {
-        //     _logOutUser();
-        // }
-    }
 
     const handleDrawerToggle = () => {
         setMobileOpen((prevState) => !prevState);
@@ -204,7 +186,7 @@ export default function AccountHeaderComponent() {
                         )
                     }
 
-                    {/* <ListItem disablePadding onClick={() => logOutFunc() }>
+                    {/* <ListItem disablePadding onClick={() => _logOutUser() }>
                         <ListItemButton>
                             <ListItemText primary="Log out" />
                         </ListItemButton>
@@ -255,7 +237,7 @@ export default function AccountHeaderComponent() {
                     </Stack>
 
                     <Stack direction="row" alignItems='center' spacing="10px"
-                        onClick={() => logOutFunc() }
+                        onClick={() => _logOutUser() }
                         sx={{
                             width: "fit-content",
                             bgcolor: darkTheme ? "#FBFBFB" : "#272727",
@@ -364,7 +346,7 @@ export default function AccountHeaderComponent() {
             </Stack>
 
             <Stack direction="row" alignItems='center' spacing="10px"
-                onClick={() => logOutFunc() }
+                onClick={() => _logOutUser() }
                 sx={{
                     width: "fit-content",
                     bgcolor: "#FBFBFB",

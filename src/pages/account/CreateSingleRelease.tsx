@@ -41,16 +41,19 @@ import { customTextFieldTheme } from '@/util/mui';
 
 import AccountWrapper from '@/components/AccountWrapper';
 import SearchArtistModalComponent from '@/components/account/SearchArtistModal';
-import AppleSportifyCheckmark from '@/components/AppleSportifyCheckmark';
-
-import albumSampleArt from "@/assets/images/albumSampleArt.png"
+// import AppleSportifyCheckmark from '@/components/AppleSportifyCheckmark';
+// import albumSampleArt from "@/assets/images/albumSampleArt.png"
 import { restCountries } from '@/util/countries';
 import LongSelectList from '@/components/LongSelectList';
+import ArtistProfileInfoComponent from '@/components/ArtistProfileInfo';
 
 
 const formSchema = yup.object({
     songTitle: yup.string().required().trim().label("Song Title"),
     artistName: yup.string().trim().label("Artist Name"),
+    appleMusicUrl: yup.string().trim().label("Apple Music Profile Link"),
+    spotifyMusicUrl: yup.string().trim().label("Spotify Music Profile Link"),
+
     explicitSongLyrics: yup.string().trim(),
     language: yup.string().required().trim().label("Language"),
     primaryGenre: yup.string().required().trim().label("Primary Genre"),
@@ -113,6 +116,9 @@ function CreateSingleRelease() {
         if (singleRelease1.song_title) {
             setValue("songTitle", singleRelease1.song_title, {shouldDirty: true, shouldTouch: true, shouldValidate: true});
             setValue("artistName", singleRelease1.artist_name, {shouldDirty: true, shouldTouch: true, shouldValidate: true});
+
+            setValue("appleMusicUrl", singleRelease1.appleMusicUrl, {shouldDirty: true, shouldTouch: true, shouldValidate: true});
+            setValue("spotifyMusicUrl", singleRelease1.spotifyMusicUrl, {shouldDirty: true, shouldTouch: true, shouldValidate: true});
             // TODO::: work on displaying the artist name and details
             setSelectArtistName(singleRelease1.selectedArtistName);
     
@@ -210,10 +216,10 @@ function CreateSingleRelease() {
             _setToastNotification({
                 display: true,
                 status: "error",
-                message: "Please add an artist."
+                message: "Please Enter the artist name" // "Please add an artist."
             })
 
-            setError("artistName", {message: "Please add an artist."})
+            setError("artistName", {message: "Please Enter the artist name."}, {shouldFocus: true})
             return;
         }
 
@@ -291,6 +297,9 @@ function CreateSingleRelease() {
         
             song_title: formData.songTitle, // missing
             artist_name: formData.artistName,
+            appleMusicUrl: formData.appleMusicUrl || '',
+            spotifyMusicUrl: formData.spotifyMusicUrl || '',
+
             selectedArtistName: selectArtistName,
         
             explicitLyrics: explicitLyrics, // missing
@@ -442,6 +451,33 @@ function CreateSingleRelease() {
 
                                 <Grid item xs={12} md={8}>
                                     <Box>
+                                        <TextField 
+                                            variant="outlined" 
+                                            fullWidth 
+                                            id='artistName'
+                                            type='text'
+                                            label=''
+                                            inputMode='text'
+                                            defaultValue=""
+                                            InputLabelProps={{
+                                                style: { color: '#c1c1c1', fontWeight: "400" },
+                                            }}
+                                            InputProps={{
+                                                sx: {
+                                                    borderRadius: "16px",
+                                                    maxWidth: {xs: "337px", md: "100%"}
+                                                },
+                                            }}
+                                            error={ errors.artistName ? true : false }
+                                            { ...register('artistName') }
+                                        />
+                                        
+                                        { errors.artistName && <Box sx={{fontSize: 13, color: "red", textAlign: "left"}}>{ errors.artistName?.message }</Box> }
+                                    </Box> 
+
+
+
+                                    {/* <Box>
                                         <Box 
                                             sx={{
                                                 p: {xs: "11.25px 21.75px 11.25px 21.75px", md: "15px 29px 15px 29px"},
@@ -472,7 +508,6 @@ function CreateSingleRelease() {
                                                     sx={{
                                                         height: {xs: "82px", md: "82.92px"}, 
                                                         borderRadius: "8.65px",
-                                                        // border: "0.07px solid #FFFFFF",
 
                                                         bgcolor: "#6449868F",
                                                         py: {xs: "6.02px",md: "6.5px"},
@@ -539,115 +574,211 @@ function CreateSingleRelease() {
                                             ) : <></>
                                         }
 
-                                        <Typography
-                                            sx={{
+                                    </Box> */}
+                                </Grid>
+                            </Grid>
+
+                            <Grid container spacing="20px" sx={{my: "31px"}}>
+                                <Grid item xs={12} md={4}>
+                                    <Stack direction="row">
+                                        <Box>
+                                            <Typography sx={{
+                                                fontWeight: {xs: "700", md: "900"},
+                                                fontSize: {xs: "13.12px", md: "25px"},
+                                                lineHeight: {xs: "21px", md: "40px"},
+                                                letterSpacing: {xs: "-0.07px", md: "-0.13px"}
+                                            }}> Artist Profile </Typography>
+
+                                            <Typography sx={{
                                                 fontWeight: "400",
-                                                fontSize: {xs: "16.96px", md: "25px"},
-                                                lineHeight: {xs: "27.14px", md: "40px"},
-                                                letterSpacing: {xs: "-0.09px", md: "-0.13px"},
-                                                mt: "21px"
+                                                fontSize: {xs: "13.88px", md: "18px"},
+                                                lineHeight: {xs: "9.25px", md: "12px"},
+                                                letterSpacing: {xs: "-0.1px", md: "-0.13px"},
+                                                // mt: "9px"
+                                            }}> Optional </Typography>
+                                        </Box>
+
+                                        <ArtistProfileInfoComponent  />
+                                    </Stack>
+                                </Grid>
+
+                                <Grid item xs={12} md={8}>
+                                    <Box>
+                                        <Grid container spacing="20px">
+
+                                            <Grid item xs={12} md={6}>
+                                                <TextField 
+                                                    variant="outlined" 
+                                                    fullWidth 
+                                                    id='spotifyMusicUrl'
+                                                    type='url'
+                                                    inputMode='url'
+                                                    label=''
+                                                    placeholder='Add your soptify profile link'
+                                                    defaultValue=""
+                                                    InputLabelProps={{
+                                                        style: { color: '#c1c1c1', fontWeight: "400" },
+                                                    }}
+                                                    InputProps={{
+                                                        sx: {
+                                                            borderRadius: "16px",
+                                                            maxWidth: {xs: "337px", md: "100%"}
+                                                        },
+                                                    }}
+                                                    error={ errors.spotifyMusicUrl ? true : false }
+                                                    { ...register('spotifyMusicUrl') }
+                                                />
+                                                
+                                                { errors.spotifyMusicUrl && <Box sx={{fontSize: 13, color: "red", textAlign: "left"}}>{ errors.spotifyMusicUrl?.message }</Box> }
+
+                                            </Grid>
+
+                                            <Grid item xs={12} md={6}>
+                                                <TextField 
+                                                    variant="outlined" 
+                                                    fullWidth 
+                                                    id='appleMusicUrl'
+                                                    inputMode='url'
+                                                    type='url'
+                                                    label=''
+                                                    placeholder='Add your apple music profile link'
+                                                    defaultValue=""
+                                                    InputLabelProps={{
+                                                        style: { color: '#c1c1c1', fontWeight: "400" },
+                                                    }}
+                                                    InputProps={{
+                                                        sx: {
+                                                            borderRadius: "16px",
+                                                            maxWidth: {xs: "337px", md: "100%"}
+                                                        },
+                                                    }}
+                                                    error={ errors.appleMusicUrl ? true : false }
+                                                    { ...register('appleMusicUrl') }
+                                                />
+                                                
+                                                { errors.appleMusicUrl && <Box sx={{fontSize: 13, color: "red", textAlign: "left"}}>{ errors.appleMusicUrl?.message }</Box> }
+
+                                            </Grid>
+
+                                        </Grid>
+
+                                        
+                                    </Box>
+                                </Grid>
+                            </Grid>
+
+                            <Grid container spacing="20px" sx={{my: "31px"}}>
+                                <Grid item xs={12} md={4}> </Grid>
+
+                                <Grid item xs={12} md={8}>
+                                    <Typography
+                                        sx={{
+                                            fontWeight: "400",
+                                            fontSize: {xs: "16.96px", md: "25px"},
+                                            lineHeight: {xs: "27.14px", md: "40px"},
+                                            letterSpacing: {xs: "-0.09px", md: "-0.13px"},
+                                            // mt: "21px"
+                                        }}
+                                    >
+                                        Does this song have explicit lyrics? &#32;
+                                        <span
+                                            // onClick={() => { }}
+                                            style={{
+                                                color: "#C8F452",
+                                                cursor: "pointer"
                                             }}
                                         >
-                                            Does this song have explicit lyrics? &#32;
-                                            <span
-                                                // onClick={() => { }}
-                                                style={{
-                                                    color: "#C8F452",
-                                                    cursor: "pointer"
+                                            Read More
+                                        </span>
+                                    </Typography>
+
+                                    <Box
+                                        sx={{
+                                            display: "flex",
+                                            flexDirection: "row",
+                                            alignItems: "center",
+                                            gap: explicitLyrics == "Yes" ? "5px" : "15px",
+                                            // mb: "21px",
+                                            mt: "5px"
+                                        }}
+                                    >
+
+                                        <Box>
+                                            <Box 
+                                                sx={{
+                                                    p: {xs: "10.18px 19.68px 10.18px 19.68px", md: "15px 29px 15px 29px"},
+                                                    borderRadius: {xs: "8.14px", md: "12px"},
+                                                    background: getValues("explicitSongLyrics") == "Yes" ? "#644986" : darkTheme ? "#fff" : "#272727",
+                                                    color: getValues("explicitSongLyrics") == "Yes" ? "#fff" : darkTheme ? "#000" : "#fff",
+                                                    cursor: "pointer",
+                                                    display: "inline-block"
+                                                }}
+                                                onClick={() => {
+                                                    setValue("explicitSongLyrics", "Yes");
+                                                    setExplicitLyrics("Yes");
                                                 }}
                                             >
-                                                Read More
-                                            </span>
-                                        </Typography>
-
-                                        <Box
-                                            sx={{
-                                                display: "flex",
-                                                flexDirection: "row",
-                                                alignItems: "center",
-                                                gap: explicitLyrics == "Yes" ? "5px" : "15px",
-                                                // mb: "21px",
-                                                mt: "5px"
-                                            }}
-                                        >
-
-                                            <Box>
-                                                <Box 
+                                                <Typography 
                                                     sx={{
-                                                        p: {xs: "10.18px 19.68px 10.18px 19.68px", md: "15px 29px 15px 29px"},
-                                                        borderRadius: {xs: "8.14px", md: "12px"},
-                                                        background: getValues("explicitSongLyrics") == "Yes" ? "#644986" : darkTheme ? "#fff" : "#272727",
-                                                        color: getValues("explicitSongLyrics") == "Yes" ? "#fff" : darkTheme ? "#000" : "#fff",
-                                                        cursor: "pointer",
-                                                        display: "inline-block"
+                                                        fontWeight: '900',
+                                                        fontSize: {xs: "10.18px", md: "15px"},
+                                                        lineHeight: {xs: "8.82px", md: "13px"},
+                                                        letterSpacing: {xs: "-0.09px", md: "-0.13px"},
+                                                        textAlign: 'center',
                                                     }}
-                                                    onClick={() => {
-                                                        setValue("explicitSongLyrics", "Yes");
-                                                        setExplicitLyrics("Yes");
-                                                    }}
-                                                >
-                                                    <Typography 
-                                                        sx={{
-                                                            fontWeight: '900',
-                                                            fontSize: {xs: "10.18px", md: "15px"},
-                                                            lineHeight: {xs: "8.82px", md: "13px"},
-                                                            letterSpacing: {xs: "-0.09px", md: "-0.13px"},
-                                                            textAlign: 'center',
-                                                        }}
-                                                    > Yes </Typography>
-                                                </Box>
-
-                                                { explicitLyrics == "Yes" ? 
-                                                    <CheckCircleIcon 
-                                                        sx={{ 
-                                                            color: darkTheme ? "#fff" : "#c4c4c4",
-                                                            position: "relative", 
-                                                            left: -15,
-                                                            top: -8,
-                                                        }} 
-                                                    /> : <></>
-                                                }
+                                                > Yes </Typography>
                                             </Box>
 
-                                            <Box>
-                                                <Box 
-                                                    sx={{
-                                                        p: {xs: "10.18px 19.68px 10.18px 19.68px", md: "15px 29px 15px 29px"},
-                                                        borderRadius: {xs: "8.14px", md: "12px"},
-                                                        background: getValues("explicitSongLyrics") == "No" ? "#644986" : darkTheme ? "#fff" : "#272727",
-                                                        color: getValues("explicitSongLyrics") == "No" ? "#fff" : darkTheme ? "#000" : "#fff",
-                                                        cursor: "pointer",
-                                                        display: "inline-block"
-                                                    }}
-                                                    onClick={() => {
-                                                        setValue("explicitSongLyrics", "No");
-                                                        setExplicitLyrics("No");
-                                                    }}
-                                                >
-                                                    <Typography 
-                                                        sx={{
-                                                            fontWeight: '900',
-                                                            fontSize: {xs: "10.18px", md: "15px"},
-                                                            lineHeight: {xs: "8.82px", md: "13px"},
-                                                            letterSpacing: {xs: "-0.09px", md: "-0.13px"},
-                                                            textAlign: 'center',
-                                                        }}
-                                                    > No </Typography>
-                                                </Box>
-
-                                                { explicitLyrics == "No" ? 
-                                                    <CheckCircleIcon 
-                                                        sx={{ 
-                                                            color: darkTheme ? "#fff" : "#c4c4c4",
-                                                            position: "relative", 
-                                                            left: -15,
-                                                            top: -8,
-                                                        }} 
-                                                    /> : <></>
-                                                }
-                                            </Box>
-
+                                            { explicitLyrics == "Yes" ? 
+                                                <CheckCircleIcon 
+                                                    sx={{ 
+                                                        color: darkTheme ? "#fff" : "#c4c4c4",
+                                                        position: "relative", 
+                                                        left: -15,
+                                                        top: -8,
+                                                    }} 
+                                                /> : <></>
+                                            }
                                         </Box>
+
+                                        <Box>
+                                            <Box 
+                                                sx={{
+                                                    p: {xs: "10.18px 19.68px 10.18px 19.68px", md: "15px 29px 15px 29px"},
+                                                    borderRadius: {xs: "8.14px", md: "12px"},
+                                                    background: getValues("explicitSongLyrics") == "No" ? "#644986" : darkTheme ? "#fff" : "#272727",
+                                                    color: getValues("explicitSongLyrics") == "No" ? "#fff" : darkTheme ? "#000" : "#fff",
+                                                    cursor: "pointer",
+                                                    display: "inline-block"
+                                                }}
+                                                onClick={() => {
+                                                    setValue("explicitSongLyrics", "No");
+                                                    setExplicitLyrics("No");
+                                                }}
+                                            >
+                                                <Typography 
+                                                    sx={{
+                                                        fontWeight: '900',
+                                                        fontSize: {xs: "10.18px", md: "15px"},
+                                                        lineHeight: {xs: "8.82px", md: "13px"},
+                                                        letterSpacing: {xs: "-0.09px", md: "-0.13px"},
+                                                        textAlign: 'center',
+                                                    }}
+                                                > No </Typography>
+                                            </Box>
+
+                                            { explicitLyrics == "No" ? 
+                                                <CheckCircleIcon 
+                                                    sx={{ 
+                                                        color: darkTheme ? "#fff" : "#c4c4c4",
+                                                        position: "relative", 
+                                                        left: -15,
+                                                        top: -8,
+                                                    }} 
+                                                /> : <></>
+                                            }
+                                        </Box>
+
                                     </Box>
                                 </Grid>
                             </Grid>

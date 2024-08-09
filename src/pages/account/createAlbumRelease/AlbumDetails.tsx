@@ -34,7 +34,7 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import SideNav from './SideNav';
 import AccountWrapper from '@/components/AccountWrapper';
 import SearchArtistModalComponent from '@/components/account/SearchArtistModal';
-import AppleSportifyCheckmark from '@/components/AppleSportifyCheckmark';
+// import AppleSportifyCheckmark from '@/components/AppleSportifyCheckmark';
 
 import { useUserStore } from '@/state/userStore';
 import { useSettingStore } from '@/state/settingStore';
@@ -43,12 +43,17 @@ import { createReleaseStore } from '@/state/createReleaseStore';
 import { customTextFieldTheme } from '@/util/mui';
 import { languages } from '@/util/languages';
 import { primaryGenre, secondaryGenre, hours, minutes, minReleaseDate, apiEndpoint } from '@/util/resources';
-import albumSampleArt from "@/assets/images/albumSampleArt.png"
+// import albumSampleArt from "@/assets/images/albumSampleArt.png"
+import ArtistProfileInfoComponent from '@/components/ArtistProfileInfo';
 
 
 const formSchema = yup.object({
     albumTitle: yup.string().required().trim().label("Album Title"),
     artistName: yup.string().trim().label("Artist Name"),
+
+    appleMusicUrl: yup.string().trim().label("Apple Music Profile Link"),
+    spotifyMusicUrl: yup.string().trim().label("Spotify Music Profile Link"),
+
     // explicitSongLyrics: yup.string().trim(),
     language: yup.string().required().trim().label("Language"),
     primaryGenre: yup.string().required().trim().label("Primary Genre"),
@@ -100,7 +105,7 @@ function AlbumDetails() {
 
 
     const { 
-        handleSubmit, register, setValue, getValues, setError, formState: { errors, isValid, isSubmitting } 
+        handleSubmit, register, setValue, setError, formState: { errors, isValid, isSubmitting } 
     } = useForm({ 
         resolver: yupResolver(formSchema),
         mode: 'onBlur',
@@ -121,6 +126,10 @@ function AlbumDetails() {
     
             setValue("albumTitle", albumReleaseDetails.album_title, {shouldDirty: true, shouldTouch: true, shouldValidate: true});
             setValue("artistName", albumReleaseDetails.artist_name, {shouldDirty: true, shouldTouch: true, shouldValidate: true});
+
+            setValue("appleMusicUrl", albumReleaseDetails.appleMusicUrl, {shouldDirty: true, shouldTouch: true, shouldValidate: true});
+            setValue("spotifyMusicUrl", albumReleaseDetails.spotifyMusicUrl, {shouldDirty: true, shouldTouch: true, shouldValidate: true});
+
             // TODO::: work on displaying the artist name and details
             setSelectArtistName(albumReleaseDetails.selectedArtistName);
     
@@ -259,6 +268,10 @@ function AlbumDetails() {
         
             album_title: formData.albumTitle,
             artist_name: formData.artistName,
+
+            appleMusicUrl: formData.appleMusicUrl || '',
+            spotifyMusicUrl: formData.spotifyMusicUrl || '',
+
             selectedArtistName: selectArtistName,
         
             // explicitLyrics: explicitLyrics,
@@ -285,6 +298,10 @@ function AlbumDetails() {
             email: formDetails.email,
             album_title: formDetails.album_title,
             artist_name: formDetails.artist_name,
+
+            appleMusicUrl: formDetails.appleMusicUrl,
+            spotifyMusicUrl: formDetails.spotifyMusicUrl,
+
             language: formDetails.language,
             primary_genre: formDetails.primary_genre,
             secondary_genre: formDetails.secondary_genre,
@@ -426,6 +443,32 @@ function AlbumDetails() {
 
                                         <Grid item xs={12} md={8}>
                                             <Box>
+                                                <TextField 
+                                                    variant="outlined" 
+                                                    fullWidth 
+                                                    id='artistName'
+                                                    type='text'
+                                                    label=''
+                                                    inputMode='text'
+                                                    defaultValue=""
+                                                    InputLabelProps={{
+                                                        style: { color: '#c1c1c1', fontWeight: "400" },
+                                                    }}
+                                                    InputProps={{
+                                                        sx: {
+                                                            borderRadius: "16px",
+                                                            maxWidth: {xs: "337px", md: "100%"}
+                                                        },
+                                                    }}
+                                                    error={ errors.artistName ? true : false }
+                                                    { ...register('artistName') }
+                                                />
+                                                
+                                                { errors.artistName && <Box sx={{fontSize: 13, color: "red", textAlign: "left"}}>{ errors.artistName?.message }</Box> }
+                                            </Box> 
+
+
+                                            {/* <Box>
                                                 <Box 
                                                     sx={{
                                                         p: {xs: "11.25px 21.75px 11.25px 21.75px", md: "15px 29px 15px 29px"},
@@ -522,9 +565,99 @@ function AlbumDetails() {
                                                         </Box>
                                                     ) : <></>
                                                 }
+                                            </Box> */}
+                                        </Grid>
+                                    </Grid>
+
+                                    <Grid container spacing="20px" sx={{my: "31px"}}>
+                                        <Grid item xs={12} md={4}>
+                                            <Stack direction="row">
+                                                <Box>
+                                                    <Typography sx={{
+                                                        fontWeight: {xs: "700", md: "900"},
+                                                        fontSize: {xs: "13.12px", md: "25px"},
+                                                        lineHeight: {xs: "21px", md: "40px"},
+                                                        letterSpacing: {xs: "-0.07px", md: "-0.13px"}
+                                                    }}> Artist Profile </Typography>
+
+                                                    <Typography sx={{
+                                                        fontWeight: "400",
+                                                        fontSize: {xs: "13.88px", md: "18px"},
+                                                        lineHeight: {xs: "9.25px", md: "12px"},
+                                                        letterSpacing: {xs: "-0.1px", md: "-0.13px"},
+                                                        // mt: "9px"
+                                                    }}> Optional </Typography>
+                                                </Box>
+
+                                                <ArtistProfileInfoComponent  />
+                                            </Stack>
+                                        </Grid>
+
+                                        <Grid item xs={12} md={8}>
+                                            <Box>
+                                                <Grid container spacing="20px">
+
+                                                    <Grid item xs={12} md={6}>
+                                                        <TextField 
+                                                            variant="outlined" 
+                                                            fullWidth 
+                                                            id='spotifyMusicUrl'
+                                                            type='url'
+                                                            inputMode='url'
+                                                            label=''
+                                                            placeholder='Add your soptify profile link'
+                                                            defaultValue=""
+                                                            InputLabelProps={{
+                                                                style: { color: '#c1c1c1', fontWeight: "400" },
+                                                            }}
+                                                            InputProps={{
+                                                                sx: {
+                                                                    borderRadius: "16px",
+                                                                    maxWidth: {xs: "337px", md: "100%"}
+                                                                },
+                                                            }}
+                                                            error={ errors.spotifyMusicUrl ? true : false }
+                                                            { ...register('spotifyMusicUrl') }
+                                                        />
+                                                        
+                                                        { errors.spotifyMusicUrl && <Box sx={{fontSize: 13, color: "red", textAlign: "left"}}>{ errors.spotifyMusicUrl?.message }</Box> }
+
+                                                    </Grid>
+
+                                                    <Grid item xs={12} md={6}>
+                                                        <TextField 
+                                                            variant="outlined" 
+                                                            fullWidth 
+                                                            id='appleMusicUrl'
+                                                            inputMode='url'
+                                                            type='url'
+                                                            label=''
+                                                            placeholder='Add your apple music profile link'
+                                                            defaultValue=""
+                                                            InputLabelProps={{
+                                                                style: { color: '#c1c1c1', fontWeight: "400" },
+                                                            }}
+                                                            InputProps={{
+                                                                sx: {
+                                                                    borderRadius: "16px",
+                                                                    maxWidth: {xs: "337px", md: "100%"}
+                                                                },
+                                                            }}
+                                                            error={ errors.appleMusicUrl ? true : false }
+                                                            { ...register('appleMusicUrl') }
+                                                        />
+                                                        
+                                                        { errors.appleMusicUrl && <Box sx={{fontSize: 13, color: "red", textAlign: "left"}}>{ errors.appleMusicUrl?.message }</Box> }
+
+                                                    </Grid>
+
+                                                </Grid>
+
+                                                
                                             </Box>
                                         </Grid>
                                     </Grid>
+                                    
 
                                     <Grid container spacing="20px" sx={{my: "31px"}}>
                                         <Grid item xs={12} md={4}>

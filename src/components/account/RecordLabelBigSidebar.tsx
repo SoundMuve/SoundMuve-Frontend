@@ -22,7 +22,8 @@ import AccountBalanceOutlinedIcon from '@mui/icons-material/AccountBalanceOutlin
 
 import { useSettingStore } from '@/state/settingStore';
 import { useUserStore } from '@/state/userStore';
-import PaymentComponent from './PaymentComponent';
+// import PaymentComponent from './PaymentComponent';
+import PaymentzComponent from './payments/PaymentzComponent';
 
 
 
@@ -189,7 +190,7 @@ const RecordLabelBigSidebarComponent: React.FC<_Props> = ({setSideNav}) => {
                 <Box my="auto">
                     <Box p="8px 16px" mb="23px">
                         <Stack direction="row" alignItems="center" spacing="15px"
-                            onClick={() => navigate('add-artist')}
+                            onClick={() => navigate('/account/record-label/add-artist')}
                             sx={{
                                 color: darkTheme ? '#C8F452' : '#5B8E14',
                                 fontWeight: '400',
@@ -229,7 +230,12 @@ const RecordLabelBigSidebarComponent: React.FC<_Props> = ({setSideNav}) => {
             </Box>
 
 
-            <PaymentComponent 
+            {/* <PaymentComponent 
+                withdrawlModal={withdrawlModal} setWithdrawlModal={setWithdrawlModal} 
+                openPayoutModal={openPayoutModal} setOpenPayoutModal={setOpenPayoutModal}
+            /> */}
+
+            <PaymentzComponent 
                 withdrawlModal={withdrawlModal} setWithdrawlModal={setWithdrawlModal} 
                 openPayoutModal={openPayoutModal} setOpenPayoutModal={setOpenPayoutModal}
             />

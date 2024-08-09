@@ -11,19 +11,20 @@ import TableCell, { tableCellClasses } from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
+import Typography from '@mui/material/Typography';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
 
 
 import IconButton from '@mui/material/IconButton';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 
 import AccountWrapper from '@/components/AccountWrapper';
-import { useSettingStore } from '@/state/settingStore';
-import Typography from '@mui/material/Typography';
-import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem';
 import ArtistAnalyticsNavComponent from '@/components/account/ArtistAnalyticsNav';
-import PaymentComponent from '@/components/account/PaymentComponent';
+// import PaymentComponent from '@/components/account/PaymentComponent';
+import PaymentzComponent from '@/components/account/payments/PaymentzComponent';
+import { useSettingStore } from '@/state/settingStore';
 
   
 const headerTitle = [
@@ -324,7 +325,13 @@ function BalanceHistory_RL() {
             </Box>
 
 
-            <PaymentComponent 
+            {/* <PaymentComponent 
+                withdrawlModal={withdrawlModal} setWithdrawlModal={setWithdrawlModal} 
+                openPayoutModal={openPayoutModal} setOpenPayoutModal={setOpenPayoutModal}
+            /> */}
+
+
+            <PaymentzComponent 
                 withdrawlModal={withdrawlModal} setWithdrawlModal={setWithdrawlModal} 
                 openPayoutModal={openPayoutModal} setOpenPayoutModal={setOpenPayoutModal}
             />

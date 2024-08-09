@@ -223,6 +223,19 @@ export const convertToBase64 = (file: File): Promise<base64Interface> => {
   });
 }
 
+
+export const getQueryParams = (query: string) => {
+  const search = window.location.search;
+  const params = new URLSearchParams(search);
+  const result = params.get(query);
+
+  return result;
+}
+
+
+
+
+
 export function maskPhoneNumber(phoneNumber: string) {
   // Remove any non-digit characters from the input
   const cleanedNumber = phoneNumber.replace(/\D/g, '');

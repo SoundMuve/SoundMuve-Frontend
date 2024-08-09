@@ -22,10 +22,11 @@ import { useUserStore } from '@/state/userStore';
 import { apiEndpoint } from '@/util/resources';
 import { getLocalStorage, setLocalStorage } from '@/util/storage';
 import ReleaseStatusComponent from '@/components/ReleaseStatus';
-import EmptyListComponent from '@/components/EmptyList';
-import LoadingDataComponent from '@/components/LoadingData';
+// import EmptyListComponent from '@/components/EmptyList';
+// import LoadingDataComponent from '@/components/LoadingData';
 import { useReleaseStore } from '@/state/releaseStore';
 import PaymentComponent from '@/components/account/PaymentComponent';
+import PaymentzComponent from '@/components/account/payments/PaymentzComponent';
 
 
 const albumSongs = [
@@ -66,11 +67,11 @@ function DashboardArtist() {
     const [releases, setReleases] = useState<any[]>();
 
     const _setToastNotification = useSettingStore((state) => state._setToastNotification);
-    const [apiResponse, setApiResponse] = useState({
-        display: false,
-        status: true,
-        message: ""
-    });
+    // const [apiResponse, setApiResponse] = useState({
+    //     display: false,
+    //     status: true,
+    //     message: ""
+    // });
 
     const [openReleaseModal, setOpenReleaseModal] = useState(false);
     const closeReleaseModal = () => { setOpenReleaseModal(false) };
@@ -105,13 +106,13 @@ function DashboardArtist() {
             setLocalStorage("singleRelease", response);
             setReleases(response);
 
-            if (!response.length) {
-                setApiResponse({
-                    display: true,
-                    status: true,
-                    message: "You don't have any single Release yet."
-                });
-            }
+            // if (!response.length) {
+            //     setApiResponse({
+            //         display: true,
+            //         status: true,
+            //         message: "You don't have any single Release yet."
+            //     });
+            // }
 
         } catch (error: any) {
             const errorResponse = error.response.data;
@@ -119,11 +120,11 @@ function DashboardArtist() {
 
             setReleases([]);
 
-            setApiResponse({
-                display: true,
-                status: false,
-                message: errorResponse.message || "Ooops and error occurred!"
-            });
+            // setApiResponse({
+            //     display: true,
+            //     status: false,
+            //     message: errorResponse.message || "Ooops and error occurred!"
+            // });
 
             _setToastNotification({
                 display: true,
@@ -882,6 +883,13 @@ function DashboardArtist() {
                 <Grid container spacing="20px">
                     
                     {
+                        releases && releases.length ?
+                            releases.slice(0, 2).map((song, index) => (
+                                viewSong(song, index)
+                            ))
+                        : <></>
+                    }
+                    {/* {
                         releases ? 
                             releases.length ?
                                 releases.slice(0, 2).map((song, index) => (
@@ -893,7 +901,7 @@ function DashboardArtist() {
                         : <Grid item xs={6} md={8}>
                             <LoadingDataComponent />
                         </Grid>
-                    }
+                    } */}
 
 
 
@@ -942,94 +950,104 @@ function DashboardArtist() {
                                 </Box>
                             </Box>
 
-                            <Box sx={{display: {xs: "none", md: "block"}}}>
-                                <Link to="/account/artist/all-music" style={{
-                                    textDecoration: "none",
-                                    color: "#000000",
-                                    border: "none",
-                                    outline: "none",
+                            {
+                                releases && releases.length ? 
+                                    <Box sx={{display: {xs: "none", md: "block"}}}>
+                                        <Link to="/account/artist/all-music" style={{
+                                            textDecoration: "none",
+                                            color: "#000000",
+                                            border: "none",
+                                            outline: "none",
 
-                                    display: 'flex',
-                                    justifyContent: "center",
-                                }}>
-                                    <Box
-                                        sx={{
-                                            bgcolor: darkTheme ? "#fff" : "#000",
-                                            p: "11px 29px 10px 29px",
-                                            borderRadius: "12px",
-                                            display: "inline-block",
-                                            my: 2
-                                        }}
-                                    >
-                                        <Typography
-                                            sx={{
-                                                color: darkTheme ? "#000" : "#fff",
-                                                fontSize: {xs: "8.56px", md: "15px"},
-                                                lineHeight: {xs: "7.42px", md: "13px"},
-                                                letterSpacing: {xs: "-0.07px", md: "-0.13px"}
-                                            }}
-                                        > See all your music </Typography>
+                                            display: 'flex',
+                                            justifyContent: "center",
+                                        }}>
+                                            <Box
+                                                sx={{
+                                                    bgcolor: darkTheme ? "#fff" : "#000",
+                                                    p: "11px 29px 10px 29px",
+                                                    borderRadius: "12px",
+                                                    display: "inline-block",
+                                                    my: 2
+                                                }}
+                                            >
+                                                <Typography
+                                                    sx={{
+                                                        color: darkTheme ? "#000" : "#fff",
+                                                        fontSize: {xs: "8.56px", md: "15px"},
+                                                        lineHeight: {xs: "7.42px", md: "13px"},
+                                                        letterSpacing: {xs: "-0.07px", md: "-0.13px"}
+                                                    }}
+                                                > See all your music </Typography>
+                                            </Box>
+                                        </Link> 
                                     </Box>
-                                </Link> 
-                            </Box>
+                                : <></>
+                            }
+
                         </Box>
                     </Grid>
 
-                    <Grid item
-                        xs={6} md={4}
-                        sx={{ alignSelf: "center", display: {xs: "block", md: "none"} }}
-                    >
-                        <Box
-                            sx={{
-                                width: "100%",
-                                maxWidth: {xs: "196.38px", md: "345px"},
-                                mx: "auto"
-                            }}
-                        >
-                            <Box
-                                sx={{
-                                    height: {xs: "152.99px", md: "268px"},
-                                    borderRadius: {xs: "6.85px", md: "12px"},
-                                    // bgcolor: "#343434",
-                                    textAlign: "center",
-                                    display: "flex",
-                                    justifyContent: "center",
-                                    alignItems: "center",
-                                }}
+                    {
+                        releases && releases.length ? 
+                            <Grid item
+                                xs={6} md={4}
+                                sx={{ alignSelf: "center", display: {xs: "block", md: "none"} }}
                             >
-                                <Link to="/account/artist/all-music" 
-                                    style={{
-                                        textDecoration: "none",
-                                        color: "#000000",
-                                        border: "none",
-                                        outline: "none",
-
-                                        display: 'flex',
-                                        justifyContent: "center",
+                                <Box
+                                    sx={{
+                                        width: "100%",
+                                        maxWidth: {xs: "196.38px", md: "345px"},
+                                        mx: "auto"
                                     }}
                                 >
                                     <Box
                                         sx={{
-                                            bgcolor: darkTheme ? "#fff" : "#000",
-                                            p: {xs: "6.28px 16.56px 5.71px 16.56px", md: "11px 29px 10px 29px"},
+                                            height: {xs: "152.99px", md: "268px"},
                                             borderRadius: {xs: "6.85px", md: "12px"},
-                                            display: "inline-block",
-                                            // my: 2
+                                            // bgcolor: "#343434",
+                                            textAlign: "center",
+                                            display: "flex",
+                                            justifyContent: "center",
+                                            alignItems: "center",
                                         }}
                                     >
-                                        <Typography
-                                            sx={{
-                                                color: darkTheme ? "#000" : "#fff",
-                                                fontSize: {xs: "8.56px", md: "15px"},
-                                                lineHeight: {xs: "7.42px", md: "13px"},
-                                                letterSpacing: {xs: "-0.07px", md: "-0.13px"}
+                                        <Link to="/account/artist/all-music" 
+                                            style={{
+                                                textDecoration: "none",
+                                                color: "#000000",
+                                                border: "none",
+                                                outline: "none",
+
+                                                display: 'flex',
+                                                justifyContent: "center",
                                             }}
-                                        > See all your music </Typography>
+                                        >
+                                            <Box
+                                                sx={{
+                                                    bgcolor: darkTheme ? "#fff" : "#000",
+                                                    p: {xs: "6.28px 16.56px 5.71px 16.56px", md: "11px 29px 10px 29px"},
+                                                    borderRadius: {xs: "6.85px", md: "12px"},
+                                                    display: "inline-block",
+                                                    // my: 2
+                                                }}
+                                            >
+                                                <Typography
+                                                    sx={{
+                                                        color: darkTheme ? "#000" : "#fff",
+                                                        fontSize: {xs: "8.56px", md: "15px"},
+                                                        lineHeight: {xs: "7.42px", md: "13px"},
+                                                        letterSpacing: {xs: "-0.07px", md: "-0.13px"}
+                                                    }}
+                                                > See all your music </Typography>
+                                            </Box>
+                                        </Link> 
                                     </Box>
-                                </Link> 
-                            </Box>
-                        </Box>
-                    </Grid>
+                                </Box>
+                            </Grid>
+                        : <></>
+                    }
+
 
                 </Grid>
 
@@ -1109,7 +1127,12 @@ function DashboardArtist() {
                 closeReleaseModal={closeReleaseModal}
             />
 
-            <PaymentComponent 
+            {/* <PaymentComponent 
+                withdrawlModal={withdrawlModal} setWithdrawlModal={setWithdrawlModal} 
+                openPayoutModal={openPayoutModal} setOpenPayoutModal={setOpenPayoutModal}
+            /> */}
+
+            <PaymentzComponent 
                 withdrawlModal={withdrawlModal} setWithdrawlModal={setWithdrawlModal} 
                 openPayoutModal={openPayoutModal} setOpenPayoutModal={setOpenPayoutModal}
             />

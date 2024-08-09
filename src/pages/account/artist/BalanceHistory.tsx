@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
@@ -22,15 +23,17 @@ import Typography from '@mui/material/Typography';
 import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
+
+// import PaymentComponent from '@/components/account/PaymentComponent';
+import LoadingComponent from '@/components/Loading';
+import EmptyListComponent from '@/components/EmptyList';
+import PaymentzComponent from '@/components/account/payments/PaymentzComponent';
 import ArtistAnalyticsNavComponent from '@/components/account/ArtistAnalyticsNav';
-import PaymentComponent from '@/components/account/PaymentComponent';
-import axios from 'axios';
-import { apiEndpoint, formatedNumber } from '@/util/resources';
+
 import { useUserStore } from '@/state/userStore';
 import { balTransactionsInterface } from '@/constants/typesInterface';
-import EmptyListComponent from '@/components/EmptyList';
+import { apiEndpoint, formatedNumber } from '@/util/resources';
 import { formatTransactionDate, getDateRange, getFormattedDateRange } from '@/util/dateTime';
-import LoadingComponent from '@/components/Loading';
 
   
 const headerTitle = [
@@ -491,10 +494,16 @@ function BalanceHistory() {
                 </Box>
             </Box>
 
-            <PaymentComponent 
+            {/* <PaymentComponent 
+                withdrawlModal={withdrawlModal} setWithdrawlModal={setWithdrawlModal} 
+                openPayoutModal={openPayoutModal} setOpenPayoutModal={setOpenPayoutModal}
+            /> */}
+
+            <PaymentzComponent 
                 withdrawlModal={withdrawlModal} setWithdrawlModal={setWithdrawlModal} 
                 openPayoutModal={openPayoutModal} setOpenPayoutModal={setOpenPayoutModal}
             />
+
 
         </AccountWrapper>
     )
