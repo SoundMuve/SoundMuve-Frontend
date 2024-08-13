@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
-import Grid from '@mui/material/Grid';
+// import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
@@ -15,58 +15,58 @@ import AccountWrapper from '@/components/AccountWrapper';
 import { useSettingStore } from '@/state/settingStore';
 import ArtistAnalyticsNavComponent from '@/components/account/ArtistAnalyticsNav';
 
-import albumImage from '@/assets/images/album.png';
+// import albumImage from '@/assets/images/album.png';
 import BarChartGraphComponent from '@/components/analytics/BarChartGraph';
 
 
 
-const moreInsights = [
-    {
-        title: "Good God",
-        percentage: "+ 200%",
-        status: true
-    },
-    {
-        title: "Good God",
-        percentage: "-40%",
-        status: false
-    },
-    {
-        title: "Good God",
-        percentage: "+ 200%",
-        status: true
-    },
-    {
-        title: "Good God",
-        percentage: "+ 200%",
-        status: false
-    },
-    {
-        title: "Good God",
-        percentage: "+ 200%",
-        status: true
-    },
-    {
-        title: "Good God",
-        percentage: "-40%",
-        status: true
-    },
-    {
-        title: "Good God",
-        percentage: "+ 200%",
-        status: true
-    },
-    {
-        title: "Good God",
-        percentage: "+ 200%",
-        status: true
-    },
-    {
-        title: "Good God",
-        percentage: "-40%",
-        status: false
-    },
-];
+// const moreInsights = [
+//     {
+//         title: "Good God",
+//         percentage: "+ 200%",
+//         status: true
+//     },
+//     {
+//         title: "Good God",
+//         percentage: "-40%",
+//         status: false
+//     },
+//     {
+//         title: "Good God",
+//         percentage: "+ 200%",
+//         status: true
+//     },
+//     {
+//         title: "Good God",
+//         percentage: "+ 200%",
+//         status: false
+//     },
+//     {
+//         title: "Good God",
+//         percentage: "+ 200%",
+//         status: true
+//     },
+//     {
+//         title: "Good God",
+//         percentage: "-40%",
+//         status: true
+//     },
+//     {
+//         title: "Good God",
+//         percentage: "+ 200%",
+//         status: true
+//     },
+//     {
+//         title: "Good God",
+//         percentage: "+ 200%",
+//         status: true
+//     },
+//     {
+//         title: "Good God",
+//         percentage: "-40%",
+//         status: false
+//     },
+// ];
 
 
 const dataset = [

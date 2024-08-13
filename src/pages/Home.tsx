@@ -138,7 +138,7 @@ export default function Home() {
                                         lineHeight: {xs: "39.96px", md: "73.79px"}, // "73.79px",
                                         letterSpacing: {xs: "-0.73px", md: "-1.34px"}
                                     }}>
-                                        Make the most of your music on Soundmuve
+                                        Amplify your sound: Start Here, Reach Everywhere
                                     </Typography>
 
                                     <Typography sx={{
@@ -149,8 +149,7 @@ export default function Home() {
                                         textAlign: "justify",
                                         pt: 3
                                     }}>
-                                        Increase the reach of your music across the most popular stores & platforms like Spotify, 
-                                        Apple Music, TikTok, YouTube and many more.
+                                        Easily distribute your music and audio creations to major streaming platforms and connect with a global audience.
                                     </Typography>
 
                                     <Box sx={{
@@ -326,7 +325,10 @@ export default function Home() {
                                         // my: {xs: 1, md: 2.5}
                                         textAlign: {xs: "Justified", md: "Justified"}
                                     }}
-                                > Tools built for your music </Typography>
+                                > 
+                                    {/* Tools built for your music  */}
+                                    Your Sound, Your Stage, Our Support.
+                                </Typography>
 
                                 <Typography sx={{
                                     fontWeight: "400",
@@ -336,9 +338,15 @@ export default function Home() {
                                     textAlign: "justify",
                                     pr: {md: 4}
                                 }}>
-                                    Grow your career while keeping your music at the center. 
+                                    We believe in the power of your sound to make a global impact. 
+                                    SoundMuve empowers artists at every level with a transparent and 
+                                    inclusive music distribution platform that expands your reach. 
+                                    From your local scene to a worldwide audience, 
+                                    we take your sound from anywhere in the world to everywhere it matters.
+
+                                    {/* Grow your career while keeping your music at the center. 
                                     With Soundmuv, you can amplify your reach, increase your revenue potential, 
-                                    and grow rapidly in the music industry.
+                                    and grow rapidly in the music industry. */}
                                 </Typography>
                             </Grid>
 
@@ -515,7 +523,8 @@ export default function Home() {
                                             letterSpacing: {xs: "-0.91px", md: "-1.13px"},
                                             pt: {xs: 5, md: 1}
                                         }}>
-                                            Maximize your revenue
+                                            {/* Maximize your revenue */}
+                                            Embrace Your Creative Freedom
                                         </Typography>
 
                                         <Typography sx={{
@@ -525,11 +534,16 @@ export default function Home() {
                                             letterSpacing: {xs: "-0.69px", md: "-0.13px"},
                                             textAlign: "justify"
                                         }}>
-                                            Independent musicians can make money from their original songs through royalties. 
+                                            You can now enjoy unmatched creative freedom, and stay true to your sound and independent spirit. 
+                                            Discover limitless opportunities and explore your full potential with our support, 
+                                            guiding you through every stage of your journey. 
+                                            Step into a new era of success and own your sound story.
+
+                                            {/* Independent musicians can make money from their original songs through royalties. 
                                             We help you collect royalties globally from various sources like Spotify, YouTube, 
                                             TikTok, radio, and others. With advanced analytics, you can track your publishing 
                                             royalties and know where your performance and mechanical royalties come from. 
-                                            You keep 100% of your copyrights.
+                                            You keep 100% of your copyrights. */}
                                         </Typography>
 
                                         
@@ -585,7 +599,8 @@ export default function Home() {
                                             letterSpacing: {xs: "-1.05px", md: "-1.13px"},
                                             pt: {xs: 5, md: 1}
                                         }}>
-                                            See how your music is doing
+                                            {/* See how your music is doing */}
+                                            Get Your Sound Discovered
                                         </Typography>
 
                                         <Typography sx={{
@@ -595,9 +610,14 @@ export default function Home() {
                                             letterSpacing: {xs: "-0.69px", md: "-0.13px"},
                                             textAlign: "justify"
                                         }}>
-                                            Grow your career while keeping your music at the center. 
+                                            We'll expand your reach and boost your visibility across top streaming 
+                                            platforms like Spotify, Apple Music, Boomplay and more. 
+                                            Captivate millions and attract new listeners with your unique voice. 
+                                            Make your mark and watch your sound reach audiences everywhere.
+
+                                            {/* Grow your career while keeping your music at the center. 
                                             With Soundmuv, you can amplify your reach, increase your revenue potential, 
-                                            and grow rapidly in the music industry.
+                                            and grow rapidly in the music industry. */}
                                         </Typography>
                                     </Box>
                                 </Grid>
@@ -663,7 +683,8 @@ export default function Home() {
                                             lineHeight: {xs: "40.6px", md: "50px"},
                                             letterSpacing: {xs: "-0.92px", md: "-1.13px"},
                                         }}>
-                                            Expand your reach
+                                            {/* Expand your reach */}
+                                            Advanced Analytics and Insights at Your Fingertips
                                         </Typography>
 
                                         <Typography sx={{
@@ -673,9 +694,13 @@ export default function Home() {
                                             letterSpacing: {xs: "-0.69px", md: "-0.13px"},
                                             textAlign: "justify"
                                         }}>
-                                            Grow your career while keeping your music at the center. 
+                                            Track your earnings, analyse performance, gain insights and make data-driven 
+                                            decisions with cutting-edge tools designed specifically for you. 
+                                            Stay informed and in control as you navigate your journey with clarity.
+
+                                            {/* Grow your career while keeping your music at the center. 
                                             With Soundmuv, you can amplify your reach, increase your revenue potential, 
-                                            and grow rapidly in the music industry.
+                                            and grow rapidly in the music industry. */}
                                         </Typography>
 
 

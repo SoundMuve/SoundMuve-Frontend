@@ -233,7 +233,7 @@ function Contact() {
                                     fontSize: {xs: "13px", md: "16px"},
                                     fontWeight: "400"
                                 }}>
-                                    Feel ftee to contact us anytime, we would get back to you as soon as we can 
+                                    Are you interested in partnering or discussing your projects? Reach out to us anytime.
                                 </Typography>
 
 

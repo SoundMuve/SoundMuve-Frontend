@@ -290,7 +290,7 @@ function AlbumDetails() {
             listenerTimeZone: formData.listenerTimezone ? true : false,
             generalTimeZone: formData.generalTimezone ? true : false,
         };
-        _setAlbumReleaseDetails(formDetails);
+        _setAlbumReleaseDetails({ ...formDetails, _id: ''});
 
         // console.log(data2db);
 
@@ -312,7 +312,17 @@ function AlbumDetails() {
         }
 
         try {
-            const response = (await axios.post(
+            const response = albumReleaseDetails._id ? (await axios.put(
+                // `${apiEndpoint}/Album/create-album`,
+                `${apiEndpoint}/songs/albums/${ albumReleaseDetails._id }`,
+                data2db,
+                {
+                    headers: {
+                        // 'Content-Type': 'multipart/form-data',
+                        Authorization: `Bearer ${accessToken}`
+                    },
+                }
+            )).data : (await axios.post(
                 // `${apiEndpoint}/Album/create-album`,
                 `${apiEndpoint}/songs/albums`,
                 data2db,
@@ -323,7 +333,9 @@ function AlbumDetails() {
                     },
                 }
             )).data;
-            console.log(response);
+
+            // console.log(response);
+            _setAlbumReleaseDetails({ ...formDetails, _id: response._id });
 
             _setCompleteAlbumData(response);
             // _setCompleteAlbumData(response.savedAlbum);

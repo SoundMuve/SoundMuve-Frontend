@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import Box from '@mui/material/Box';
@@ -13,7 +13,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
 import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 
 
@@ -25,103 +25,205 @@ import ArtistAnalyticsNavComponent from '@/components/account/ArtistAnalyticsNav
 // import PaymentComponent from '@/components/account/PaymentComponent';
 import PaymentzComponent from '@/components/account/payments/PaymentzComponent';
 import { useSettingStore } from '@/state/settingStore';
+import axios from 'axios';
+import { apiEndpoint, formatedNumber } from '@/util/resources';
+import { useUserStore } from '@/state/userStore';
+import { balTransactionsInterface } from '@/constants/typesInterface';
+import { formatTransactionDate, getDateRange, getFormattedDateRange } from '@/util/dateTime';
+import LoadingComponent from '@/components/Loading';
+import EmptyListComponent from '@/components/EmptyList';
 
   
 const headerTitle = [
-    "Date", "Description", "Debit", "Credit", "Balance", "Currency"
+    "Date", "Description", "Debit", "Credit", "Balance", "Currency", "Status"
 ]
 
-const tBodyContent = [
-    {
-        Date: "21/5/2024",
-        Description: "sales",
-        Debit: "",
-        Credit: "$14.13",
-        Balance: "$6,228.76",
-        Currency: "USD"
-    },
-    {
-        Date: "21/5/2024",
-        Description: "sales",
-        Debit: "",
-        Credit: "$14.13",
-        Balance: "$6,228.76",
-        Currency: "USD"
-    },
-    {
-        Date: "21/5/2024",
-        Description: "sales",
-        Debit: "",
-        Credit: "$14.13",
-        Balance: "$6,228.76",
-        Currency: "USD"
-    },
-    {
-        Date: "21/5/2024",
-        Description: "sales",
-        Debit: "",
-        Credit: "$14.13",
-        Balance: "$6,228.76",
-        Currency: "USD"
-    },
-    {
-        Date: "21/5/2024",
-        Description: "sales",
-        Debit: "",
-        Credit: "$14.13",
-        Balance: "$6,228.76",
-        Currency: "USD"
-    },
-    {
-        Date: "21/5/2024",
-        Description: "sales",
-        Debit: "",
-        Credit: "$14.13",
-        Balance: "$6,228.76",
-        Currency: "USD"
-    },
-    {
-        Date: "21/5/2024",
-        Description: "sales",
-        Debit: "",
-        Credit: "$14.13",
-        Balance: "$6,228.76",
-        Currency: "USD"
-    },
-    {
-        Date: "21/5/2024",
-        Description: "sales",
-        Debit: "",
-        Credit: "$14.13",
-        Balance: "$6,228.76",
-        Currency: "USD"
-    },
-    {
-        Date: "21/5/2024",
-        Description: "sales",
-        Debit: "",
-        Credit: "$14.13",
-        Balance: "$6,228.76",
-        Currency: "USD"
-    },
-    {
-        Date: "21/5/2024",
-        Description: "sales",
-        Debit: "",
-        Credit: "$14.13",
-        Balance: "$6,228.76",
-        Currency: "USD"
-    },
-]
+// const tBodyContent = [
+//     {
+//         Date: "21/5/2024",
+//         Description: "sales",
+//         Debit: "",
+//         Credit: "$14.13",
+//         Balance: "$6,228.76",
+//         Currency: "USD"
+//     },
+//     {
+//         Date: "21/5/2024",
+//         Description: "sales",
+//         Debit: "",
+//         Credit: "$14.13",
+//         Balance: "$6,228.76",
+//         Currency: "USD"
+//     },
+//     {
+//         Date: "21/5/2024",
+//         Description: "sales",
+//         Debit: "",
+//         Credit: "$14.13",
+//         Balance: "$6,228.76",
+//         Currency: "USD"
+//     },
+//     {
+//         Date: "21/5/2024",
+//         Description: "sales",
+//         Debit: "",
+//         Credit: "$14.13",
+//         Balance: "$6,228.76",
+//         Currency: "USD"
+//     },
+//     {
+//         Date: "21/5/2024",
+//         Description: "sales",
+//         Debit: "",
+//         Credit: "$14.13",
+//         Balance: "$6,228.76",
+//         Currency: "USD"
+//     },
+//     {
+//         Date: "21/5/2024",
+//         Description: "sales",
+//         Debit: "",
+//         Credit: "$14.13",
+//         Balance: "$6,228.76",
+//         Currency: "USD"
+//     },
+//     {
+//         Date: "21/5/2024",
+//         Description: "sales",
+//         Debit: "",
+//         Credit: "$14.13",
+//         Balance: "$6,228.76",
+//         Currency: "USD"
+//     },
+//     {
+//         Date: "21/5/2024",
+//         Description: "sales",
+//         Debit: "",
+//         Credit: "$14.13",
+//         Balance: "$6,228.76",
+//         Currency: "USD"
+//     },
+//     {
+//         Date: "21/5/2024",
+//         Description: "sales",
+//         Debit: "",
+//         Credit: "$14.13",
+//         Balance: "$6,228.76",
+//         Currency: "USD"
+//     },
+//     {
+//         Date: "21/5/2024",
+//         Description: "sales",
+//         Debit: "",
+//         Credit: "$14.13",
+//         Balance: "$6,228.76",
+//         Currency: "USD"
+//     },
+// ]
 
 
 function BalanceHistory_RL() {
     const navigate = useNavigate();
     const darkTheme = useSettingStore((state) => state.darkTheme);
+    const userData = useUserStore((state) => state.userData); 
+    const accessToken = useUserStore((state) => state.accessToken);
+
+    const [balTransactions, setBalTransactions] = useState<balTransactionsInterface[]>();
+    const [sortByDays, setSortByDays] = useState('All');
 
     const [openPayoutModal, setOpenPayoutModal] = useState(false);
     const [withdrawlModal, setWithdrawlModal] = useState(false);
 
+    useEffect(() => {
+        getAllBalanceHistory();
+    }, []);
+    
+    const getAllBalanceHistory = async () => {
+        try {
+            const response = (await axios.get(`${apiEndpoint}/wallet/get-transactionby-email/${ userData.email }`, {
+            // const response = (await axios.get(`${apiEndpoint}/wallet/get-transactionby-email/latham01@yopmail.com`, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`
+                }
+            })).data;
+            console.log(response);
+
+            setBalTransactions(response.transactions);
+
+        } catch (error: any) {
+            const errorResponse = error.response.data;
+            console.error(errorResponse);
+            setBalTransactions([]);
+
+
+            // setReleases([]);
+
+            // setApiResponse({
+            //     display: true,
+            //     status: false,
+            //     message: errorResponse.message || "Ooops and error occurred!"
+            // });
+
+            // _setToastNotification({
+            //     display: true,
+            //     status: "error",
+            //     message: errorResponse.message || "Ooops and error occurred!"
+            // });
+        }
+    }
+    
+    const getBalanceBetweenDates = async (startDate: string, endDate: string) => {
+        try {
+            // https://soundmuve-backend-zrap.onrender.com/api/wallet/check-transactions?startDate=2024-06-01&endDate=2024-12-31&email=latham01@yopmail.com
+            const response = (await axios.get(`${apiEndpoint}/wallet/check-transactions?startDate=${startDate}&endDate=${endDate}&email=${ userData.email }`, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`
+                }
+            })).data;
+            console.log(response);
+
+            setBalTransactions(response);
+
+        } catch (error: any) {
+            const errorResponse = error.response.data;
+            console.error(errorResponse);
+            setBalTransactions([]);
+
+
+            // setReleases([]);
+
+            // setApiResponse({
+            //     display: true,
+            //     status: false,
+            //     message: errorResponse.message || "Ooops and error occurred!"
+            // });
+
+            // _setToastNotification({
+            //     display: true,
+            //     status: "error",
+            //     message: errorResponse.message || "Ooops and error occurred!"
+            // });
+        }
+    }
+
+    const handleChange = (event: SelectChangeEvent) => {
+        const {
+            target: { value },
+        } = event;
+        // console.log(value);
+
+        if (value != "All") {
+            const dateRange = getDateRange(Number(value));
+            setSortByDays(dateRange);
+            const betweenDates = getFormattedDateRange(Number(value));
+            getBalanceBetweenDates(betweenDates.startDate, betweenDates.endDate);
+        } else {
+            setSortByDays(value);
+            getAllBalanceHistory();
+        }
+    };
+    
+    
 
     return (
         <AccountWrapper>
@@ -144,7 +246,6 @@ function BalanceHistory_RL() {
                 </Stack>
 
                 <Box sx={{ mt: 7 }}>
-
                     <Paper 
                         sx={{ 
                             width: '100%',
@@ -171,8 +272,8 @@ function BalanceHistory_RL() {
                                                     labelId="sortByDays"
                                                     id="sortByDays-select"
                                                     label=""
-                                                    defaultValue="Last 30 Days"
-                                                    placeholder='Last 30 Days'
+                                                    defaultValue="All"
+                                                    onChange={handleChange}
 
                                                     sx={{
                                                         color: "#fff",
@@ -205,13 +306,16 @@ function BalanceHistory_RL() {
                                                         }
                                                     }}
                                                 >
-                                                    <MenuItem value="Last 30 Days">
+                                                    <MenuItem value="All">
+                                                        All
+                                                    </MenuItem>
+                                                    <MenuItem value="7">
                                                         Last 7 Days
                                                     </MenuItem>
-                                                    <MenuItem value="Last 30 Days">
+                                                    <MenuItem value="14">
                                                         Last 14 Days
                                                     </MenuItem>
-                                                    <MenuItem value="Last 30 Days">
+                                                    <MenuItem value="30">
                                                         Last 30 Days
                                                     </MenuItem>
                                                 </Select>
@@ -227,7 +331,7 @@ function BalanceHistory_RL() {
                                                     letterSpacing: {xs: "-0.67px", md: "-1.34px"},
                                                     color: darkTheme ? "#fff" : "#000"
                                                 }}
-                                            >April 22 - May 21</Typography>
+                                            >{ sortByDays == "All" ? '' : sortByDays  }</Typography>
                                         </TableCell>
                                     </TableRow>
 
@@ -264,72 +368,153 @@ function BalanceHistory_RL() {
                                     </TableRow>
                                 </TableHead>
 
-                                <TableBody>
-                                    {tBodyContent
-                                    .map((row, index) => {
-                                        return (
-                                            <TableRow hover role="checkbox" tabIndex={-1} key={index}>
-                                                {Object.entries(row).map(([_key,value], indez) => {
-                                                    return (
-                                                        
-                                                        <TableCell 
-                                                            key={indez} 
-                                                            // align={"center"} 
-                                                            align={indez == 0 ? "left" : indez == Object.entries(row).length - 1 ? "right" : 'center' }
-                                                            sx={{ 
-                                                                color: darkTheme ? "#fff" : "#000",
-                                                                fontWeight: "400",
-                                                                fontSize: {xs: "9.07px", md: "18px"},
-                                                                lineHeight: {xs: "12.1px", md: "24px"},
-                                                            }}
-                                                        >
-                                                            { value }
-                                                        </TableCell>
-                                                    );
-                                                })}
-                                            </TableRow>
-                                        );
-                                    })}
-                                </TableBody>
+                                { 
+                                    balTransactions && balTransactions.length ?
+                                    <TableBody>
+                                        {balTransactions
+                                        .map((row, index) => {
+                                            return (
+                                                <TableRow hover role="checkbox" tabIndex={-1} key={index}>
+                                                    <TableCell 
+                                                        align='left'
+                                                        sx={{ 
+                                                            color: darkTheme ? "#fff" : "#000",
+                                                            fontWeight: "400",
+                                                            fontSize: {xs: "9.07px", md: "18px"},
+                                                            lineHeight: {xs: "12.1px", md: "24px"},
+                                                        }}
+                                                    >
+                                                        { formatTransactionDate(row.created_at) }
+                                                    </TableCell>
+
+                                                    <TableCell 
+                                                        align='center'
+                                                        sx={{ 
+                                                            color: darkTheme ? "#fff" : "#000",
+                                                            fontWeight: "400",
+                                                            fontSize: {xs: "9.07px", md: "18px"},
+                                                            lineHeight: {xs: "12.1px", md: "24px"},
+                                                        }}
+                                                    >
+                                                        { row.narration }
+                                                    </TableCell>
+
+                                                    <TableCell 
+                                                        align='center'
+                                                        sx={{ 
+                                                            color: darkTheme ? "#fff" : "#000",
+                                                            fontWeight: "400",
+                                                            fontSize: {xs: "9.07px", md: "18px"},
+                                                            lineHeight: {xs: "12.1px", md: "24px"},
+                                                        }}
+                                                    >
+                                                        { formatedNumber(row.debit) }
+                                                    </TableCell>
+
+                                                    <TableCell 
+                                                        align='center'
+                                                        sx={{ 
+                                                            color: darkTheme ? "#fff" : "#000",
+                                                            fontWeight: "400",
+                                                            fontSize: {xs: "9.07px", md: "18px"},
+                                                            lineHeight: {xs: "12.1px", md: "24px"},
+                                                        }}
+                                                    >
+                                                        { formatedNumber(row.credit) }
+                                                    </TableCell>
+
+                                                    <TableCell 
+                                                        align='center'
+                                                        sx={{ 
+                                                            color: darkTheme ? "#fff" : "#000",
+                                                            fontWeight: "400",
+                                                            fontSize: {xs: "9.07px", md: "18px"},
+                                                            lineHeight: {xs: "12.1px", md: "24px"},
+                                                        }}
+                                                    >
+                                                        { formatedNumber(row.balance) }
+                                                    </TableCell>
+
+                                                    <TableCell 
+                                                        // align='right'
+                                                        align='center'
+                                                        sx={{ 
+                                                            color: darkTheme ? "#fff" : "#000",
+                                                            fontWeight: "400",
+                                                            fontSize: {xs: "9.07px", md: "18px"},
+                                                            lineHeight: {xs: "12.1px", md: "24px"},
+                                                        }}
+                                                    >
+                                                        { row.currency }
+                                                    </TableCell>
+
+                                                    <TableCell 
+                                                        // align='right'
+                                                        align='center'
+                                                        sx={{ 
+                                                            color: darkTheme ? "#fff" : "#000",
+                                                            fontWeight: "400",
+                                                            fontSize: {xs: "9.07px", md: "18px"},
+                                                            lineHeight: {xs: "12.1px", md: "24px"},
+                                                        }}
+                                                    >
+                                                        { row.status || "Pending" }
+                                                    </TableCell>
+                                                </TableRow>
+                                            );
+                                        })}
+                                    </TableBody>
+                                    : <></>
+                                }
 
                             </Table>
                         </TableContainer>
+                        
+                        {
+                            balTransactions ? (
+                                balTransactions.length ?
+                                    <Stack direction={'row'} justifyContent={"right"} sx={{p: 2 }}>
+                                        <Box 
+                                            sx={{
+                                                p: {xs: "10.18px 19.68px", md: "10px 29px"},
+                                                borderRadius: {xs: "8.14px", md: "5px"},
+                                                background: darkTheme ? "#fff" : "#272727",
+                                                color: darkTheme ? "#000" : "#fff",
+                                                cursor: "pointer",
+                                                display: "inline-block",
+                                                // m: 2,
+                                                width: "fit-content"
+                                            }}
+                                            onClick={() => setWithdrawlModal(true)}
+                                        >
+                                            <Typography 
+                                                sx={{
+                                                    fontWeight: '900',
+                                                    fontSize: {xs: "10.18px", md: "15px"},
+                                                    lineHeight: {xs: "8.82px", md: "13px"},
+                                                    letterSpacing: {xs: "-0.09px", md: "-0.13px"},
+                                                    textAlign: 'center',
+                                                }}
+                                            > Withdraw </Typography>
+                                        </Box>
+                                    </Stack>
+                                    :
+                                    <Box py={5}>
+                                        <EmptyListComponent notFoundText='No transaction has been carried out yet.' />
+                                    </Box>
+                            ):
+                            <LoadingComponent />
+                        }
 
-                        <Stack direction={'row'} justifyContent={"right"} sx={{p: 2 }}>
-                            <Box 
-                                sx={{
-                                    p: {xs: "10.18px 19.68px", md: "10px 29px"},
-                                    borderRadius: {xs: "8.14px", md: "5px"},
-                                    background: darkTheme ? "#fff" : "#272727",
-                                    color: darkTheme ? "#000" : "#fff",
-                                    cursor: "pointer",
-                                    display: "inline-block",
-                                    // m: 2,
-                                    width: "fit-content"
-                                }}
-                                onClick={() => setWithdrawlModal(true)}
-                            >
-                                <Typography 
-                                    sx={{
-                                        fontWeight: '900',
-                                        fontSize: {xs: "10.18px", md: "15px"},
-                                        lineHeight: {xs: "8.82px", md: "13px"},
-                                        letterSpacing: {xs: "-0.09px", md: "-0.13px"},
-                                        textAlign: 'center',
-                                    }}
-                                > Withdraw </Typography>
-                            </Box>
-                        </Stack>
                     </Paper>
                 </Box>
-            </Box>
 
+            </Box>
 
             {/* <PaymentComponent 
                 withdrawlModal={withdrawlModal} setWithdrawlModal={setWithdrawlModal} 
                 openPayoutModal={openPayoutModal} setOpenPayoutModal={setOpenPayoutModal}
             /> */}
-
 
             <PaymentzComponent 
                 withdrawlModal={withdrawlModal} setWithdrawlModal={setWithdrawlModal} 

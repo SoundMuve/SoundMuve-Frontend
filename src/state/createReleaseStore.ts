@@ -8,6 +8,7 @@ interface creativeType {
 }
 
 const singleRelease1 = {
+    _id: '',
     email: "",
     release_type: "",
     song_title: "",
@@ -61,6 +62,7 @@ const singleRelease2 = {
 }
 
 const albumReleaseDetails = {
+    _id: '',
     email: '',
     release_type: '',
     album_title: '',

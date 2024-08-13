@@ -516,8 +516,7 @@ function BalanceHistory() {
                 withdrawlModal={withdrawlModal} setWithdrawlModal={setWithdrawlModal} 
                 openPayoutModal={openPayoutModal} setOpenPayoutModal={setOpenPayoutModal}
             />
-
-
+            
         </AccountWrapper>
     )
 }

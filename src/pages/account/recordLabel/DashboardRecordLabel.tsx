@@ -180,7 +180,7 @@ function DashboardRecordLabel() {
                                 pb: 5,
                             }}
                         >
-                            <RecordLabelSearchComponent />
+                            <RecordLabelSearchComponent darkTheme={darkTheme} artists={recordLabelArtist || []} />
 
                             <Stack alignItems="center" justifyContent="center" 
                                 sx={{
@@ -385,81 +385,86 @@ function DashboardRecordLabel() {
 
                             </Stack>
 
-                            <Box>
-                                <Stack direction="row" alignItems="center" justifyContent="space-between" my="50px">
-                                    <Typography variant='h3' component="h3"
-                                        sx={{
-                                            fontWeight: '900',
-                                            fontSize: '23.73px',
-                                            lineHeight: '14.24px',
-                                            letterSpacing: '-0.59px',
-                                            // my: '50px'
-                                        }}
-                                    >Artist</Typography>
+                            {
+                                recordLabelArtist && recordLabelArtist.length ? (
+                                    <Box>
+                                        <Stack direction="row" alignItems="center" justifyContent="space-between" my="50px">
+                                            <Typography variant='h3' component="h3"
+                                                sx={{
+                                                    fontWeight: '900',
+                                                    fontSize: '23.73px',
+                                                    lineHeight: '14.24px',
+                                                    letterSpacing: '-0.59px',
+                                                    // my: '50px'
+                                                }}
+                                            >Artist</Typography>
 
-                                    <Typography variant='h3' component="h3"
-                                        onClick={() => navigate("/account/record-label/artist")}
-                                        sx={{
-                                            fontWeight: '900',
-                                            fontSize: '23.73px',
-                                            lineHeight: '14.24px',
-                                            letterSpacing: '-0.59px',
-                                            // my: '50px',
-                                            cursor: 'pointer'
-                                        }}
-                                    >See all</Typography>
-                                </Stack>
+                                            <Typography variant='h3' component="h3"
+                                                onClick={() => navigate("/account/record-label/artist")}
+                                                sx={{
+                                                    fontWeight: '900',
+                                                    fontSize: '23.73px',
+                                                    lineHeight: '14.24px',
+                                                    letterSpacing: '-0.59px',
+                                                    // my: '50px',
+                                                    cursor: 'pointer'
+                                                }}
+                                            >See all</Typography>
+                                        </Stack>
 
-                                <Grid container spacing={3}>
-                                    {
-                                        recordLabelArtist && recordLabelArtist?.slice(0, 6).map((item, i) => (
-                                            <Grid item xs={6} sm={4} md={3} lg={2} key={i}>
-                                                <Stack alignItems="center">
-                                                    <Avatar
-                                                        alt={`${item.artistName} image`}
-                                                        src={item.artistAvatarUrl}
-                                                        // variant="rounded"
-                                                        aria-label={item.artistName}
-                                                        sx={{ 
-                                                            boxShadow: "0px 4px 8px -1px rgba(0, 0, 0, 0.1)",
-                                                            // bgcolor: stringToColor(project.title),
-                                                            width: "110px",
-                                                            height: "110px",
-                                                            // mb: "0.5rem",
-                                                            // p: 1
-                                                        }}
-                                                        children={<Typography sx={{
-                                                            fontSize: "15px",
-                                                            fontWeight: "bold"
-                                                        }}>{stringAvatar(item.artistName)}</Typography>}
-                                                    />
-                            
-                                                    <Typography variant='h4' component="h4"
-                                                        sx={{
-                                                            fontWeight: '900',
-                                                            fontSize: '23.73px',
-                                                            lineHeight: '14.24px',
-                                                            letterSpacing: '-0.59px',
-                                                            mt: '26px'
-                                                        }}
-                                                    >{item.artistName}</Typography>
+                                        <Grid container spacing={3}>
+                                            {
+                                                recordLabelArtist?.slice(0, 6).map((item, i) => (
+                                                    <Grid item xs={6} sm={4} md={3} lg={2} key={i}>
+                                                        <Stack alignItems="center">
+                                                            <Avatar
+                                                                alt={`${item.artistName} image`}
+                                                                src={item.artistAvatarUrl}
+                                                                // variant="rounded"
+                                                                aria-label={item.artistName}
+                                                                sx={{ 
+                                                                    boxShadow: "0px 4px 8px -1px rgba(0, 0, 0, 0.1)",
+                                                                    // bgcolor: stringToColor(project.title),
+                                                                    width: "110px",
+                                                                    height: "110px",
+                                                                    // mb: "0.5rem",
+                                                                    // p: 1
+                                                                }}
+                                                                children={<Typography sx={{
+                                                                    fontSize: "15px",
+                                                                    fontWeight: "bold"
+                                                                }}>{stringAvatar(item.artistName)}</Typography>}
+                                                            />
+                                    
+                                                            <Typography variant='h4' component="h4"
+                                                                sx={{
+                                                                    fontWeight: '900',
+                                                                    fontSize: '23.73px',
+                                                                    lineHeight: '14.24px',
+                                                                    letterSpacing: '-0.59px',
+                                                                    mt: '26px'
+                                                                }}
+                                                            >{item.artistName}</Typography>
 
-                                                    <Typography variant='body2'
-                                                        sx={{
-                                                            fontWeight: "400",
-                                                            fontSize: '14.24px',
-                                                            lineHeight: '10.68px',
-                                                            letterSpacing: '-0.59px',
-                                                            color: '#666666',
-                                                            mt: '13px'
-                                                        }}
-                                                    >{ item.songCount }</Typography>
-                                                </Stack>
-                                            </Grid>
-                                        ))
-                                    }
-                                </Grid>
-                            </Box>
+                                                            <Typography variant='body2'
+                                                                sx={{
+                                                                    fontWeight: "400",
+                                                                    fontSize: '14.24px',
+                                                                    lineHeight: '10.68px',
+                                                                    letterSpacing: '-0.59px',
+                                                                    color: '#666666',
+                                                                    mt: '13px'
+                                                                }}
+                                                            >{ item.songCount }</Typography>
+                                                        </Stack>
+                                                    </Grid>
+                                                ))
+                                            }
+                                        </Grid>
+                                    </Box>
+                                ) : <></>
+                            }
+
 
                             <Box my={5}>
                                 <PromotionalAdsComponent />

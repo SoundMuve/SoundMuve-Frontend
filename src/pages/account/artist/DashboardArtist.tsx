@@ -10,7 +10,6 @@ import AddIcon from '@mui/icons-material/Add';
 
 import albumImage from '@/assets/images/album.png';
 import dashHappyGuyImage from '@/assets/images/dashHappyGuy.png';
-import albumSampleArt from "@/assets/images/albumSampleArt.png";
 
 import AccountWrapper from '@/components/AccountWrapper';
 import AlbumSongItem from '@/components/account/AlbumSongItem';
@@ -27,34 +26,7 @@ import { useUserStore } from '@/state/userStore';
 import { apiEndpoint, currencyDisplay } from '@/util/resources';
 import { getLocalStorage, setLocalStorage } from '@/util/storage';
 import { useReleaseStore } from '@/state/releaseStore';
-
-
-const albumSongs = [
-    {
-        song_cover: albumImage,
-        artworkImage: albumSampleArt,
-        song_title: "Good God",
-        artist_name: "Joseph solomon",
-        distributedDSP: ["Apple", "Spotify"],
-        status: "Live"
-    },
-    {
-        song_cover: albumImage,
-        artworkImage: albumSampleArt,
-        song_title: "Good God",
-        artist_name: "Joseph solomon",
-        distributedDSP: ["Apple", "Spotify"],
-        status: "Complete"
-    },
-    {
-        song_cover: albumImage,
-        artworkImage: albumSampleArt,
-        song_title: "Good God",
-        artist_name: "Joseph solomon",
-        distributedDSP: ["Apple", "Spotify"],
-        status: "Incomplete"
-    }
-];
+import { releaseInterface } from '@/constants/typesInterface';
 
 
 function DashboardArtist() {
@@ -64,7 +36,7 @@ function DashboardArtist() {
     const userData = useUserStore((state) => state.userData); 
     const accessToken = useUserStore((state) => state.accessToken);
     const _setSongDetails = useReleaseStore((state) => state._setSongDetails);
-    const [releases, setReleases] = useState<any[]>();
+    const [releases, setReleases] = useState<releaseInterface[]>();
 
     const _setToastNotification = useSettingStore((state) => state._setToastNotification);
     // const [apiResponse, setApiResponse] = useState({
@@ -137,10 +109,50 @@ function DashboardArtist() {
     const getAlbumRelease = async () => {
         setReleases(undefined);
 
-        setReleases(albumSongs);
+        // setReleases(albumSongs);
+
+        try {
+            // https://soundmuve-backend-zrap.onrender.com/api/songs/GetMyAlbumsByEmail?email=latham01@yopmail.com
+            // const response = (await axios.get(`${apiEndpoint}/songs/GetMyAlbumsByEmail?email=${ userData.email }`, {
+            const response = (await axios.get(`${apiEndpoint}/songs/GetMyAlbumsByEmail?email=latham01@yopmail.com`, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`
+                }
+            })).data;
+            console.log(response);
+
+            setLocalStorage("singleRelease", response.albums);
+            setReleases(response.albums);
+
+            // if (!response.length) {
+            //     setApiResponse({
+            //         display: true,
+            //         status: true,
+            //         message: "You don't have any single Release yet."
+            //     });
+            // }
+
+        } catch (error: any) {
+            const errorResponse = error.response.data;
+            console.error(errorResponse);
+
+            setReleases([]);
+
+            // setApiResponse({
+            //     display: true,
+            //     status: false,
+            //     message: errorResponse.message || "Ooops and error occurred!"
+            // });
+
+            _setToastNotification({
+                display: true,
+                status: "error",
+                message: errorResponse.message || "Ooops and error occurred!"
+            });
+        }
     }
 
-    const viewSong = (song: any, index: number) => (
+    const viewSong = (song: releaseInterface, index: number) => (
         <Grid item xs={6} md={4} key={index}>
             <Box 
                 sx={{ 
@@ -153,12 +165,12 @@ function DashboardArtist() {
 
                     _setSongDetails({
                         artist_name: song.artist_name,
-                        cover_photo: song.song_cover,
+                        cover_photo: song.song_cover || song.song_cover_url || albumImage,
                         email: song.email,
                         label_name: song.label_name,
                         primary_genre: song.primary_genre,
                         secondary_genre: song.secondary_genre,
-                        song_title: song.song_title,
+                        song_title: song.album_title || song.song_title || '',
                         stream_time: '',
                         streams: "",
                         total_revenue: "",
@@ -186,7 +198,8 @@ function DashboardArtist() {
                         }}
                     >
                         <img
-                            src={song.song_cover} alt={`${song.song_title} song cover`}
+                            src={ song.song_cover || song.song_cover_url || albumImage } 
+                            alt={`${song.song_title} song cover`}
                             style={{
                                 width: "100%",
                                 height: "100%",
@@ -285,11 +298,13 @@ function DashboardArtist() {
                                     flexDirection: "row",
                                     justifyContent: "space-between",
                                     alignItems: "center",
-                                    gap: 10,
+                                    flexWrap: "wrap",
+
+                                    // gap: 10,
                                     mt: "auto"
                                 }}
                             >
-                                <Typography onClick={() => navigate("/account/artist/balance-history") }
+                                <Typography noWrap onClick={() => navigate("/account/artist/balance-history") }
                                     sx={{
                                         fontWeight: "900",
                                         fontSize: "25px",
@@ -524,8 +539,7 @@ function DashboardArtist() {
                         <Box 
                             sx={{
                                 width: "100%",
-                                // minWidth: "150px",
-                                // maxWidth: "165px",
+                                maxWidth: '47%',
                                 height: "214px",
                                 borderRadius: "6.81px",
                                 border: "1px solid #C0A3E0",
@@ -548,29 +562,29 @@ function DashboardArtist() {
 
                             <Box 
                                 sx={{
-                                    display: "flex",
-                                    flexDirection: "column",
-                                    justifyContent: "center",
-                                    alignItems: "center",
-                                    gap: "30px",
+                                    mx: "auto",
+                                    maxWidth: "100%",
+                                    // gap: "30px",
                                     mt: "auto"
                                 }}
                             >
-                                <Typography onClick={() => navigate("/account/artist/balance-history") }
+                                <Typography variant='h3' component="h3" noWrap
+                                    onClick={() => navigate("/account/artist/balance-history") }
                                     sx={{
                                         fontWeight: "900",
                                         fontSize: "24px",
                                         lineHeight: "22.7px",
                                         letterSpacing: "-0.07px",
-                                        cursor: "pointer"
+                                        cursor: "pointer",
+                                        mb: "30px"
                                     }}
-                                >{ currencyDisplay(Number(userData.balance)) }</Typography>
+                                >{ currencyDisplay(Number(userData.balance)) } </Typography>
 
                                 <Box onClick={() => setWithdrawlModal(true) } sx={{
                                     p: "8.97px 26px 8.97px 26px",
                                     borderRadius: "10.76px",
                                     background: "#fff",
-                                    cursor: 'pointer'
+                                    cursor: 'pointer',
                                 }}>
                                     <Typography sx={{
                                         fontWeight: '900',
@@ -587,8 +601,7 @@ function DashboardArtist() {
                         <Box 
                             sx={{
                                 width: "100%",
-                                // minWidth: "150px",
-                                // maxWidth: "165px",
+                                maxWidth: '47%',
                                 height: "214px",
                                 borderRadius: "6.81px",
                                 border: "1px solid #DA606B",
@@ -1051,10 +1064,9 @@ function DashboardArtist() {
                         : <></>
                     }
 
-
                 </Grid>
 
-                { albumType == "Album" && (
+                { releases && releases.length && albumType == "Album" ? (
                     <Box sx={{my: 4}}>
                         <Grid container spacing="20px">
                             <Grid item xs={12} md={6}>
@@ -1067,61 +1079,67 @@ function DashboardArtist() {
                                         color: "#666666",
                                         mb: 3
                                     }}
-                                >
-                                    Songs from Good God Album
-                                </Typography>
+                                > Songs from { releases[0].album_title } Album </Typography>
 
-                                <Box>
-                                    {albumSongs.map((item, index) => (
-                                        <Box key={index} onClick={() => navigate("/account/artist/song-details")}>
-                                            <AlbumSongItem 
-                                                artistName={item.artist_name}
-                                                artworkImage={item.artworkImage}
-                                                songTitle={item.song_title}
-                                                distributedDSP={item.distributedDSP} 
-                                            />
+                                {
+                                    releases[0].songs && releases[0].songs.length ? (
+                                        <Box>
+                                            {releases[0].songs.map((item, index) => (
+                                                <Box key={index} onClick={() => navigate("/account/artist/song-details")}>
+                                                    <AlbumSongItem 
+                                                        artistName={ releases[0].artist_name}
+                                                        artworkImage={releases[0].song_cover_url}
+                                                        songTitle={item.song_title}
+                                                        distributedDSP={["Apple", "Spotify"]} 
+                                                    />
+                                                </Box>
+                                            ))}
                                         </Box>
-                                    ))}
-                                </Box>
+                                    ) : <></>
+                                }
 
                             </Grid>
 
-                            <Grid item
-                                xs={12} md={6}
-                                sx={{
-                                    display: {xs: "none", md: "initial"}
-                                }}
-                            >
-                                <Typography
-                                    sx={{
-                                        fontWeight: "900",
-                                        fontSize: {xs: "19px"},
-                                        lineHeight: {xs: "24px"},
-                                        letterSpacing: {xs: "-1.34px"},
-                                        color: "#666666",
-                                        mb: 3
-                                    }}
-                                >
-                                    Songs from Good God Album
-                                </Typography>
+                            {
+                                releases.length > 0 ? (
+                                    <Grid item xs={12} md={6}
+                                        sx={{ display: {xs: "none", md: "initial"} }}
+                                    >
+                                        <Typography
+                                            sx={{
+                                                fontWeight: "900",
+                                                fontSize: {xs: "19px"},
+                                                lineHeight: {xs: "24px"},
+                                                letterSpacing: {xs: "-1.34px"},
+                                                color: "#666666",
+                                                mb: 3
+                                            }}
+                                        > Songs from { releases[1].album_title } Album </Typography>
 
-                                <Box>
-                                    {albumSongs.map((item, index) => (
-                                        <Box key={index} onClick={() => navigate("/account/artist/song-details")}>
-                                            <AlbumSongItem 
-                                                artistName={item.artist_name}
-                                                artworkImage={item.artworkImage}
-                                                songTitle={item.song_title}
-                                                distributedDSP={item.distributedDSP} 
-                                            />
-                                        </Box>
-                                    ))}
-                                </Box>
+                                        {
+                                            releases[1].songs && releases[1].songs.length ? (
+                                                <Box>
+                                                    {releases[1].songs.map((item, index) => (
+                                                        <Box key={index} onClick={() => navigate("/account/artist/song-details")}>
+                                                            <AlbumSongItem 
+                                                                artistName={ releases[1].artist_name}
+                                                                artworkImage={releases[1].song_cover_url}
+                                                                songTitle={item.song_title}
+                                                                distributedDSP={["Apple", "Spotify"]} 
+                                                            />
+                                                        </Box>
+                                                    ))}
+                                                </Box>
+                                            ) : <></>
+                                        }
 
-                            </Grid>
+                                    </Grid>
+                                ) : <></>
+                            }
+
                         </Grid>
                     </Box>
-                )}
+                ) : <></> }
 
             </Box>
 

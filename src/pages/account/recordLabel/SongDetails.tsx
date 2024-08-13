@@ -600,12 +600,7 @@ function SongDetails_RL() {
 
 
                     <Box mt={10}>
-                        <Box 
-                            sx={{
-                                // width: {xs: "124.48px", md: "218.06px"},
-                                height: {xs: "35px", md: "40px"}
-                            }}
-                        >
+                        <Box sx={{ height: {xs: "35px", md: "40px"} }} >
                             <img
                                 src={ darkTheme ? appleMusiclogo : appleMusicLightlogo } alt='album image'
                                 style={{

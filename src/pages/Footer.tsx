@@ -132,8 +132,11 @@ export default function FooterComponent() {
 
                         <Box my={2}>
                             <Typography className={style.text}>
-                                Subscribe to our newsletter to get
-                                our news delivered to you.
+                                Subscribe to receive the latest news, tips, special offers, 
+                                and more straight in your inbox.
+
+                                {/* Subscribe to our newsletter to get
+                                our news delivered to you. */}
                             </Typography>
                         </Box>
 

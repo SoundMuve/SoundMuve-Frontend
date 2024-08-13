@@ -57,7 +57,7 @@ const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
 
 
 function Faq() {
-    const [expanded, setExpanded] = React.useState<string | false>('panel1');
+    const [expanded, setExpanded] = React.useState<string | false>('panel0');
 
     const handleChange = (panel: string) => (_event: React.SyntheticEvent, newExpanded: boolean) => {
         setExpanded(newExpanded ? panel : false);
@@ -65,32 +65,32 @@ function Faq() {
 
     const questions = [
         {
-            title: "How can i get started?",
-            details: "qui consequat culpa mollit consectetur officia nulla non nulla nisi nulla ea ullamco labore magna veniam adipisicing laborum ut culpa incididunt esse sit fugiat excepteur qui nostrud laborum ea in irure in pariatur ipsum qui cillum esse sit pariatur sunt laboris labore sit exercitation voluptate enim adipisicing"
+            title: "What is SoundMuve?",
+            details: "SoundMuve is a platform that helps artists, sound designers and podcasters to distribute their work to major streaming services. We provide tools and support to amplify your sound and reach a global audience."
         },
         {
-            title: "How can i get started?",
-            details: "qui consequat culpa mollit consectetur officia nulla non nulla nisi nulla ea ullamco labore magna veniam adipisicing laborum ut culpa incididunt esse sit fugiat excepteur qui nostrud laborum ea in irure in pariatur ipsum qui cillum esse sit pariatur sunt laboris labore sit exercitation voluptate enim adipisicing"
+            title: "How does SoundMuve work?",
+            details: "Sign up on the SoundMuve website, upload your music, select your preferred streaming platforms, promote your tracks and track your performance with our real-time analytics."
         },
         {
-            title: "How can i make money selling my music?",
-            details: "qui consequat culpa mollit consectetur officia nulla non nulla nisi nulla ea ullamco labore magna veniam adipisicing laborum ut culpa incididunt esse sit fugiat excepteur qui nostrud laborum ea in irure in pariatur ipsum qui cillum esse sit pariatur sunt laboris labore sit exercitation voluptate enim adipisicing"
+            title: "Is SoundMuve suitable for independent artists?",
+            details: "Yes. We provide essential tools for music distribution, marketing and audience engagement, making it easier for independent creators to gain visibility and achieve their goals."
         },
         {
-            title: "What streaming sites would i be listed on?",
-            details: "qui consequat culpa mollit consectetur officia nulla non nulla nisi nulla ea ullamco labore magna veniam adipisicing laborum ut culpa incididunt esse sit fugiat excepteur qui nostrud laborum ea in irure in pariatur ipsum qui cillum esse sit pariatur sunt laboris labore sit exercitation voluptate enim adipisicing"
+            title: "What streaming sites does SoundMuve distribute to?",
+            details: "We partner with over 150 digital stores and streaming services, including Spotify, Apple Music, YouTube, Boomplay, TikTok and many more, to ensure your sound reaches a global audience."
         },
         {
-            title: "Do i have to pay to get started?",
-            details: "qui consequat culpa mollit consectetur officia nulla non nulla nisi nulla ea ullamco labore magna veniam adipisicing laborum ut culpa incididunt esse sit fugiat excepteur qui nostrud laborum ea in irure in pariatur ipsum qui cillum esse sit pariatur sunt laboris labore sit exercitation voluptate enim adipisicing"
+            title: "What is SoundMuve’s pricing plan?",
+            details: "SoundMuve offers three plans: Basic, Business and Premium. Choose the plan that fits your goals and start amplifying your sound today."
         },
         {
-            title: "What are music Royalties?",
-            details: "qui consequat culpa mollit consectetur officia nulla non nulla nisi nulla ea ullamco labore magna veniam adipisicing laborum ut culpa incididunt esse sit fugiat excepteur qui nostrud laborum ea in irure in pariatur ipsum qui cillum esse sit pariatur sunt laboris labore sit exercitation voluptate enim adipisicing"
+            title: "How much of my royalties does SoundMuve keep?",
+            details: "None. We offer transparent transactions, ensuring you receive 100% of your earnings."
         },
         {
-            title: "Does soundmuve own a music streaming app?",
-            details: "qui consequat culpa mollit consectetur officia nulla non nulla nisi nulla ea ullamco labore magna veniam adipisicing laborum ut culpa incididunt esse sit fugiat excepteur qui nostrud laborum ea in irure in pariatur ipsum qui cillum esse sit pariatur sunt laboris labore sit exercitation voluptate enim adipisicing"
+            title: "What kind of support does SoundMuve offer its users?",
+            details: "We offer 24/7 support in multiple local languages. Our services include dedicated coaching, personalized onboarding and a responsive chatbot to provide quick answers and solutions."
         },
     ];
 

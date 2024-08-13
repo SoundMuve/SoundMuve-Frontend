@@ -9,58 +9,19 @@ import InputAdornment from '@mui/material/InputAdornment';
 import SearchIcon from '@mui/icons-material/Search';
 import ClearIcon from '@mui/icons-material/Clear';
 
-import album1 from "@/assets/images/album/album1.jpeg";
-import album2 from "@/assets/images/album/album2.jpg";
-import album3 from "@/assets/images/album/album3.jpeg";
-import album4 from "@/assets/images/album/album4.jpg";
-import album5 from "@/assets/images/album/album5.jpg";
 
 import { stringAvatar } from '@/util/resources';
-import { useSettingStore } from '@/state/settingStore';
+import { recordLabelArtistInterface } from '@/constants/typesInterface';
 
 
 
 interface _Props {
-    // darkTheme: boolean,
-    // setSideNav: (state: boolean) => void;
-}
-
-interface _ArtistsListProps {
-    artists: typeof albumPreview,
     darkTheme: boolean,
-
-    // setSideNav: (state: boolean) => void;
+    artists: recordLabelArtistInterface[],
 }
 
-const albumPreview = [
-    {
-        image: album1,
-        name: 'David',
-        subtitle: '5 Songs'
-    },
-    {
-        image: album2,
-        name: 'John',
-        subtitle: '5 Songs'
-    },
-    {
-        image: album3,
-        name: 'Mavi',
-        subtitle: '5 Songs'
-    },
-    {
-        image: album4,
-        name: 'Portable',
-        subtitle: '5 Songs'
-    },
-    {
-        image: album5,
-        name: 'Limo',
-        subtitle: '5 Songs'
-    },
-];
 
-const ArtistListComponent: React.FC<_ArtistsListProps> = ({ artists, darkTheme }) => {
+const ArtistListComponent: React.FC<_Props> = ({ artists, darkTheme }) => {
     return (
         <Box
             sx={{
@@ -80,10 +41,10 @@ const ArtistListComponent: React.FC<_ArtistsListProps> = ({ artists, darkTheme }
                 artists.map((item, i) => (
                     <Box key={i} alignSelf="center" textAlign="center">
                         <Avatar
-                            alt={`${item.name} icon`}
-                            src={item.image}
+                            alt={`${item.artistName} icon`}
+                            src={item.artistAvatarUrl}
                             // variant="rounded"
-                            aria-label={item.name}
+                            aria-label={item.artistName}
                             sx={{ 
                                 boxShadow: "0px 4px 8px -1px rgba(0, 0, 0, 0.1)",
                                 // bgcolor: stringToColor(project.title),
@@ -95,7 +56,7 @@ const ArtistListComponent: React.FC<_ArtistsListProps> = ({ artists, darkTheme }
                             children={<Typography sx={{
                                 fontSize: {xs: "13px", md: "15px"},
                                 fontWeight: "bold"
-                            }}>{stringAvatar(item.name)}</Typography>}
+                            }}>{stringAvatar(item.artistName)}</Typography>}
                         />
 
                         <Typography variant='h4' component="h4"
@@ -106,7 +67,7 @@ const ArtistListComponent: React.FC<_ArtistsListProps> = ({ artists, darkTheme }
                                 letterSpacing: '-0.59px',
                                 mt: {xs: "13px", md: '26px'}
                             }}
-                        >{item.name}</Typography>
+                        >{item.artistName}</Typography>
 
                         <Typography variant='body2'
                             sx={{
@@ -117,7 +78,7 @@ const ArtistListComponent: React.FC<_ArtistsListProps> = ({ artists, darkTheme }
                                 color: '#666666',
                                 mt: {xs: "7px", md: '13px'}
                             }}
-                        >{item.subtitle}</Typography>
+                        >{item.songCount} Songs</Typography>
                     </Box>
                 ))
             }
@@ -125,8 +86,8 @@ const ArtistListComponent: React.FC<_ArtistsListProps> = ({ artists, darkTheme }
     )
 }
 
-const RecordLabelSearchComponent: React.FC<_Props> = () => {
-    const darkTheme = useSettingStore((state) => state.darkTheme);
+const RecordLabelSearchComponent: React.FC<_Props> = ({ artists, darkTheme }) => {
+    // const darkTheme = useSettingStore((state) => state.darkTheme);
     const [searchInputValue, setSearchInputValue] = useState('');
     const [searchResult, setSearchResult] = useState<any[]>([]);
 
@@ -137,7 +98,7 @@ const RecordLabelSearchComponent: React.FC<_Props> = () => {
             return
         };
 
-        const results = albumPreview.filter(obj => obj.name.toLowerCase().includes(searchedWord.toLowerCase()));
+        const results = artists.filter(obj => obj.artistName.toLowerCase().includes(searchedWord.toLowerCase()));
         
         if (results.length) {
             setSearchResult(results);

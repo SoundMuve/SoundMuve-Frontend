@@ -24,7 +24,7 @@ import FlutterwaveLogo2 from "@/assets/images/FlutterwaveLogo2.png";
 import { useUserStore } from '@/state/userStore';
 import { useSettingStore } from '@/state/settingStore';
 
-import { apiEndpoint } from '@/util/resources';
+import { apiEndpoint, getQueryParams } from '@/util/resources';
 import { MuiSelectFieldStyle, MuiTextFieldStyle } from '@/util/mui';
 import { euroPaymentFormSchema, euroPaymentsInterface } from './FL_Europayments';
 import { restCountries } from '@/util/countries';
@@ -43,6 +43,7 @@ const FL_EuroConfirmationModalComponent: React.FC<_Props> = ({
 }) => {
     const darkTheme = useSettingStore((state) => state.darkTheme);
     const accessToken = useUserStore((state) => state.accessToken);
+    const userData = useUserStore((state) => state.userData);
 
     const [apiResponse, setApiResponse] = useState({
         display: false,
@@ -56,7 +57,7 @@ const FL_EuroConfirmationModalComponent: React.FC<_Props> = ({
 
 
     const onSubmit = async (formData: euroPaymentsInterface) => {
-        console.log(formData);
+        // console.log(formData);
 
         setApiResponse({
             display: false,
@@ -64,14 +65,24 @@ const FL_EuroConfirmationModalComponent: React.FC<_Props> = ({
             message: ""
         });
 
-        // const currency = getQueryParams('currency');
-
-        saveBtn();
-
-        return;
+        const currency = getQueryParams('currency');
+        const data2db = {
+            email: userData.email,
+            currency: currency || '',
+            account_number: formData.accountNumber,
+            routing_number: formData.routingNumber,
+            swift_code: formData.swiftCode,
+            bank_name: formData.bankName,
+            beneficiary_name: formData.beneficiaryName,
+            beneficiary_country: formData.country,
+            postal_code: formData.postalCode,
+            street_number: formData.streetNumber,
+            street_name: formData.streetName,
+            city: formData.city
+        }
 
         try {
-            const response = (await axios.post(`${apiEndpoint}/payouts/banks/NG`, {
+            const response = (await axios.post(`${apiEndpoint}/payoutDetails/payout-details`, data2db, {
                 headers: {
                     Authorization: `Bearer ${accessToken}`
                 }
@@ -80,7 +91,6 @@ const FL_EuroConfirmationModalComponent: React.FC<_Props> = ({
             // setBanks(response.data);
 
             saveBtn();
-
             
         } catch (error: any) {
             const errorResponse = error.response.data;
@@ -91,14 +101,7 @@ const FL_EuroConfirmationModalComponent: React.FC<_Props> = ({
                 status: false,
                 message: errorResponse.message || "Ooops and error occurred!"
             });
-
-            // _setToastNotification({
-            //     display: true,
-            //     status: "error",
-            //     message: errorResponse.message || "Ooops and error occurred!"
-            // });
         }
-
 
     }
 

@@ -94,7 +94,7 @@ const ArtistList_RL = () => {
                         }}
                     >
 
-                        <RecordLabelSearchComponent />
+                        <RecordLabelSearchComponent darkTheme={darkTheme} artists={recordLabelArtist || []} />
 
 
                         <Box my={5}>

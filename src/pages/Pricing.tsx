@@ -261,28 +261,31 @@ function Pricing() {
 
                                         <ul className={style.pricingFeatures}>
                                             <li >
-                                                Unlimited Releases to all Social Platforms
+                                                Unlimited releases
                                             </li>
                                             <li>
-                                                TuneCore Rewards Master Classes
+                                                Basic analytics
                                             </li>
                                             <li>
-                                                Official Sales Reports
+                                                Choose release date
                                             </li>
                                             <li>
-                                                Schedule Your Own Release Date
+                                                Customisable artist profile
                                             </li>
                                             <li>
-                                                Unlimited Releases to all Digital Stores
+                                                Community access
                                             </li>
                                             <li>
-                                                100% Revenue from Digital Stores
+                                                Music promo campaign
                                             </li>
                                             <li>
-                                                Spotify Verified Artist Checkmark
+                                                Music distribution on streaming platforms
                                             </li>
                                             <li>
-                                                Apple Music for Artists Verification
+                                                Support reply under 72hrs
+                                            </li>
+                                            <li>
+                                                Change to Business or Premium Plan anytime
                                             </li>
                                         </ul>
                                     </Box>
@@ -346,43 +349,34 @@ function Pricing() {
 
                                         <ul className={style.pricingFeatures}>
                                             <li >
-                                                Unlimited Releases to all Social Platforms
+                                                Everything in the Basic Plan
                                             </li>
                                             <li>
-                                                TuneCore Rewards Master Classes
+                                                Advanced Analytics
                                             </li>
                                             <li>
-                                                Official Sales Reports
+                                                Pre-save & Smartlinks
                                             </li>
                                             <li>
-                                                Schedule Your Own Release Date
+                                                Youtube Content ID
                                             </li>
                                             <li>
-                                                Unlimited Releases to all Digital Stores
+                                                Support reply under 48hrs
                                             </li>
                                             <li>
-                                                100% Revenue from Digital Stores
+                                                Automated royalty splitting
                                             </li>
                                             <li>
-                                                Spotify Verified Artist Checkmark
+                                                Enhanced Marketing tools
                                             </li>
                                             <li>
-                                                Apple Music for Artists Verification
+                                                Custom release strategies
                                             </li>
                                             <li>
-                                                Artist Revenue Splits
+                                                Additional Distribution Channels
                                             </li>
                                             <li>
-                                                Customer Service Response Tim
-                                            </li>
-                                            <li>
-                                                Store Automator
-                                            </li>
-                                            <li>
-                                                Daily Trend Reports
-                                            </li>
-                                            <li>
-                                                Access to Exclusive Partnerships
+                                                Change to Premium Plan anytime
                                             </li>
                                         </ul>
                                     </Box>
@@ -446,64 +440,28 @@ function Pricing() {
                                         
                                         <ul className={style.pricingFeatures}>
                                             <li >
-                                                Unlimited Releases to all Social Platforms
+                                                Everything in the Business Plan
                                             </li>
                                             <li>
-                                                TuneCore Rewards Master Classes
+                                                Premium Analytics
                                             </li>
                                             <li>
-                                                Official Sales Reports
+                                                Pitch for TV and Movie Sync
                                             </li>
                                             <li>
-                                                Schedule Your Own Release Date
+                                                Free ISRC and UPCs
                                             </li>
                                             <li>
-                                                Unlimited Releases to all Digital Stores
+                                                Support reply under 24hrs
                                             </li>
                                             <li>
                                                 100% Revenue from Digital Stores
                                             </li>
                                             <li>
-                                                Spotify Verified Artist Checkmark
+                                                High-Quality Audio mastering
                                             </li>
                                             <li>
-                                                Apple Music for Artists Verification
-                                            </li>
-                                            <li>
-                                                Artist Revenue Splits
-                                            </li>
-                                            <li>
-                                                Customer Service Response Tim
-                                            </li>
-                                            <li>
-                                                Store Automator
-                                            </li>
-                                            <li>
-                                                Daily Trend Reports
-                                            </li>
-                                            <li>
-                                                Access to Exclusive Partnerships
-                                            </li>
-                                            <li>
-                                                Promotional Opportunities
-                                            </li>
-                                            <li>
-                                                Pro Panels & Expert Advice Sessions
-                                            </li>
-                                            <li>
-                                                Custom Label Name
-                                            </li>
-                                            <li>
-                                                Use Your Own UPC
-                                            </li>
-                                            <li>
-                                                Release Level Country Restrictions
-                                            </li>
-                                            <li>
-                                                Recording Location
-                                            </li>
-                                            <li>
-                                                Cost Per Additional Artist Profile
+                                                Promotional Opportunities and Playlist Submissions
                                             </li>
                                         </ul>
                                     </Box>
@@ -521,7 +479,7 @@ function Pricing() {
                             fontSize: {xs: 18, md: 25},
                             textAlign: "center"
                         }}>
-                            Sign up for free while you think of a plan that suits you
+                            Sign up for a free trial to discover the perfect plan for your career journey.
                         </Typography>
         
                         <Button variant="contained" 

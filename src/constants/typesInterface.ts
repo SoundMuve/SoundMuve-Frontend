@@ -96,3 +96,54 @@ export type recordLabelArtistInterface = {
 
     songCount: number,
 }
+
+
+
+export type releaseInterface = {
+    _id: string,
+    email: string,
+    appleMusicUrl: string,
+    spotifyMusicUrl: string,
+    album_title?: string,
+    song_title?: string,
+    artist_name: string,
+    language: string,
+    primary_genre: string,
+    secondary_genre: string,
+    release_date: string,
+    release_time: string,
+    listenerTimeZone: string,
+    otherTimeZone: string,
+    label_name: string,
+    soldWorldwide: string,
+    recording_location: string,
+    upc_ean: string,
+    store: string,
+    social_platform: string,
+    status: string,
+    song_cover_url?: string,
+    song_cover?: string,
+    created_at: string,
+
+    songs?: releaseSongsInterface[]
+
+    numberOfSongs?: 1
+}
+
+
+export type releaseSongsInterface = {
+    _id: string,
+    email: string,
+    song_mp3: string,
+    song_title: string,
+    creative_name: string[],
+    album_id: string,
+    song_writer: string[],
+    creative_role: string[],
+    copyright_ownership: string,
+    copyright_ownership_permissions: string,
+    isrc_number: string,
+    language_of_lyrics: string,
+    lyrics: string,
+    ticktokClipStartTime: string,
+}

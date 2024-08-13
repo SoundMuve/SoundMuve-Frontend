@@ -52,7 +52,7 @@ const FL_CurrencyModalComponent: React.FC<_Props> = ({
                 //     Authorization: `Bearer ${accessToken}`
                 // }
             })).data;
-            console.log(response);
+            // console.log(response);
 
             const supportedCurrency = getSupportedCurrency(response);
 

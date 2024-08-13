@@ -324,10 +324,18 @@ function CreateSingleRelease() {
             upc_ean: formData.UPC_EANcode || '',
         };
         // console.log(data2db);
-        _setSingleRelease1(data2db);
+        _setSingleRelease1({ ...data2db, _id: '' });
 
         try {
-            const response = (await axios.post(
+            const response = singleRelease1._id ? (await axios.put(
+                `${apiEndpoint}/Release/checkAndUpdateRelease`,
+                data2db,  
+                {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`
+                    },
+                }
+            )).data : (await axios.post(
                 `${apiEndpoint}/Release/create-release`,
                 data2db,  
                 {
@@ -338,7 +346,7 @@ function CreateSingleRelease() {
             )).data;
             // console.log(response);
 
-            _setSingleRelease1(data2db);
+            _setSingleRelease1({ ...data2db, _id: response.new_release._id });
 
             // setApiResponse({
             //     display: true,
