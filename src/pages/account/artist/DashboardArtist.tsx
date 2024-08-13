@@ -15,18 +15,18 @@ import albumSampleArt from "@/assets/images/albumSampleArt.png";
 import AccountWrapper from '@/components/AccountWrapper';
 import AlbumSongItem from '@/components/account/AlbumSongItem';
 import NewReleaseModalComponent from '@/components/account/NewReleaseModal';
+import ReleaseStatusComponent from '@/components/ReleaseStatus';
+// import PaymentComponent from '@/components/account/PaymentComponent';
+// import EmptyListComponent from '@/components/EmptyList';
+// import LoadingDataComponent from '@/components/LoadingData';
+import PaymentzComponent from '@/components/account/payments/PaymentzComponent';
 
 import { useSettingStore } from '@/state/settingStore';
 import { useUserStore } from '@/state/userStore';
 
-import { apiEndpoint } from '@/util/resources';
+import { apiEndpoint, currencyDisplay } from '@/util/resources';
 import { getLocalStorage, setLocalStorage } from '@/util/storage';
-import ReleaseStatusComponent from '@/components/ReleaseStatus';
-// import EmptyListComponent from '@/components/EmptyList';
-// import LoadingDataComponent from '@/components/LoadingData';
 import { useReleaseStore } from '@/state/releaseStore';
-import PaymentComponent from '@/components/account/PaymentComponent';
-import PaymentzComponent from '@/components/account/payments/PaymentzComponent';
 
 
 const albumSongs = [
@@ -223,7 +223,6 @@ function DashboardArtist() {
             </Box>
         </Grid>
     )
-    
 
 
     return (
@@ -290,14 +289,15 @@ function DashboardArtist() {
                                     mt: "auto"
                                 }}
                             >
-                                <Typography 
+                                <Typography onClick={() => navigate("/account/artist/balance-history") }
                                     sx={{
                                         fontWeight: "900",
                                         fontSize: "25px",
                                         lineHeight: "40px",
                                         letterSpacing: "-0.13px",
+                                        cursor: 'pointer'
                                     }}
-                                >$0.00</Typography>
+                                >{ currencyDisplay(Number(userData.balance)) }</Typography>
 
                                 <Box onClick={() => setWithdrawlModal(true) }
                                     sx={{
@@ -417,7 +417,7 @@ function DashboardArtist() {
                                 mt: "auto",
                                 mx: "auto"
                             }}>
-                                <Link to="/account/artist/analytics-reach" style={{
+                                <Link to="/account/artist/sales-report" style={{
                                     textDecoration: "none",
                                     color: "#000000",
                                     border: "none",
@@ -556,12 +556,15 @@ function DashboardArtist() {
                                     mt: "auto"
                                 }}
                             >
-                                <Typography sx={{
-                                    fontWeight: "900",
-                                    fontSize: "24px",
-                                    lineHeight: "22.7px",
-                                    letterSpacing: "-0.07px",
-                                }}>$0.00</Typography>
+                                <Typography onClick={() => navigate("/account/artist/balance-history") }
+                                    sx={{
+                                        fontWeight: "900",
+                                        fontSize: "24px",
+                                        lineHeight: "22.7px",
+                                        letterSpacing: "-0.07px",
+                                        cursor: "pointer"
+                                    }}
+                                >{ currencyDisplay(Number(userData.balance)) }</Typography>
 
                                 <Box onClick={() => setWithdrawlModal(true) } sx={{
                                     p: "8.97px 26px 8.97px 26px",
@@ -618,7 +621,7 @@ function DashboardArtist() {
                                     mx: "auto"
                                 }}
                             >
-                                <Link to="/account/artist/analytics-reach" style={{
+                                <Link to="/account/artist/sales-report" style={{
                                     textDecoration: "none",
                                     color: "#000000",
                                     border: "none",

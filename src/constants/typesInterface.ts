@@ -79,16 +79,20 @@ export type balTransactionsInterface = {
     amount: number,
     balance: number,
     currency: string,
+    status?: string,
     created_at: string,
 }
 
 export type recordLabelArtistInterface = {
-    _id: string,
+    _id?: string,
     email: string,
     artistName: string,
-    recordLabelemail: string,
-    phoneNumber: string,
-    country: string,
-    gender: string,
+
+    recordLabelemail?: string,
+    phoneNumber?: string,
+    country?: string,
+    gender?: string,
     artistAvatarUrl: string,
+
+    songCount: number,
 }

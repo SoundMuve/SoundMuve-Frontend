@@ -68,7 +68,7 @@ const ArtistAnalyticsNavComponent: React.FC<_Props> = ({
                     > Sales Report </Typography>
                 </Box>
 
-                <Box 
+                {/* <Box 
                     sx={{
                         p: {xs: "10.18px 19.68px 10.18px 19.68px", md: "15px 29px 15px 29px"},
                         borderRadius: {xs: "8.14px", md: "12px"},
@@ -90,7 +90,7 @@ const ArtistAnalyticsNavComponent: React.FC<_Props> = ({
                             textAlign: 'center',
                         }}
                     > Reach </Typography>
-                </Box>
+                </Box> */}
             </Stack>
         </Box>
     )

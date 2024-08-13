@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
@@ -18,6 +19,7 @@ interface _Props {
 const FL_RequestConfirmationModalComponent: React.FC<_Props> = ({
     openModal, closeModal
 }) => {
+    const navigate = useNavigate();
     const darkTheme = useSettingStore((state) => state.darkTheme);
 
 
@@ -175,7 +177,7 @@ const FL_RequestConfirmationModalComponent: React.FC<_Props> = ({
                                     cursor: "pointer",
                                     display: "inline-block"
                                 }}
-                                onClick={() => closeModal()}
+                                onClick={() => navigate('/account/artist/balance-history')}
                             >
                                 <Typography 
                                     sx={{

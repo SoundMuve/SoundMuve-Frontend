@@ -30,6 +30,7 @@ import axios from 'axios';
 // import { useSettingStore } from '@/state/settingStore';
 import { useUserStore } from '@/state/userStore';
 import { recordLabelArtistInterface } from '@/constants/typesInterface';
+import { getLocalStorage, setLocalStorage } from '@/util/storage';
 
 
 // const albumPreview = [
@@ -74,6 +75,11 @@ function DashboardRecordLabel() {
 
 
     useEffect(() => {
+        const artistsList = getLocalStorage("artistsList");
+        if (artistsList) {
+            setRecordLabelArtist(artistsList);
+        }
+
         getTotalNumberOfArtist();
         getAllRecordLabelArtist();
         getRecordLabelTotalSongs();
@@ -106,7 +112,8 @@ function DashboardRecordLabel() {
             })).data;
             console.log(response);
 
-            setRecordLabelArtist(response);
+            setRecordLabelArtist(response.artists);
+            setLocalStorage("artistsList", response.artists);
         } catch (error: any) {
             const errorResponse = error.response.data;
             console.error(errorResponse);
@@ -405,7 +412,7 @@ function DashboardRecordLabel() {
 
                                 <Grid container spacing={3}>
                                     {
-                                        recordLabelArtist?.slice(0, 6).map((item, i) => (
+                                        recordLabelArtist && recordLabelArtist?.slice(0, 6).map((item, i) => (
                                             <Grid item xs={6} sm={4} md={3} lg={2} key={i}>
                                                 <Stack alignItems="center">
                                                     <Avatar
@@ -446,8 +453,7 @@ function DashboardRecordLabel() {
                                                             color: '#666666',
                                                             mt: '13px'
                                                         }}
-                                                    >{ '0' }</Typography>
-                                                    {/* >{item.subtitle }</Typography> */}
+                                                    >{ item.songCount }</Typography>
                                                 </Stack>
                                             </Grid>
                                         ))

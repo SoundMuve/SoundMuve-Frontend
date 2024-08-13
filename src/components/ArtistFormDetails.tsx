@@ -28,15 +28,16 @@ import CircularProgressWithLabel from './CircularProgressWithLabel';
 const formSchema = yup.object({
     artistName: yup.string().required().min(2).trim().label("First Name"),
 
-    email: yup.string().required()
-    .email("Please enter a valid email address.")
+    email: yup.string().email("Please enter a valid email address.")
     .matches(/^([a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+(?:\.[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+)*|\"([^\\]\\\"]|\\.)*\")@(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}$/
     , "Please enter a valid email address.")
     .trim().label("Email Address"),
 
-    phoneNumber: yup.string().required().min(7, "Incorrect phone number").max(15, "Incorrect phone number").trim().label("Phone Number"),
-    country: yup.string().required().min(2).trim().label("Country"),
-    gender: yup.string().required().min(2).trim().label("Gender"),
+    phoneNumber: yup.string()
+    // .min(7, "Incorrect phone number").max(15, "Incorrect phone number")
+    .trim().label("Phone Number"),
+    country: yup.string().required().trim().label("Country"),
+    gender: yup.string().required().trim().label("Gender"),
 });
 
   
@@ -148,11 +149,11 @@ function ArtistFormDetailsComponent() {
 
 
         const data_2db = new FormData();
-        data_2db.append('email', data2db.email);
+        data_2db.append('email', data2db.email || '');
         data_2db.append('recordLabelemail', data2db.recordLabelemail);
         data_2db.append('artistName', data2db.artistName);
         data_2db.append('country', data2db.country);
-        data_2db.append('phoneNumber', data2db.phoneNumber);
+        data_2db.append('phoneNumber', data2db.phoneNumber || '');
         data_2db.append('gender', data2db.gender);
         data_2db.append('artistAvatar', image);
 

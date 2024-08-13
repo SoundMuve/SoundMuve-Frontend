@@ -37,7 +37,7 @@ import { formatTransactionDate, getDateRange, getFormattedDateRange } from '@/ut
 
   
 const headerTitle = [
-    "Date", "Description", "Debit", "Credit", "Balance", "Currency"
+    "Date", "Description", "Debit", "Credit", "Balance", "Currency", "Status"
 ]
 
 // const tBodyContent = [
@@ -443,6 +443,19 @@ function BalanceHistory() {
                                                         }}
                                                     >
                                                         { row.currency }
+                                                    </TableCell>
+
+                                                    <TableCell 
+                                                        // align='right'
+                                                        align='center'
+                                                        sx={{ 
+                                                            color: darkTheme ? "#fff" : "#000",
+                                                            fontWeight: "400",
+                                                            fontSize: {xs: "9.07px", md: "18px"},
+                                                            lineHeight: {xs: "12.1px", md: "24px"},
+                                                        }}
+                                                    >
+                                                        { row.status || "Pending" }
                                                     </TableCell>
                                                 </TableRow>
                                             );

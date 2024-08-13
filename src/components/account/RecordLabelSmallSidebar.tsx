@@ -8,7 +8,7 @@ import ListItemButton from '@mui/material/ListItemButton';
 import HomeIcon from '@mui/icons-material/Home';
 
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
-import AssessmentOutlinedIcon from '@mui/icons-material/AssessmentOutlined';
+// import AssessmentOutlinedIcon from '@mui/icons-material/AssessmentOutlined';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import PersonIcon from '@mui/icons-material/Person';
 import SettingsPowerIcon from '@mui/icons-material/SettingsPower';
@@ -92,7 +92,7 @@ const RecordLabelSmallSidebarComponent: React.FC<_Props> = ({setSideNav}) => {
                         </ListItemButton>
                     </ListItem>
 
-                    <ListItem disablePadding
+                    {/* <ListItem disablePadding
                         sx={{ 
                             mb: '35px',
                             color: "#666666"
@@ -103,7 +103,7 @@ const RecordLabelSmallSidebarComponent: React.FC<_Props> = ({setSideNav}) => {
                                 <AssessmentOutlinedIcon sx={{ color: "#666666" }}  />
                             </IconButton>
                         </ListItemButton>
-                    </ListItem>
+                    </ListItem> */}
 
                     <ListItem disablePadding
                         sx={{ 

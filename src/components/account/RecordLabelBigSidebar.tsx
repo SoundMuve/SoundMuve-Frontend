@@ -12,7 +12,7 @@ import ListItemText from '@mui/material/ListItemText';
 
 import HomeIcon from '@mui/icons-material/Home';
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
-import AssessmentOutlinedIcon from '@mui/icons-material/AssessmentOutlined';
+// import AssessmentOutlinedIcon from '@mui/icons-material/AssessmentOutlined';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import PersonIcon from '@mui/icons-material/Person';
 import SettingsPowerIcon from '@mui/icons-material/SettingsPower';
@@ -142,7 +142,7 @@ const RecordLabelBigSidebarComponent: React.FC<_Props> = ({setSideNav}) => {
                         </ListItemButton>
                     </ListItem>
 
-                    <ListItem disablePadding
+                    {/* <ListItem disablePadding
                         sx={{ 
                             mb: '40px',
                             color: "#666666"
@@ -162,7 +162,7 @@ const RecordLabelBigSidebarComponent: React.FC<_Props> = ({setSideNav}) => {
 
                             <ListItemText primary="Reach" />
                         </ListItemButton>
-                    </ListItem>
+                    </ListItem> */}
 
                     <ListItem disablePadding
                         sx={{ 
