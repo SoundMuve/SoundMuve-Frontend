@@ -33,6 +33,7 @@ function CreateAlbumReleaseOverview() {
     const albumReleaseStores = createReleaseStore((state) => state.albumReleaseStores);
     const albumReleaseSongUpload = createReleaseStore((state) => state.albumReleaseSongUpload);
     const _removeAlbumReleaseSongUpload = createReleaseStore((state) => state._removeAlbumReleaseSongUpload);
+    const _clearAlbumRelease = createReleaseStore((state) => state._clearAlbumRelease);
     const albumReleaseAlbumArt = createReleaseStore((state) => state.albumReleaseAlbumArt);
     const completeAlbumData = createReleaseStore((state) => state.completeAlbumData);
 
@@ -114,12 +115,14 @@ function CreateAlbumReleaseOverview() {
         });
 
         setOpenSuccessModal(true);
+
+        _clearAlbumRelease();
+
         setTimeout(() => {
             setOpenSuccessModal(false);
 
             navigate("/account");
         }, 1000);
-
     }
 
 

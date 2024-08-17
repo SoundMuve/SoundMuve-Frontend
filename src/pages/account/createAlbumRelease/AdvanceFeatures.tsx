@@ -30,6 +30,10 @@ import { createReleaseStore } from '@/state/createReleaseStore';
 import AccountWrapper from '@/components/AccountWrapper';
 import { customTextFieldTheme } from '@/util/mui';
 import { apiEndpoint } from '@/util/resources';
+import FormControl from '@mui/material/FormControl';
+import LongSelectList from '@/components/LongSelectList';
+import { restCountries } from '@/util/countries';
+
 
 const formSchema = yup.object({
     labelName: yup.string().trim().label("Label Name"),
@@ -38,6 +42,8 @@ const formSchema = yup.object({
     UPC_EANcode: yup.string().trim().label("UPC/EAN Code"),
 });
 
+const contriesss = restCountries.map(item => item.name.common);
+contriesss.unshift("All");
 
 function CreateAlbumReleaseAdvanceFeatures() {
     const navigate = useNavigate();
@@ -52,6 +58,7 @@ function CreateAlbumReleaseAdvanceFeatures() {
     const completeAlbumData = createReleaseStore((state) => state.completeAlbumData);
     const _setCompleteAlbumData = createReleaseStore((state) => state._setCompleteAlbumData);
     const _setToastNotification = useSettingStore((state) => state._setToastNotification);
+    const [selectSoldCountries, setSelectSoldCountries] = useState<string[]>(contriesss);
 
     const [apiResponse, setApiResponse] = useState({
         display: false,
@@ -71,13 +78,17 @@ function CreateAlbumReleaseAdvanceFeatures() {
     
 
     const { 
-        handleSubmit, register, setValue, getValues, setError, formState: { errors, isValid, isSubmitting } 
+        handleSubmit, register, setValue, setError, formState: { errors, isValid, isSubmitting } 
     } = useForm({ 
         resolver: yupResolver(formSchema),
         mode: 'onBlur'
     });
 
 
+    const handleSoldCountriesSelect = (selected: string[]) => {
+        setSelectSoldCountries(selected);
+        setValue("soldWorldwide", selected.toString(), {shouldDirty: true, shouldTouch: true, shouldValidate: true});
+    }
             
     const onSubmit = async (formData: typeof formSchema.__outputType) => {
         setApiResponse({
@@ -116,6 +127,7 @@ function CreateAlbumReleaseAdvanceFeatures() {
             label_name: formDetails.label_name,
             recording_location: formDetails.recording_location,
             upc_ean: formDetails.upc_ean,
+            soldWorldwide: formDetails.soldWorldwide || selectSoldCountries || soldWorldwide
         }
 
         try {
@@ -342,8 +354,8 @@ function CreateAlbumReleaseAdvanceFeatures() {
                                                                     p: {xs: "10.18px 19.68px 10.18px 19.68px", md: "15px 29px 15px 29px"},
                                                                     borderRadius: {xs: "8.14px", md: "12px"},
 
-                                                                    background: getValues("soldWorldwide") == "Yes" ? "#644986" : darkTheme ? "#fff" : "#272727",
-                                                                    color: getValues("soldWorldwide") == "Yes" ? "#fff" : darkTheme ? "#000" : "#fff",
+                                                                    background: soldWorldwide == "Yes" ? "#644986" : darkTheme ? "#fff" : "#272727",
+                                                                    color: soldWorldwide == "Yes" ? "#fff" : darkTheme ? "#000" : "#fff",
 
                                                                     cursor: "pointer",
                                                                     display: "inline-block"
@@ -382,8 +394,8 @@ function CreateAlbumReleaseAdvanceFeatures() {
                                                                     p: {xs: "10.18px 19.68px 10.18px 19.68px", md: "15px 29px 15px 29px"},
                                                                     borderRadius: {xs: "8.14px", md: "12px"},
 
-                                                                    background: getValues("soldWorldwide") == "No" ? "#644986" : darkTheme ? "#fff" : "#272727",
-                                                                    color: getValues("soldWorldwide") == "No" ? "#fff" : darkTheme ? "#000" : "#fff",
+                                                                    background: soldWorldwide == "No" ? "#644986" : darkTheme ? "#fff" : "#272727",
+                                                                    color: soldWorldwide == "No" ? "#fff" : darkTheme ? "#000" : "#fff",
 
                                                                     cursor: "pointer",
                                                                     display: "inline-block"
@@ -416,6 +428,24 @@ function CreateAlbumReleaseAdvanceFeatures() {
                                                             }
                                                         </Box>
                                                     </Box>
+
+                                                    { soldWorldwide == "No" ? 
+                                                        <FormControl fullWidth sx={{mt: 2}}>
+
+                                                            <Typography id="soldCountriesSelect" sx={{color: "grey"}}>
+                                                                Where would you like your music to be sold
+                                                            </Typography>
+
+                                                            <LongSelectList 
+                                                                options={contriesss}
+                                                                darkTheme={darkTheme}
+                                                                handleSelected={handleSoldCountriesSelect}
+                                                                selectedValue={selectSoldCountries}
+                                                                error={ errors.soldWorldwide ? true : false }
+                                                            />
+                                                        </FormControl>
+                                                        : <></>
+                                                    }
 
                                                     { errors.soldWorldwide && <Box sx={{fontSize: 13, color: "red", textAlign: "left"}}>{ errors.soldWorldwide?.message }</Box> }
                                                 </Box>

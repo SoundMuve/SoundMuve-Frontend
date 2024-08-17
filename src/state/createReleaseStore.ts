@@ -286,7 +286,7 @@ export const createReleaseStore = create<_typeInterface_>((set) => ({
     _setAlbumReleaseSongUpload: (details) => {
         const albumReleaseSongUpload = getLocalStorage('albumReleaseSongUpload');
         const newDetail = { ...details, mp3_file: '', songAudioPreview: '' };
-        if (albumReleaseSongUpload.length) {
+        if (albumReleaseSongUpload && albumReleaseSongUpload.length) {
             setLocalStorage("albumReleaseSongUpload", [ ...albumReleaseSongUpload, newDetail ]);
         } else {
             setLocalStorage("albumReleaseSongUpload", [ newDetail ]);
@@ -304,7 +304,7 @@ export const createReleaseStore = create<_typeInterface_>((set) => ({
   
     _removeAlbumReleaseSongUpload: (index) => {
         const albumReleaseSongUpload = getLocalStorage('albumReleaseSongUpload');
-        if (albumReleaseSongUpload.length) {
+        if (albumReleaseSongUpload && albumReleaseSongUpload.length) {
             const result = albumReleaseSongUpload.filter((_: any, i: number) => i !== index);
             setLocalStorage("albumReleaseSongUpload", result);
         }

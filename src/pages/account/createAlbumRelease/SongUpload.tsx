@@ -37,6 +37,7 @@ import { minutes, seconds, songArtistsCreativesRoles, pauseExecution } from '@/u
 import CopyrightOwnershipModalComponent from '@/components/account/CopyrightOwnershipModal';
 import { apiEndpoint } from '@/util/resources';
 import CircularProgressWithLabel from '@/components/CircularProgressWithLabel';
+import ExplicitLyricsReadMoreInfoComponent from '@/components/ExplicitLyricsReadMoreInfo';
 
 
 const formSchema = yup.object({
@@ -436,8 +437,6 @@ function CreateAlbumReleaseSongUpload() {
         };
 
         _setAlbumReleaseSongUpload({...newSongData, _id: ''});
-        
-        // console.log(newSongData);
 
         const data2db = new FormData();
         data2db.append('album_id', completeAlbumData._id );
@@ -459,7 +458,6 @@ function CreateAlbumReleaseSongUpload() {
 
 
         try {
-
             const response = songEditId ? 
                 (await axios.put(
                     `${apiEndpoint}/songs/editSong/${songEditId}`,
@@ -488,9 +486,22 @@ function CreateAlbumReleaseSongUpload() {
                         'Content-Type': 'multipart/form-data',
                         Authorization: `Bearer ${accessToken}`
                     },
+                    onUploadProgress: (progressEvent) => {
+                        const loaded = progressEvent.loaded;
+                        const total = progressEvent.total || 0;
+                        const percentage = Math.floor((loaded * 100) / total );
+
+                        if (percentage < 100) {
+                            setSongUploadProgress(percentage);
+                        }
+                    },
                 }
             )).data;
             console.log(response);
+
+
+            await pauseExecution(500);
+
 
             _setAlbumReleaseSongUpload({...newSongData, _id: response.song._id});
 
@@ -1199,7 +1210,23 @@ function CreateAlbumReleaseSongUpload() {
                                                     }}
                                                 >
                                                     <Box>
-                                                        <Typography
+                                                        <Stack direction="row" alignItems="center" spacing="8px">
+                                                            <Typography variant='body2' component="div"
+                                                                sx={{
+                                                                    fontWeight: "400",
+                                                                    fontSize: {xs: "16.96px", md: "25px"},
+                                                                    lineHeight: {xs: "27.14px", md: "40px"},
+                                                                    letterSpacing: {xs: "-0.09px", md: "-0.13px"},
+                                                                    // mt: "21px"
+                                                                }}
+                                                            >
+                                                                Does this song have explicit lyrics? 
+                                                            </Typography>
+
+                                                            <ExplicitLyricsReadMoreInfoComponent />
+                                                        </Stack>
+
+                                                        {/* <Typography
                                                             sx={{
                                                                 fontWeight: "900",
                                                                 fontSize: {xs: "13px", md: "16px"},
@@ -1216,7 +1243,7 @@ function CreateAlbumReleaseSongUpload() {
                                                             >
                                                                 Read More
                                                             </span>
-                                                        </Typography>
+                                                        </Typography> */}
 
                                                         <Box
                                                             sx={{
@@ -1884,18 +1911,17 @@ function CreateAlbumReleaseSongUpload() {
                                                         width: "200px",
                                                         bgcolor: darkTheme ? "#fff" : "#000",
                                                         color: darkTheme ? "#000" : "#fff",
-                                                        // my: 3,
                                                     }}
                                                 >
                                                     {
                                                         isSubmitting ? (
-                                                            <>
+                                                            <Box mx="auto">
                                                                 {/* <CircularProgress size={25} sx={{ color: "#8638E5", fontWeight: "bold", mx: 'auto' }} /> */}
                                                                 <CircularProgressWithLabel 
                                                                     value={songUploadProgress} size={30} 
                                                                     sx={{ color: "#8638E5", fontWeight: "bold", mx: 'auto' }} 
                                                                 />
-                                                            </>
+                                                            </Box>
                                                         ) : (
                                                             <>
                                                                 <Typography

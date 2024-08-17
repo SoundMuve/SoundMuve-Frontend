@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { useForm } from 'react-hook-form';
 import * as yup from "yup";
@@ -20,14 +20,21 @@ import { ThemeProvider, useTheme } from '@mui/material/styles';
 import FlutterwaveLogo2 from "@/assets/images/FlutterwaveLogo2.png";
 import { useSettingStore } from '@/state/settingStore';
 import { customTextFieldTheme, MuiTextFieldStyle } from '@/util/mui';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
 
+import { currencyLists, getSupportedCurrency } from '@/util/currencies';
+import axios from 'axios';
+import { apiEndpoint } from '@/util/resources';
 
 const formSchema = yup.object({
     amount: yup.string().required().trim().label("Account Number"),
-    narration: yup.string().label("Narration"),
+    narration: yup.string().required().label("Narration"),
 });
 
-type withdrawInterface = {
+export type withdrawInterface = {
+    currency: string;
     narration: string;
     amount: string;
 }
@@ -44,6 +51,13 @@ const FL_WithdrawModalComponent: React.FC<_Props> = ({
 }) => {
     const outerTheme = useTheme();
     const darkTheme = useSettingStore((state) => state.darkTheme);
+    const [currencies, setCurrencies] = useState(currencyLists);
+    const [selectedCurrency, setSelectedCurrency] = useState('');
+    const [errorMsg, setErrorMsg] = useState('');
+
+    useEffect(() => {
+        getSupportedCurrencies();
+    }, []);
 
 
     const [apiResponse, setApiResponse] = useState({
@@ -57,9 +71,31 @@ const FL_WithdrawModalComponent: React.FC<_Props> = ({
     } = useForm({ resolver: yupResolver(formSchema), mode: 'onBlur', reValidateMode: 'onChange' });
 
 
+    const getSupportedCurrencies = async () => {
+        try {
+            const response = (await axios.get(`${apiEndpoint}/currency/currencies`, {
+                // headers: {
+                //     Authorization: `Bearer ${accessToken}`
+                // }
+            })).data;
+            // console.log(response);
+
+            const supportedCurrency = getSupportedCurrency(response);
+
+            setCurrencies(supportedCurrency);
+
+        } catch (error: any) {
+            const errorResponse = error.response.data;
+            console.error(errorResponse);
+        }
+    }
 
     const onSubmit = async (formData: typeof formSchema.__outputType) => {
-        console.log(formData);
+        if (!selectedCurrency) {
+            setErrorMsg("Please select your preffered currency.");
+            return;
+        }
+        // console.log(formData);
 
         setApiResponse({
             display: false,
@@ -67,7 +103,7 @@ const FL_WithdrawModalComponent: React.FC<_Props> = ({
             message: ""
         });
 
-        confirmBtn({...formData, narration: ''});
+        confirmBtn({...formData, currency: selectedCurrency });
     }
 
 
@@ -126,6 +162,57 @@ const FL_WithdrawModalComponent: React.FC<_Props> = ({
 
                         <ThemeProvider theme={customTextFieldTheme(outerTheme, darkTheme)}>
                             <form noValidate onSubmit={ handleSubmit(onSubmit) } >
+
+                                <Box>
+                                    <Typography sx={{
+                                        fontWeight: "400",
+                                        fontSize: "15.38px",
+                                        lineHeight: "38.44px",
+                                        letterSpacing: "-0.12px"
+                                    }}> Currency </Typography>
+
+                                    <FormControl fullWidth>
+                                        <Select
+                                            labelId="currency"
+                                            id="currency-select"
+                                            label=""
+                                            value={selectedCurrency}
+                                            // defaultValue={selectedCurrency}
+
+                                            sx={{
+                                                color: darkTheme ? "white" : '#272727',
+                                                borderRadius: "13.79px",
+                                                '.MuiOutlinedInput-notchedOutline': {
+                                                    borderColor: darkTheme ? 'gray' : 'gray',
+                                                },
+                                                '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                                                    borderColor: darkTheme ? '#fff' : '#272727', // '#434e5e',
+                                                },
+                                                '&:hover .MuiOutlinedInput-notchedOutline': {
+                                                    borderColor: darkTheme ? '#fff' : '#272727', // 'var(--TextField-brandBorderHoverColor)',
+                                                },
+                                                '.MuiSvgIcon-root ': {
+                                                    fill: `${darkTheme ? '#ccc' : 'black'} !important`,
+                                                }
+                                            }}
+                                            error={ errorMsg.length ? true : false }
+                                            onChange={(e) => {
+                                                setSelectedCurrency(e.target.value);
+                                                setErrorMsg('');
+                                            }}
+                                        >
+                                            { currencies.map((currency, index) => (
+                                                <MenuItem key={index} value={ currency.currency_symbol }
+                                                    title={ currency.currency_name }
+                                                >
+                                                    { currency.currency_symbol }
+                                                </MenuItem>
+                                            )) }
+                                        </Select>
+                                    </FormControl>
+        
+                                    { errorMsg && <Box sx={{fontSize: 13, color: "red", textAlign: "left"}}>{ errorMsg }</Box> }
+                                </Box>
 
                                 <Box>
                                     <Typography sx={{

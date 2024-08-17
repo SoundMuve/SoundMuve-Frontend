@@ -128,3 +128,22 @@ export function getSupportedCurrency(currencies: currencyInteeface[]) {
 }
 
 export const currencyLists = getSupportedCurrency(availableCurrencies);
+
+
+export function getCurrencySymbol(currencyCode: string): string {
+  const currencySymbols: { [key: string]: string } = {
+    'USD': '$',
+    'GBP': '£',
+    'EUR': '€',
+    'NGN': '₦',
+    'XOF': 'CFA',
+    'XAF': 'CFA',
+    'GNF': 'FG',
+    'RWF': 'FRw',
+    'GHS': '₵',
+    'TZS': 'TSh',
+    'UGX': 'USh'
+  };
+
+  return currencySymbols[currencyCode];
+}

@@ -108,41 +108,76 @@ export const languages = [
             }
         ]
     },
-    {
-        "full_code": "ar_EG",
-        "code_alpha_1": "ar",
-        "englishName": "Arabic (Egypt)",
-        "codeName": "Arabic",
-        "flagPath": "static/flags/arabic_eg",
-        "testWordForSyntezis": "مرحبا",
-        "rtl": "true",
-        "modes": [
-            {
-                "name": "Translate web site",
-                "value": true
-            },
-            {
-                "name": "Image object recognition",
-                "value": true
-            },
-            {
-                "name": "Image recognition",
-                "value": true
-            },
-            {
-                "name": "Translation",
-                "value": true
-            },
-            {
-                "name": "Translation document",
-                "value": true
-            }
-        ]
-    },
+    // {
+    //     "full_code": "ar_EG",
+    //     "code_alpha_1": "ar",
+    //     "englishName": "Arabic (Egypt)",
+    //     "codeName": "Arabic",
+    //     "flagPath": "static/flags/arabic_eg",
+    //     "testWordForSyntezis": "مرحبا",
+    //     "rtl": "true",
+    //     "modes": [
+    //         {
+    //             "name": "Translate web site",
+    //             "value": true
+    //         },
+    //         {
+    //             "name": "Image object recognition",
+    //             "value": true
+    //         },
+    //         {
+    //             "name": "Image recognition",
+    //             "value": true
+    //         },
+    //         {
+    //             "name": "Translation",
+    //             "value": true
+    //         },
+    //         {
+    //             "name": "Translation document",
+    //             "value": true
+    //         }
+    //     ]
+    // },
+    // {
+    //     "full_code": "ar_SA",
+    //     "code_alpha_1": "ar",
+    //     "englishName": "Arabic (Saudi Arabia)",
+    //     "codeName": "Arabic",
+    //     "flagPath": "static/flags/arabic_sa",
+    //     "testWordForSyntezis": "مرحبا",
+    //     "rtl": "true",
+    //     "modes": [
+    //         {
+    //             "name": "Translation document",
+    //             "value": true
+    //         },
+    //         {
+    //             "name": "Translate web site",
+    //             "value": true
+    //         },
+    //         {
+    //             "name": "Image recognition",
+    //             "value": true
+    //         },
+    //         {
+    //             "name": "Image object recognition",
+    //             "value": true
+    //         },
+    //         {
+    //             "name": "Speech recognition",
+    //             "value": true
+    //         },
+    //         {
+    //             "name": "Translation",
+    //             "value": true
+    //         }
+    //     ]
+    // },
     {
         "full_code": "ar_SA",
         "code_alpha_1": "ar",
-        "englishName": "Arabic (Saudi Arabia)",
+        "englishName": "Arabic",
         "codeName": "Arabic",
         "flagPath": "static/flags/arabic_sa",
         "testWordForSyntezis": "مرحبا",
@@ -174,41 +209,41 @@ export const languages = [
             }
         ]
     },
-    {
-        "full_code": "ar_AE",
-        "code_alpha_1": "ar",
-        "englishName": "Arabic (United Arab Emirates)",
-        "codeName": "Arabic",
-        "flagPath": "static/flags/arabic_ae",
-        "testWordForSyntezis": "مرحبا",
-        "rtl": "true",
-        "modes": [
-            {
-                "name": "Translation",
-                "value": true
-            },
-            {
-                "name": "Translation document",
-                "value": true
-            },
-            {
-                "name": "Translate web site",
-                "value": true
-            },
-            {
-                "name": "Image object recognition",
-                "value": true
-            },
-            {
-                "name": "Speech recognition",
-                "value": true
-            },
-            {
-                "name": "Image recognition",
-                "value": true
-            }
-        ]
-    },
+    // {
+    //     "full_code": "ar_AE",
+    //     "code_alpha_1": "ar",
+    //     "englishName": "Arabic (United Arab Emirates)",
+    //     "codeName": "Arabic",
+    //     "flagPath": "static/flags/arabic_ae",
+    //     "testWordForSyntezis": "مرحبا",
+    //     "rtl": "true",
+    //     "modes": [
+    //         {
+    //             "name": "Translation",
+    //             "value": true
+    //         },
+    //         {
+    //             "name": "Translation document",
+    //             "value": true
+    //         },
+    //         {
+    //             "name": "Translate web site",
+    //             "value": true
+    //         },
+    //         {
+    //             "name": "Image object recognition",
+    //             "value": true
+    //         },
+    //         {
+    //             "name": "Speech recognition",
+    //             "value": true
+    //         },
+    //         {
+    //             "name": "Image recognition",
+    //             "value": true
+    //         }
+    //     ]
+    // },
     {
         "full_code": "hy_AM",
         "code_alpha_1": "hy",
@@ -751,80 +786,115 @@ export const languages = [
             }
         ]
     },
-    {
-        "full_code": "en_AU",
-        "code_alpha_1": "en",
-        "englishName": "English (Australian)",
-        "codeName": "English",
-        "flagPath": "static/flags/english_au",
-        "testWordForSyntezis": "Hello",
-        "rtl": "false",
-        "modes": [
-            {
-                "name": "Translation document",
-                "value": true
-            },
-            {
-                "name": "Translation",
-                "value": true
-            },
-            {
-                "name": "Speech recognition",
-                "value": true
-            },
-            {
-                "name": "Image recognition",
-                "value": true
-            },
-            {
-                "name": "Translate web site",
-                "value": true
-            },
-            {
-                "name": "Image object recognition",
-                "value": true
-            }
-        ]
-    },
-    {
-        "full_code": "en_GB",
-        "code_alpha_1": "en",
-        "englishName": "English (Great Britain)",
-        "codeName": "English",
-        "flagPath": "static/flags/english_uk",
-        "testWordForSyntezis": "Hello",
-        "rtl": "false",
-        "modes": [
-            {
-                "name": "Image object recognition",
-                "value": true
-            },
-            {
-                "name": "Speech recognition",
-                "value": true
-            },
-            {
-                "name": "Image recognition",
-                "value": true
-            },
-            {
-                "name": "Translate web site",
-                "value": true
-            },
-            {
-                "name": "Translation document",
-                "value": true
-            },
-            {
-                "name": "Translation",
-                "value": true
-            }
-        ]
-    },
+    // {
+    //     "full_code": "en_AU",
+    //     "code_alpha_1": "en",
+    //     "englishName": "English (Australian)",
+    //     "codeName": "English",
+    //     "flagPath": "static/flags/english_au",
+    //     "testWordForSyntezis": "Hello",
+    //     "rtl": "false",
+    //     "modes": [
+    //         {
+    //             "name": "Translation document",
+    //             "value": true
+    //         },
+    //         {
+    //             "name": "Translation",
+    //             "value": true
+    //         },
+    //         {
+    //             "name": "Speech recognition",
+    //             "value": true
+    //         },
+    //         {
+    //             "name": "Image recognition",
+    //             "value": true
+    //         },
+    //         {
+    //             "name": "Translate web site",
+    //             "value": true
+    //         },
+    //         {
+    //             "name": "Image object recognition",
+    //             "value": true
+    //         }
+    //     ]
+    // },
+    // {
+    //     "full_code": "en_GB",
+    //     "code_alpha_1": "en",
+    //     "englishName": "English (Great Britain)",
+    //     "codeName": "English",
+    //     "flagPath": "static/flags/english_uk",
+    //     "testWordForSyntezis": "Hello",
+    //     "rtl": "false",
+    //     "modes": [
+    //         {
+    //             "name": "Image object recognition",
+    //             "value": true
+    //         },
+    //         {
+    //             "name": "Speech recognition",
+    //             "value": true
+    //         },
+    //         {
+    //             "name": "Image recognition",
+    //             "value": true
+    //         },
+    //         {
+    //             "name": "Translate web site",
+    //             "value": true
+    //         },
+    //         {
+    //             "name": "Translation document",
+    //             "value": true
+    //         },
+    //         {
+    //             "name": "Translation",
+    //             "value": true
+    //         }
+    //     ]
+    // },
+    // {
+    //     "full_code": "en_US",
+    //     "code_alpha_1": "en",
+    //     "englishName": "English (USA)",
+    //     "codeName": "English",
+    //     "flagPath": "static/flags/english_us",
+    //     "testWordForSyntezis": "Hello",
+    //     "rtl": "false",
+    //     "modes": [
+    //         {
+    //             "name": "Translation",
+    //             "value": true
+    //         },
+    //         {
+    //             "name": "Translation document",
+    //             "value": true
+    //         },
+    //         {
+    //             "name": "Image object recognition",
+    //             "value": true
+    //         },
+    //         {
+    //             "name": "Speech recognition",
+    //             "value": true
+    //         },
+    //         {
+    //             "name": "Translate web site",
+    //             "value": true
+    //         },
+    //         {
+    //             "name": "Image recognition",
+    //             "value": true
+    //         }
+    //     ]
+    // },
     {
         "full_code": "en_US",
         "code_alpha_1": "en",
-        "englishName": "English (USA)",
+        "englishName": "English",
         "codeName": "English",
         "flagPath": "static/flags/english_us",
         "testWordForSyntezis": "Hello",
@@ -949,45 +1019,80 @@ export const languages = [
             }
         ]
     },
-    {
-        "full_code": "fr_CA",
-        "code_alpha_1": "fr",
-        "englishName": "French (Canada)",
-        "codeName": "French",
-        "flagPath": "static/flags/french_canada",
-        "testWordForSyntezis": "Salut",
-        "rtl": "false",
-        "modes": [
-            {
-                "name": "Translate web site",
-                "value": true
-            },
-            {
-                "name": "Speech recognition",
-                "value": true
-            },
-            {
-                "name": "Image recognition",
-                "value": true
-            },
-            {
-                "name": "Image object recognition",
-                "value": true
-            },
-            {
-                "name": "Translation",
-                "value": true
-            },
-            {
-                "name": "Translation document",
-                "value": true
-            }
-        ]
-    },
+    // {
+    //     "full_code": "fr_CA",
+    //     "code_alpha_1": "fr",
+    //     "englishName": "French (Canada)",
+    //     "codeName": "French",
+    //     "flagPath": "static/flags/french_canada",
+    //     "testWordForSyntezis": "Salut",
+    //     "rtl": "false",
+    //     "modes": [
+    //         {
+    //             "name": "Translate web site",
+    //             "value": true
+    //         },
+    //         {
+    //             "name": "Speech recognition",
+    //             "value": true
+    //         },
+    //         {
+    //             "name": "Image recognition",
+    //             "value": true
+    //         },
+    //         {
+    //             "name": "Image object recognition",
+    //             "value": true
+    //         },
+    //         {
+    //             "name": "Translation",
+    //             "value": true
+    //         },
+    //         {
+    //             "name": "Translation document",
+    //             "value": true
+    //         }
+    //     ]
+    // },
+    // {
+    //     "full_code": "fr_FR",
+    //     "code_alpha_1": "fr",
+    //     "englishName": "French (France)",
+    //     "codeName": "French",
+    //     "flagPath": "static/flags/french",
+    //     "testWordForSyntezis": "Salut",
+    //     "rtl": "false",
+    //     "modes": [
+    //         {
+    //             "name": "Translation document",
+    //             "value": true
+    //         },
+    //         {
+    //             "name": "Translate web site",
+    //             "value": true
+    //         },
+    //         {
+    //             "name": "Speech recognition",
+    //             "value": true
+    //         },
+    //         {
+    //             "name": "Image object recognition",
+    //             "value": true
+    //         },
+    //         {
+    //             "name": "Translation",
+    //             "value": true
+    //         },
+    //         {
+    //             "name": "Image recognition",
+    //             "value": true
+    //         }
+    //     ]
+    // },
     {
         "full_code": "fr_FR",
         "code_alpha_1": "fr",
-        "englishName": "French (France)",
+        "englishName": "French",
         "codeName": "French",
         "flagPath": "static/flags/french",
         "testWordForSyntezis": "Salut",
@@ -2416,41 +2521,41 @@ export const languages = [
             }
         ]
     },
-    {
-        "full_code": "pt_BR",
-        "code_alpha_1": "pt",
-        "englishName": "Portuguese (Brazil)",
-        "codeName": "Portuguese",
-        "flagPath": "static/flags/portuguese_brazil",
-        "testWordForSyntezis": "Olá",
-        "rtl": "false",
-        "modes": [
-            {
-                "name": "Translation document",
-                "value": true
-            },
-            {
-                "name": "Translation",
-                "value": true
-            },
-            {
-                "name": "Speech recognition",
-                "value": true
-            },
-            {
-                "name": "Image recognition",
-                "value": true
-            },
-            {
-                "name": "Translate web site",
-                "value": true
-            },
-            {
-                "name": "Image object recognition",
-                "value": true
-            }
-        ]
-    },
+    // {
+    //     "full_code": "pt_BR",
+    //     "code_alpha_1": "pt",
+    //     "englishName": "Portuguese (Brazil)",
+    //     "codeName": "Portuguese",
+    //     "flagPath": "static/flags/portuguese_brazil",
+    //     "testWordForSyntezis": "Olá",
+    //     "rtl": "false",
+    //     "modes": [
+    //         {
+    //             "name": "Translation document",
+    //             "value": true
+    //         },
+    //         {
+    //             "name": "Translation",
+    //             "value": true
+    //         },
+    //         {
+    //             "name": "Speech recognition",
+    //             "value": true
+    //         },
+    //         {
+    //             "name": "Image recognition",
+    //             "value": true
+    //         },
+    //         {
+    //             "name": "Translate web site",
+    //             "value": true
+    //         },
+    //         {
+    //             "name": "Image object recognition",
+    //             "value": true
+    //         }
+    //     ]
+    // },
     {
         "full_code": "pa_PK",
         "code_alpha_1": "pa",
@@ -2861,76 +2966,76 @@ export const languages = [
             }
         ]
     },
-    {
-        "full_code": "es_MX",
-        "code_alpha_1": "es",
-        "englishName": "Spanish (Mexico)",
-        "codeName": "Spanish",
-        "flagPath": "static/flags/spanish_mexico",
-        "testWordForSyntezis": "Hola",
-        "rtl": "false",
-        "modes": [
-            {
-                "name": "Image recognition",
-                "value": true
-            },
-            {
-                "name": "Image object recognition",
-                "value": true
-            },
-            {
-                "name": "Translate web site",
-                "value": true
-            },
-            {
-                "name": "Speech recognition",
-                "value": true
-            },
-            {
-                "name": "Translation document",
-                "value": true
-            },
-            {
-                "name": "Translation",
-                "value": true
-            }
-        ]
-    },
-    {
-        "full_code": "es_US",
-        "code_alpha_1": "es",
-        "englishName": "Spanish (United States)",
-        "codeName": "Spanish",
-        "flagPath": "static/flags/english_us",
-        "testWordForSyntezis": "Hola",
-        "rtl": "false",
-        "modes": [
-            {
-                "name": "Translation",
-                "value": true
-            },
-            {
-                "name": "Translation document",
-                "value": true
-            },
-            {
-                "name": "Speech recognition",
-                "value": true
-            },
-            {
-                "name": "Image object recognition",
-                "value": true
-            },
-            {
-                "name": "Translate web site",
-                "value": true
-            },
-            {
-                "name": "Image recognition",
-                "value": true
-            }
-        ]
-    },
+    // {
+    //     "full_code": "es_MX",
+    //     "code_alpha_1": "es",
+    //     "englishName": "Spanish (Mexico)",
+    //     "codeName": "Spanish",
+    //     "flagPath": "static/flags/spanish_mexico",
+    //     "testWordForSyntezis": "Hola",
+    //     "rtl": "false",
+    //     "modes": [
+    //         {
+    //             "name": "Image recognition",
+    //             "value": true
+    //         },
+    //         {
+    //             "name": "Image object recognition",
+    //             "value": true
+    //         },
+    //         {
+    //             "name": "Translate web site",
+    //             "value": true
+    //         },
+    //         {
+    //             "name": "Speech recognition",
+    //             "value": true
+    //         },
+    //         {
+    //             "name": "Translation document",
+    //             "value": true
+    //         },
+    //         {
+    //             "name": "Translation",
+    //             "value": true
+    //         }
+    //     ]
+    // },
+    // {
+    //     "full_code": "es_US",
+    //     "code_alpha_1": "es",
+    //     "englishName": "Spanish (United States)",
+    //     "codeName": "Spanish",
+    //     "flagPath": "static/flags/english_us",
+    //     "testWordForSyntezis": "Hola",
+    //     "rtl": "false",
+    //     "modes": [
+    //         {
+    //             "name": "Translation",
+    //             "value": true
+    //         },
+    //         {
+    //             "name": "Translation document",
+    //             "value": true
+    //         },
+    //         {
+    //             "name": "Speech recognition",
+    //             "value": true
+    //         },
+    //         {
+    //             "name": "Image object recognition",
+    //             "value": true
+    //         },
+    //         {
+    //             "name": "Translate web site",
+    //             "value": true
+    //         },
+    //         {
+    //             "name": "Image recognition",
+    //             "value": true
+    //         }
+    //     ]
+    // },
     {
         "full_code": "su_ID",
         "code_alpha_1": "su",

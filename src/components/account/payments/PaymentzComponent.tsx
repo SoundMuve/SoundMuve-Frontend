@@ -93,14 +93,35 @@ const PaymentzComponent: React.FC<_Props> = ({
     const [withdrawalReview, setWithdrawalReview] = useState(false);
     const [withdrawSuccess, setWithdrawSuccess] = useState(false);
     const [withdrawlDetails, setWithdrawlDetails] = useState({
-        // currency: "",
+        currency: "",
         narration: "",
         amount: "",
+    });
+    const [successfulWithdrawlDetails, setSuccessfulWithdrawlDetails] = useState({
+        email: '',
+        narration: '',
+        credit: 0,
+        debit: 0,
+        amount: 0,
+        currency: '',
+        status: '',
+        balance: 0,
+        created_at: '',
+        _id: '',
     })
 
     const confirmSetWithdrawlBtn = (data: typeof withdrawlDetails) => {
         setWithdrawlDetails(data);
         setWithdrawalReview(true);
+    }
+
+    const saveWithdrawlBtn = (data: typeof successfulWithdrawlDetails) => {
+        setSuccessfulWithdrawlDetails(data);
+        setWithdrawlModal(false);
+        setWithdrawalReview(false);
+        setWithdrawSuccess(true);
+
+        // TODO:: navigate to balance history page.
     }
 
 
@@ -337,15 +358,17 @@ const PaymentzComponent: React.FC<_Props> = ({
                 openModal={withdrawalReview}
                 closeModal={() => setWithdrawalReview(false) }
                 formDetails={withdrawlDetails}
-                saveBtn={() => {
-                    setWithdrawlModal(false);
-                    setWithdrawalReview(false);
-                    setWithdrawSuccess(true);
-                }}
+                saveBtn={saveWithdrawlBtn}
+                // saveBtn={() => {
+                //     setWithdrawlModal(false);
+                //     setWithdrawalReview(false);
+                //     setWithdrawSuccess(true);
+                // }}
             />
 
             <FL_RequestConfirmationModalComponent
                 openModal={withdrawSuccess}
+                withdrawlData={successfulWithdrawlDetails}
                 closeModal={() => setWithdrawSuccess(false)}
             />
 

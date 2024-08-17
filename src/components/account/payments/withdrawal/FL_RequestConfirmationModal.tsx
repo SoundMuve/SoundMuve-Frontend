@@ -9,18 +9,33 @@ import Stack from '@mui/material/Stack';
 import CloseIcon from '@mui/icons-material/Close';
 
 import { useSettingStore } from '@/state/settingStore';
+import { successfulWithdrawalInterface } from './FL_ReviewModal';
+import { getCurrencySymbol } from '@/util/currencies';
+import { formatedNumber } from '@/util/resources';
 
 
 interface _Props {
     openModal: boolean,
+    withdrawlData: successfulWithdrawalInterface,
     closeModal: () => void;
 }
 
 const FL_RequestConfirmationModalComponent: React.FC<_Props> = ({
-    openModal, closeModal
+    openModal, closeModal, withdrawlData
 }) => {
     const navigate = useNavigate();
     const darkTheme = useSettingStore((state) => state.darkTheme);
+
+    const handleCloseModal = () => {
+        const url = window.location.pathname;
+
+        if (url.includes("artist")) {
+            navigate('/account/artist/balance-history');
+        } else {
+            navigate('/account/record-label/balance-history');
+        }
+        closeModal();
+    }
 
 
     return (
@@ -91,7 +106,10 @@ const FL_RequestConfirmationModalComponent: React.FC<_Props> = ({
                                 textAlign: "center",
                                 mt: "50px"
                             }}
-                        > $200.00 </Typography>
+                        >
+                            {`${getCurrencySymbol(withdrawlData.currency)}${formatedNumber(Number(withdrawlData.amount))} `}
+                        </Typography>
+                        {/* > $200.00 </Typography> */}
 
 
                         <Stack direction={"row"} justifyContent={"center"} alignItems={"center"} sx={{my: "70px"}}>
@@ -105,7 +123,7 @@ const FL_RequestConfirmationModalComponent: React.FC<_Props> = ({
                                     flexWrap: "wrap"
                                 }}
                             >
-                                <Typography
+                                {/* <Typography
                                     sx={{
                                         fontWeight: "700",
                                         fontSize: "14px",
@@ -123,7 +141,7 @@ const FL_RequestConfirmationModalComponent: React.FC<_Props> = ({
                                         // letterSpacing: "-1px"
                                         flex: "1 1 45%"
                                     }}
-                                >$1.00</Typography>
+                                >$1.00</Typography> */}
 
                                 <Typography
                                     sx={{
@@ -133,7 +151,8 @@ const FL_RequestConfirmationModalComponent: React.FC<_Props> = ({
                                         letterSpacing: "-1px",
                                         flex: "1 1 45%"
                                     }}
-                                >Confirmation Number</Typography>
+                                >Confirmation Id</Typography>
+                                {/* >Confirmation Number</Typography> */}
 
                                 <Typography
                                     sx={{
@@ -143,9 +162,9 @@ const FL_RequestConfirmationModalComponent: React.FC<_Props> = ({
                                         // letterSpacing: "-1px"
                                         flex: "1 1 45%"
                                     }}
-                                >1234567</Typography>
+                                >{ withdrawlData._id }</Typography>
 
-                                <Typography
+                                {/* <Typography
                                     sx={{
                                         fontWeight: "700",
                                         fontSize: "14px",
@@ -163,7 +182,8 @@ const FL_RequestConfirmationModalComponent: React.FC<_Props> = ({
                                         // letterSpacing: "-1px"
                                         flex: "1 1 45%"
                                     }}
-                                >Bank account</Typography>
+                                >Bank account</Typography> */}
+
                             </Box>
                         </Stack>
 
@@ -177,7 +197,7 @@ const FL_RequestConfirmationModalComponent: React.FC<_Props> = ({
                                     cursor: "pointer",
                                     display: "inline-block"
                                 }}
-                                onClick={() => navigate('/account/artist/balance-history')}
+                                onClick={() => handleCloseModal()}
                             >
                                 <Typography 
                                     sx={{

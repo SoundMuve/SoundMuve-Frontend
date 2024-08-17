@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
 import Box from '@mui/material/Box';
@@ -12,30 +12,61 @@ import Alert from '@mui/material/Alert';
 import { useUserStore } from '@/state/userStore';
 import { useSettingStore } from '@/state/settingStore';
 
-import { apiEndpoint } from '@/util/resources';
+import { apiEndpoint, formatedNumber } from '@/util/resources';
+import { withdrawInterface } from './FL_WithdrawModal';
+import { getCurrencySymbol } from '@/util/currencies';
 
+
+export interface successfulWithdrawalInterface {
+    email: string;
+    narration: string;
+    credit: number;
+    debit: number;
+    amount: number;
+    currency: string;
+    status: string;
+    balance: number;
+    created_at: string;
+    _id: string;
+};
 
 interface _Props {
     openModal: boolean,
     closeModal: () => void;
     // changeMethod: () => void;
-    saveBtn: () => void;
-    formDetails: {amount: string}
+    saveBtn: (data: successfulWithdrawalInterface) => void;
+    formDetails: withdrawInterface
 }
 
 
 const FL_ReviewModalComponent: React.FC<_Props> = ({
     openModal, closeModal, saveBtn, formDetails
 }) => {
-    // const [useEmail_n_PhoneNo, setUseEmail_n_PhoneNo] = useState(false);
     const darkTheme = useSettingStore((state) => state.darkTheme);
     const accessToken = useUserStore((state) => state.accessToken);
+    const userData = useUserStore((state) => state.userData);
 
     const [apiResponse, setApiResponse] = useState({
         display: false,
         status: true,
         message: ""
     });
+
+    useEffect(() => {
+        setApiResponse({
+            display: false,
+            status: true,
+            message: ""
+        });
+        
+        return () => {
+            setApiResponse({
+                display: false,
+                status: true,
+                message: ""
+            });
+        }
+    }, []);
 
     const onSubmit = async () => {
 
@@ -45,13 +76,19 @@ const FL_ReviewModalComponent: React.FC<_Props> = ({
             message: ""
         });
 
+        const data2db = {
+            email: userData.email,
+            narration: formDetails.narration,
+            amount: formDetails.amount,
+            currency: formDetails.currency
+        };
 
-        saveBtn();
-
-        return;
-
+        // const thisData: any = {};
+        // saveBtn(thisData);
+        // return;
+        
         try {
-            const response = (await axios.post(`${apiEndpoint}/payouts/banks/NG`, {
+            const response = (await axios.post(`${apiEndpoint}/transactionInit/initiate`, data2db, {
                 headers: {
                     Authorization: `Bearer ${accessToken}`
                 }
@@ -59,12 +96,11 @@ const FL_ReviewModalComponent: React.FC<_Props> = ({
             console.log(response);
             // setBanks(response.data);
 
-            saveBtn();
+            saveBtn(response.transaction);
 
-            
         } catch (error: any) {
             const errorResponse = error.response.data;
-            console.error(errorResponse);
+            // console.error(errorResponse);
 
             setApiResponse({
                 display: true,
@@ -72,14 +108,7 @@ const FL_ReviewModalComponent: React.FC<_Props> = ({
                 message: errorResponse.message || "Ooops and error occurred!"
             });
 
-            // _setToastNotification({
-            //     display: true,
-            //     status: "error",
-            //     message: errorResponse.message || "Ooops and error occurred!"
-            // });
         }
-
-
     }
 
 
@@ -159,7 +188,7 @@ const FL_ReviewModalComponent: React.FC<_Props> = ({
                                     mt: "25px"
                                 }}
                             >
-                                ${formDetails.amount}
+                                {`${getCurrencySymbol(formDetails.currency)}${formatedNumber(Number(formDetails.amount))} `}
                             </Typography>
                         </Box>
 
@@ -182,7 +211,8 @@ const FL_ReviewModalComponent: React.FC<_Props> = ({
                                     color: "#797979"
                                 }}
                             >
-                                Fees displayed are only an estimate. More Information on payout fees can be found on Payoneer's Fee Overview Page
+                                {/* Fees displayed are only an estimate. More Information on payout fees can be found on Payoneer's Fee Overview Page */}
+                                Fees displayed are only an estimate. More Information on payout fees can will be mailed to you.
                             </Typography>
                         </Stack>
 

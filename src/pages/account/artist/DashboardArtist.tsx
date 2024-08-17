@@ -112,9 +112,8 @@ function DashboardArtist() {
         // setReleases(albumSongs);
 
         try {
-            // https://soundmuve-backend-zrap.onrender.com/api/songs/GetMyAlbumsByEmail?email=latham01@yopmail.com
-            // const response = (await axios.get(`${apiEndpoint}/songs/GetMyAlbumsByEmail?email=${ userData.email }`, {
-            const response = (await axios.get(`${apiEndpoint}/songs/GetMyAlbumsByEmail?email=latham01@yopmail.com`, {
+            // const response = (await axios.get(`${apiEndpoint}/songs/GetMyAlbumsByEmail?email=latham01@yopmail.com`, {
+            const response = (await axios.get(`${apiEndpoint}/songs/GetMyAlbumsByEmail?email=${ userData.email }`, {
                 headers: {
                     Authorization: `Bearer ${accessToken}`
                 }
@@ -1101,7 +1100,7 @@ function DashboardArtist() {
                             </Grid>
 
                             {
-                                releases.length > 0 ? (
+                                releases.length > 1 ? (
                                     <Grid item xs={12} md={6}
                                         sx={{ display: {xs: "none", md: "initial"} }}
                                     >

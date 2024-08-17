@@ -46,6 +46,7 @@ import SearchArtistModalComponent from '@/components/account/SearchArtistModal';
 import { restCountries } from '@/util/countries';
 import LongSelectList from '@/components/LongSelectList';
 import ArtistProfileInfoComponent from '@/components/ArtistProfileInfo';
+import ExplicitLyricsReadMoreInfoComponent from '@/components/ExplicitLyricsReadMoreInfo';
 
 
 const formSchema = yup.object({
@@ -679,26 +680,31 @@ function CreateSingleRelease() {
                                 <Grid item xs={12} md={4}> </Grid>
 
                                 <Grid item xs={12} md={8}>
-                                    <Typography
-                                        sx={{
-                                            fontWeight: "400",
-                                            fontSize: {xs: "16.96px", md: "25px"},
-                                            lineHeight: {xs: "27.14px", md: "40px"},
-                                            letterSpacing: {xs: "-0.09px", md: "-0.13px"},
-                                            // mt: "21px"
-                                        }}
-                                    >
-                                        Does this song have explicit lyrics? &#32;
-                                        <span
-                                            // onClick={() => { }}
-                                            style={{
-                                                color: "#C8F452",
-                                                cursor: "pointer"
+                                    <Stack direction="row" alignItems="center" spacing="8px">
+                                        <Typography variant='body2' component="div"
+                                            sx={{
+                                                fontWeight: "400",
+                                                fontSize: {xs: "16.96px", md: "25px"},
+                                                lineHeight: {xs: "27.14px", md: "40px"},
+                                                letterSpacing: {xs: "-0.09px", md: "-0.13px"},
+                                                // mt: "21px"
                                             }}
                                         >
-                                            Read More
-                                        </span>
-                                    </Typography>
+                                            Does this song have explicit lyrics? 
+                                            {/* &#32; */}
+
+                                            {/* <span
+                                                style={{
+                                                    color: "#C8F452",
+                                                    cursor: "pointer"
+                                                }}
+                                            >
+                                                Read More
+                                            </span> */}
+                                        </Typography>
+
+                                        <ExplicitLyricsReadMoreInfoComponent />
+                                    </Stack>
 
                                     <Box
                                         sx={{

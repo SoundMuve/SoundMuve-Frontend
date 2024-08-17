@@ -334,11 +334,12 @@ function AlbumDetails() {
                 }
             )).data;
 
+            const result = albumReleaseDetails._id ? response.album : response;
             // console.log(response);
-            _setAlbumReleaseDetails({ ...formDetails, _id: response._id });
+            _setAlbumReleaseDetails({ ...formDetails, _id: result._id });
 
-            _setCompleteAlbumData(response);
-            // _setCompleteAlbumData(response.savedAlbum);
+            _setCompleteAlbumData(result);
+            // _setCompleteAlbumData(result.savedAlbum);
             
             navigate("/account/create-album-release-advance-features");
 
